@@ -1,0 +1,11 @@
+[Page 1]
+## SECTION 1: BOARD OVERSIGHT, DUAL-CLASS CENTRALIZATION & AUDIT COMMITTEE CHARTER
+Meta Platforms, Inc. Board of Directors oversees enterprise risk through its Audit & Risk Oversight Committee and Governance Committee. The Audit & Risk Oversight Committee charter mandates direct quarterly reporting from the Chief Privacy Officer and Chief Compliance Officer. However, strategic product direction and capital allocation remain highly centralized at the CEO and executive leadership level due to the dual-class voting structure where Class B shares control over 60% of voting power.
+
+[Page 2]
+## SECTION 2: PRIVACY GOVERNANCE, TEEN SAFETY & INDEPENDENT OVERSIGHT BOARD
+Meta operates a specialized Privacy Governance & Data Protection Function that conducts pre-launch Privacy Review gating across Family of Apps (Facebook, Instagram, WhatsApp, Threads). For youth and user safety, Meta deployed default Instagram Teen Accounts with parental supervision controls managed by the Trust and Safety Organization. Content moderation appeals are reviewed by the Independent Oversight Board, which operates through an independent trust structure, though its binding scope is limited to specific content cases rather than core ranking algorithms.
+
+[Page 3]
+## SECTION 3: ADVERTISING MONETIZATION, CREATOR REELS & AI GOVERNANCE
+Meta's Ads Monetization Engineering team deployed AI-driven Advantage+ targeting and measurement tools for advertisers, supported by third-party brand safety adjacency verification. In AI governance, the AI Governance & Responsible Innovation Council coordinates red-teaming for Llama open-weight foundation models. However, regulatory filings under the EU Digital Services Act (DSA) and third-party researchers highlight ongoing structural tension between rapid generative AI deployment speed, creator monetization velocity on Reels, and cross-functional safety review bandwidth following prior workforce flattening.

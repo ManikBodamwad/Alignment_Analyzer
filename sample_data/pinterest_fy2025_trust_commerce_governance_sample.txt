@@ -1,0 +1,11 @@
+[Page 1]
+## SECTION 1: BOARD GOVERNANCE, TRUST & SAFETY AND POSITIVE-INTENT PLATFORM
+Pinterest, Inc.'s Board of Directors oversees corporate governance through its Audit Committee and Nominating & Corporate Governance Committee, with formal charters mandating regular reviews of platform trust, cybersecurity, and ethical AI. Pinterest's Trust and Safety Organization enforces strict Community Guidelines that proactively prohibit political ads, weight-loss ads, and harmful misinformation, aligning advertiser brand safety directly with user wellbeing and positive user experience.
+
+[Page 2]
+## SECTION 2: AI RECOMMENDATIONS, VISUAL COMMERCE & MERCHANT PARTNERSHIPS
+Pinterest's AI Governance and Inclusive Product团队 (Inclusive AI & Recommendation Engineering) collaborates with Trust and Safety to tune visual discovery algorithms (including skin-tone and body-type inclusive search). Dedicated Merchant and Advertiser Partnership units manage shoppable pins and catalog integrity. However, as third-party merchant catalogs and outbound programmatic ad partnerships scale rapidly, partial alignment challenges emerge in cross-functional coordination to verify third-party merchant fulfillment quality and prevent AI-generated spam pins.
+
+[Page 3]
+## SECTION 3: CREATOR ECOSYSTEM, PRIVACY & EMPLOYEE GOVERNANCE
+Pinterest's Privacy Governance team maintains GDPR and CCPA compliance controls. For creators and publishers, Pinterest transitioned several direct creator fund programs toward merchant-driven shopping links, creating partial misalignment with independent creators seeking direct ad-revenue sharing. Employee workplace policies emphasize inclusion and clear functional reporting lines, though detailed sub-unit escalation protocols for third-party vendor governance have limited public disclosure.

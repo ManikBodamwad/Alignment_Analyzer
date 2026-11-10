@@ -1,0 +1,11 @@
+[Page 1]
+## SECTION 1: TEEN SAFETY, FAMILY CENTER & PRIVACY BY DESIGN
+Snap Inc. prioritizes teen and child safety through its specialized Trust and Safety Team and Safety Advisory Council. Snapchat defaults teen accounts to private contact settings, ephemeral message deletion, and integrates Family Center parental supervision tools. The Privacy Governance Program enforces privacy-by-design reviews across camera, visual messaging, and My AI conversational features, supported by formal data minimization procedures.
+
+[Page 2]
+## SECTION 2: THREE-CLASS VOTING CENTRALIZATION & BOARD STRUCTURE
+Snap Inc.'s capital structure features Class A (non-voting), Class B (1 vote), and Class C (10 votes) stock held by co-founders, concentrating nearly all voting power in executive leadership. Public Class A shareholders have no voting rights on director elections. While the Board of Directors maintains an Audit Committee for financial and risk oversight, independent governance analysts classify shareholder delegation and board counterbalance as a structural misalignment risk.
+
+[Page 3]
+## SECTION 3: SPOTLIGHT CREATORS, AUGMENTED REALITY & WORKFORCE STRUCTURE
+Snap's Creator Partnerships team manages Spotlight monetization and AR Lens Creator rewards. However, creators report frequent policy adjustments in Spotlight payout formulas. In advertising, Snap deployed direct-response ad targeting and brand safety controls, though signal loss from mobile OS privacy policies creates tension between user privacy and advertiser measurement. Internally, functional restructuring reduced middle management layers, leaving cross-functional coordination between AR innovation teams and regional regulatory compliance reliant on centralized executive escalation.

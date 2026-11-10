@@ -1,0 +1,11 @@
+[Page 1]
+## ITEM 1. CORPORATE GOVERNANCE AND DUAL-CLASS VOTING STRUCTURE
+Meta Platforms, Inc. maintains a dual-class capital structure consisting of Class A and Class B common stock. Our founder, Chairman, and CEO holds a majority of total voting power through Class B shares (10 votes per share), resulting in centralized control over board elections and major corporate decisions. While the Board of Directors includes an Audit & Risk Oversight Committee and a Privacy Committee composed of independent directors, minority shareholders have raised concerns that concentrated voting power limits independent shareholder accountability.
+
+[Page 2]
+## ITEM 2. WORKFORCE RESTRUCTURING AND HIERARCHY FLATTENING
+During the Efficiency Restructuring initiative, Meta reduced total headcount and removed multiple middle-management layers to flatten the organizational hierarchy. Executive leadership states that flattening accelerates engineering decision-making. However, independent third-party assessments and employee feedback note that workforce reductions and restructuring created workload strain and fragmented responsibilities across regional policy, trust and safety, and compliance teams.
+
+[Page 3]
+## ITEM 3. PRIVACY PROGRAM AND REGULATORY COMPLIANCE CHALLENGES
+Under the FTC Stipulated Order, Meta established a dedicated Privacy Governance Program and Chief Privacy Officer role. The Audit & Risk Committee receives quarterly compliance updates. Nonetheless, European Commission and GDPR regulators issued enforcement findings citing conflicts between personalized advertising targeting and user personal data consent, noting that ads monetization product teams operate under aggressive revenue targets that compete with strict data minimization.

@@ -1,0 +1,11 @@
+{
+  "name": "stakeholder-structure-alignment-analyzer-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise Organizational Diagnostic Frontend for Stakeholder–Structure Alignment Analyzer",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "/opt/homebrew/lib/node_modules/vercel/node_modules/.bin/tsc --noEmit"
+  }
+}
+
