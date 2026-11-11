@@ -106,20 +106,32 @@ def repair_and_parse_json(raw_text: str) -> Dict[str, Any]:
 def validate_structured_output(raw_text: str, schema_cls: Type[T]) -> T:
     """
     Validate raw LLM output against a Pydantic schema, attempting JSON repair
-    before raising a validation error.
+    and recursive nested list unpacking before raising a validation error.
     """
     try:
         return schema_cls.model_validate_json(raw_text)
     except Exception:
         repaired_dict = repair_and_parse_json(raw_text)
-        return schema_cls.model_validate(repaired_dict)
+        try:
+            return schema_cls.model_validate(repaired_dict)
+        except Exception:
+            for field_name in schema_cls.model_fields.keys():
+                if field_name not in repaired_dict:
+                    for v in repaired_dict.values():
+                        if isinstance(v, dict) and field_name in v:
+                            repaired_dict[field_name] = v[field_name]
+                            break
+                        elif isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict):
+                            repaired_dict[field_name] = v
+                            break
+            return schema_cls.model_validate(repaired_dict)
 
 
 def _call_groq_chat_completion(
     system_prompt: str,
     user_payload: str,
     api_key: str,
-    model: str = "llama-3.3-70b-versatile",
+    model: Optional[str] = None,
     timeout_sec: int = 25,
     max_retries: int = 3,
 ) -> str:
@@ -130,11 +142,15 @@ def _call_groq_chat_completion(
     if not api_key or not api_key.strip():
         raise MissingAPIKeyError("Groq API key is not configured.")
 
+    sys_content = system_prompt
+    if "json" not in sys_content.lower() and "json" not in user_payload.lower():
+        sys_content = sys_content + "\nYou must format your entire response as a valid JSON object."
+
     url = "https://api.groq.com/openai/v1/chat/completions"
     body = {
-        "model": model or "llama-3.3-70b-versatile",
+        "model": model or settings.llm_model or "openai/gpt-oss-120b",
         "messages": [
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": sys_content},
             {"role": "user", "content": user_payload},
         ],
         "response_format": {"type": "json_object"},
@@ -214,11 +230,7 @@ def call_external_llm_json(
     """
     system_prompt = PROMPT_REGISTRY.get(prompt_key, "")
     provider = settings.llm_provider.lower()
-    model_name = (
-        settings.llm_model
-        if "llama" in settings.llm_model or "mixtral" in settings.llm_model or "gemma" in settings.llm_model
-        else "llama-3.3-70b-versatile"
-    )
+    model_name = settings.llm_model or "openai/gpt-oss-120b"
 
     cache_key = get_stage_cache_key(prompt_key, user_payload, model_name)
     if use_cache:

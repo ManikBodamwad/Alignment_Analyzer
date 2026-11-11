@@ -11,6 +11,7 @@ __pycache__/
 *.db
 *.db-journal
 storage/
+data/
 
 # Node modules
 node_modules/

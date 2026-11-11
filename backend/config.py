@@ -54,7 +54,7 @@ class Settings(BaseModel):
     app_version: str = "1.0.0"
     database_url: str = _default_database_url()
     llm_provider: str = _default_llm_provider()
-    llm_model: str = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+    llm_model: str = os.getenv("LLM_MODEL", "openai/gpt-oss-120b")
     groq_api_key: str = os.getenv("GROQ_API_KEY", "")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
