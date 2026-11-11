@@ -224,6 +224,9 @@
     }
     const nextIsSvg = isSvg || SVG_TAGS.has(node.tag);
     const el = nextIsSvg ? document.createElementNS("http://www.w3.org/2000/svg", node.tag) : document.createElement(node.tag);
+    for (const child of node.children) {
+      el.appendChild(createDomNode(child, nextIsSvg));
+    }
     for (const [k, v] of Object.entries(node.props || {})) {
       if (k === "children" || k === "key" || v === void 0 || v === null || v === false) {
         continue;
@@ -241,13 +244,18 @@
         el.addEventListener(eventName, v);
       } else if (k === "checked" || k === "value" || k === "disabled" || k === "selected") {
         el[k] = v;
-        if (v === true) el.setAttribute(k, "");
+        if (v === true && k !== "value") {
+          el.setAttribute(k, "");
+        }
+      } else if (k === "colSpan") {
+        el.setAttribute("colspan", String(v));
+      } else if (k === "rowSpan") {
+        el.setAttribute("rowspan", String(v));
+      } else if (k === "htmlFor") {
+        el.setAttribute("for", String(v));
       } else {
         el.setAttribute(k, String(v));
       }
-    }
-    for (const child of node.children) {
-      el.appendChild(createDomNode(child, nextIsSvg));
     }
     return el;
   }
@@ -261,12 +269,39 @@
   }
   function performRender() {
     if (!rootComponent || !rootContainer) return;
+    const activeEl = document.activeElement;
+    let focusInfo = null;
+    if (activeEl && rootContainer.contains(activeEl) && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")) {
+      focusInfo = {
+        tag: activeEl.tagName,
+        placeholder: activeEl.getAttribute("placeholder") || "",
+        type: activeEl.getAttribute("type") || "",
+        selStart: activeEl.selectionStart,
+        selEnd: activeEl.selectionEnd
+      };
+    }
     stateCursor = 0;
     effectCursor = 0;
     pendingEffects = [];
     const vnode = rootComponent();
     rootContainer.innerHTML = "";
     rootContainer.appendChild(createDomNode(vnode));
+    if (focusInfo) {
+      const candidates = rootContainer.querySelectorAll(focusInfo.tag);
+      for (let i = 0; i < candidates.length; i++) {
+        const c = candidates[i];
+        if ((c.getAttribute("placeholder") || "") === focusInfo.placeholder && (c.getAttribute("type") || "") === focusInfo.type) {
+          c.focus();
+          try {
+            if (focusInfo.selStart !== null && focusInfo.selEnd !== null) {
+              c.setSelectionRange(focusInfo.selStart, focusInfo.selEnd);
+            }
+          } catch {
+          }
+          break;
+        }
+      }
+    }
     const effectsToRun = [...pendingEffects];
     pendingEffects = [];
     for (const eff of effectsToRun) {

@@ -47,7 +47,9 @@ let rootComponent: (() => VNode) | null = null;
 let rootContainer: HTMLElement | null = null;
 let renderScheduled = false;
 
-export function useState<T>(initialValue: T): [T, (next: T | ((prev: T) => T)) => void] {
+export function useState<T>(
+  initialValue: T
+): [T, (next: T | ((prev: T) => T)) => void] {
   const idx = stateCursor++;
   if (stateStore.length <= idx) {
     stateStore[idx] = initialValue;
@@ -63,7 +65,10 @@ export function useState<T>(initialValue: T): [T, (next: T | ((prev: T) => T)) =
   return [stateStore[idx], setState];
 }
 
-export function useEffect(callback: () => void | (() => void), deps?: any[]): void {
+export function useEffect(
+  callback: () => void | (() => void),
+  deps?: any[]
+): void {
   const idx = effectCursor++;
   const prev = effectStore[idx];
   let changed = true;
@@ -126,8 +131,20 @@ function createDomNode(node: VNodeChild, isSvg = false): Node {
     ? document.createElementNS("http://www.w3.org/2000/svg", node.tag)
     : document.createElement(node.tag);
 
+  // Append children FIRST so <select> has its <option> elements before setting .value
+  for (const child of node.children) {
+    el.appendChild(createDomNode(child, nextIsSvg));
+  }
+
+  // Apply attributes, properties, and event listeners AFTER children exist
   for (const [k, v] of Object.entries(node.props || {})) {
-    if (k === "children" || k === "key" || v === undefined || v === null || v === false) {
+    if (
+      k === "children" ||
+      k === "key" ||
+      v === undefined ||
+      v === null ||
+      v === false
+    ) {
       continue;
     }
     if (k === "className") {
@@ -141,17 +158,27 @@ function createDomNode(node: VNodeChild, isSvg = false): Node {
     } else if (k.startsWith("on") && typeof v === "function") {
       const eventName = k.slice(2).toLowerCase();
       el.addEventListener(eventName, v);
-    } else if (k === "checked" || k === "value" || k === "disabled" || k === "selected") {
+    } else if (
+      k === "checked" ||
+      k === "value" ||
+      k === "disabled" ||
+      k === "selected"
+    ) {
       (el as any)[k] = v;
-      if (v === true) el.setAttribute(k, "");
+      if (v === true && k !== "value") {
+        el.setAttribute(k, "");
+      }
+    } else if (k === "colSpan") {
+      el.setAttribute("colspan", String(v));
+    } else if (k === "rowSpan") {
+      el.setAttribute("rowspan", String(v));
+    } else if (k === "htmlFor") {
+      el.setAttribute("for", String(v));
     } else {
       el.setAttribute(k, String(v));
     }
   }
 
-  for (const child of node.children) {
-    el.appendChild(createDomNode(child, nextIsSvg));
-  }
   return el;
 }
 
@@ -166,6 +193,31 @@ export function scheduleRender(): void {
 
 function performRender(): void {
   if (!rootComponent || !rootContainer) return;
+
+  // Save focused input state before re-rendering
+  const activeEl = document.activeElement as HTMLInputElement | null;
+  let focusInfo: {
+    tag: string;
+    placeholder: string;
+    type: string;
+    selStart: number | null;
+    selEnd: number | null;
+  } | null = null;
+
+  if (
+    activeEl &&
+    rootContainer.contains(activeEl) &&
+    (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")
+  ) {
+    focusInfo = {
+      tag: activeEl.tagName,
+      placeholder: activeEl.getAttribute("placeholder") || "",
+      type: activeEl.getAttribute("type") || "",
+      selStart: activeEl.selectionStart,
+      selEnd: activeEl.selectionEnd,
+    };
+  }
+
   stateCursor = 0;
   effectCursor = 0;
   pendingEffects = [];
@@ -174,6 +226,28 @@ function performRender(): void {
   rootContainer.innerHTML = "";
   rootContainer.appendChild(createDomNode(vnode));
 
+  // Restore focus & cursor position if user was typing in an input/textarea
+  if (focusInfo) {
+    const candidates = rootContainer.querySelectorAll(focusInfo.tag);
+    for (let i = 0; i < candidates.length; i++) {
+      const c = candidates[i] as HTMLInputElement;
+      if (
+        (c.getAttribute("placeholder") || "") === focusInfo.placeholder &&
+        (c.getAttribute("type") || "") === focusInfo.type
+      ) {
+        c.focus();
+        try {
+          if (focusInfo.selStart !== null && focusInfo.selEnd !== null) {
+            c.setSelectionRange(focusInfo.selStart, focusInfo.selEnd);
+          }
+        } catch {
+          // ignore for input types that do not support selectionRange
+        }
+        break;
+      }
+    }
+  }
+
   const effectsToRun = [...pendingEffects];
   pendingEffects = [];
   for (const eff of effectsToRun) {
@@ -181,7 +255,10 @@ function performRender(): void {
   }
 }
 
-export function mountApp(component: () => VNode, container: HTMLElement): void {
+export function mountApp(
+  component: () => VNode,
+  container: HTMLElement
+): void {
   rootComponent = component;
   rootContainer = container;
   performRender();
@@ -194,4 +271,3 @@ declare global {
     }
   }
 }
-

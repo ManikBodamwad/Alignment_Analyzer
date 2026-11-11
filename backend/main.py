@@ -1,7 +1,7 @@
 """Main FastAPI Application Entrypoint for Stakeholder–Structure Alignment Analyzer."""
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +18,7 @@ from backend.routers import (
     stakeholders,
 )
 from backend.seed import seed_initial_data
+from backend.static_assets import BUNDLE_JS, INDEX_HTML
 
 _DB_INITIALIZED = False
 
@@ -89,6 +90,15 @@ def health_check():
     }
 
 
+@app.get("/static/bundle.js")
+@app.get("/bundle.js")
+def serve_bundle_js():
+    bundle_file = BASE_DIR / "frontend" / "public" / "bundle.js"
+    if bundle_file.exists():
+        return FileResponse(str(bundle_file), media_type="application/javascript")
+    return Response(content=BUNDLE_JS, media_type="application/javascript")
+
+
 FRONTEND_DIST = BASE_DIR / "frontend" / "public"
 if FRONTEND_DIST.exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIST)), name="static")
@@ -99,4 +109,4 @@ def serve_spa_index():
     index_file = BASE_DIR / "frontend" / "public" / "index.html"
     if index_file.exists():
         return FileResponse(str(index_file))
-    return HTMLResponse("<h1>Stakeholder–Structure Alignment Analyzer Backend Running</h1>")
+    return HTMLResponse(INDEX_HTML)

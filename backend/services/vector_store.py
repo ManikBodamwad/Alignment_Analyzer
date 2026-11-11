@@ -1,10 +1,9 @@
-"""Configurable Embedding Provider and Vector Retrieval Engine (pgvector / FAISS / NumPy)."""
+"""Configurable Embedding Provider and Vector Retrieval Engine (pgvector / FAISS / Pure-Python Cosine)."""
 
 import hashlib
 import math
 import re
 from typing import Dict, List, Optional, Tuple
-import numpy as np
 from sqlalchemy.orm import Session
 
 from backend.config import settings
@@ -63,7 +62,7 @@ def compute_embedding(text: str, dim: int = 384) -> List[float]:
     """
     if settings.embedding_provider == "openai" and settings.openai_api_key:
         try:
-            from openai import OpenAI
+            from openai import OpenAI  # type: ignore
 
             client = OpenAI(api_key=settings.openai_api_key)
             resp = client.embeddings.create(
@@ -73,11 +72,11 @@ def compute_embedding(text: str, dim: int = 384) -> List[float]:
         except Exception:
             pass
 
-    vec = np.zeros(dim, dtype=np.float32)
+    vec = [0.0] * dim
     lower_text = text.lower()
     tokens = re.findall(r"[a-z0-9]+", lower_text)
     if not tokens:
-        return vec.tolist()
+        return vec
 
     # 1. Domain concept dimensions (slots 0..39)
     for c_idx, (_, keywords) in enumerate(DOMAIN_CONCEPT_CLUSTERS.items()):
@@ -103,10 +102,14 @@ def compute_embedding(text: str, dim: int = 384) -> List[float]:
             sign_b = 1.0 if (hb & 1) == 0 else -1.0
             vec[slot_b] += sign_b * 1.25
 
-    norm = float(np.linalg.norm(vec))
+    norm = math.sqrt(sum(x * x for x in vec))
     if norm > 1e-8:
-        vec = vec / norm
-    return [round(float(x), 6) for x in vec]
+        vec = [round(x / norm, 6) for x in vec]
+    return vec
+
+
+def _dot_product(a: List[float], b: List[float]) -> float:
+    return sum(x * y for x, y in zip(a, b))
 
 
 def search_relevant_chunks(
@@ -121,7 +124,7 @@ def search_relevant_chunks(
     """
     Retrieve the top_k most relevant DocumentChunks filtered by metadata
     (company_id, assessment_period_id, document_category, financial_year),
-    using FAISS / cosine vector similarity combined with lexical keyword boost.
+    using cosine vector similarity combined with lexical keyword boost.
     """
     q = db.query(DocumentChunk).filter(DocumentChunk.company_id == company_id)
     if assessment_period_id is not None:
@@ -135,45 +138,32 @@ def search_relevant_chunks(
     if not candidates:
         return []
 
-    query_vec = np.array(compute_embedding(query, settings.embedding_dimension), dtype=np.float32)
+    query_vec = compute_embedding(query, settings.embedding_dimension)
     query_terms = [
         t for t in re.findall(r"[a-z0-9]+", query.lower()) if len(t) > 2
     ]
 
-    matrix_list = []
-    for chunk in candidates:
-        if chunk.embedding_json and len(chunk.embedding_json) == settings.embedding_dimension:
-            matrix_list.append(chunk.embedding_json)
-        else:
-            emb = compute_embedding(chunk.content, settings.embedding_dimension)
-            matrix_list.append(emb)
-
-    mat = np.array(matrix_list, dtype=np.float32)
-
-    # Use FAISS IndexFlatIP if available for inner-product search on normalized vectors
-    try:
-        import faiss  # type: ignore
-
-        index = faiss.IndexFlatIP(settings.embedding_dimension)
-        index.add(mat)
-        sims, idxs = index.search(query_vec.reshape(1, -1), len(candidates))
-        raw_scores = {int(idxs[0][i]): float(sims[0][i]) for i in range(len(candidates))}
-    except Exception:
-        dots = mat @ query_vec
-        raw_scores = {i: float(dots[i]) for i in range(len(candidates))}
-
     scored_results: List[Tuple[DocumentChunk, float]] = []
-    for idx, chunk in enumerate(candidates):
-        sem_score = raw_scores.get(idx, 0.0)
+    for chunk in candidates:
+        if (
+            chunk.embedding_json
+            and len(chunk.embedding_json) == settings.embedding_dimension
+        ):
+            chunk_vec = chunk.embedding_json
+        else:
+            chunk_vec = compute_embedding(chunk.content, settings.embedding_dimension)
+
+        sem_score = _dot_product(query_vec, chunk_vec)
         text_lower = (chunk.section_heading + " " + chunk.content).lower()
         if query_terms:
             lexical_hits = sum(1 for term in query_terms if term in text_lower)
             lexical_score = lexical_hits / len(query_terms)
         else:
             lexical_score = 0.0
-        combined_score = round(0.65 * max(0.0, sem_score) + 0.35 * lexical_score, 4)
+        combined_score = round(
+            0.65 * max(0.0, sem_score) + 0.35 * lexical_score, 4
+        )
         scored_results.append((chunk, combined_score))
 
     scored_results.sort(key=lambda x: x[1], reverse=True)
     return scored_results[:top_k]
-
