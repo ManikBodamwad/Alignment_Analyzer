@@ -170,7 +170,7 @@ export function MatrixView(props: {
                         className="p-2 border-l border-slate-800/60 align-top"
                       >
                         {matchingCells.length === 0 ? (
-                          <div className="h-14 flex items-center justify-center text-[11px] text-slate-600 italic">
+                          <div className="h-14 flex items-center justify-center text-[11px] text-slate-400 font-mono">
                             —
                           </div>
                         ) : (
@@ -319,7 +319,7 @@ export function MatrixView(props: {
                   </span>
                 </div>
                 {activeCell.evidence_records.length === 0 ? (
-                  <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800 text-xs text-slate-500 italic">
+                  <div className="p-4 rounded-lg bg-slate-900/80 border border-slate-700/60 text-xs text-slate-300 italic">
                     Insufficient Evidence: No supporting documents or verifiable disclosures were found in this assessment period.
                   </div>
                 ) : (

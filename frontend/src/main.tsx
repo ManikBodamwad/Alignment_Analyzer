@@ -21,18 +21,46 @@ import {
   StakeholderProfile,
 } from "./types";
 
-const NAV_ITEMS = [
-  { id: "dashboard", label: "1. Dashboard Overview", step: "Overview" },
-  { id: "documents", label: "2. Document Knowledge Base", step: "Ingest & RAG" },
-  { id: "stakeholders", label: "3. Stakeholder Profiles", step: "Stakeholders" },
-  { id: "structure", label: "4. Org Structure (7 Dims)", step: "Structure" },
-  { id: "matrix", label: "5. Alignment Matrix", step: "Evaluate" },
-  { id: "conflicts", label: "6. Conflict Analysis", step: "Conflicts" },
-  { id: "recommendations", label: "7. Recommendations", step: "Actions" },
-  { id: "evidence", label: "8. Evidence Repository", step: "Citations" },
-  { id: "comparison", label: "9. Historical Comparison", step: "Trends" },
-  { id: "report", label: "10. Diagnostic Report", step: "Export" },
-  { id: "settings", label: "11. Settings & Audit Trail", step: "Governance" },
+interface NavItem {
+  id: string;
+  stepNumber: string;
+  label: string;
+  shortLabel: string;
+  icon: string;
+}
+
+interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: "DIAGNOSTIC WORKFLOW",
+    items: [
+      { id: "dashboard", stepNumber: "01", label: "Executive Dashboard", shortLabel: "Cockpit", icon: "📊" },
+      { id: "documents", stepNumber: "02", label: "Research Library", shortLabel: "Filings", icon: "📁" },
+      { id: "stakeholders", stepNumber: "03", label: "Stakeholder Profiles", shortLabel: "Profiles", icon: "👥" },
+      { id: "structure", stepNumber: "04", label: "Org Structure (7 Dims)", shortLabel: "Structure", icon: "🏛️" },
+      { id: "matrix", stepNumber: "05", label: "Alignment Matrix", shortLabel: "Matrix", icon: "🎯" },
+    ],
+  },
+  {
+    title: "DEEP ANALYSIS",
+    items: [
+      { id: "conflicts", stepNumber: "06", label: "Conflict Matrix", shortLabel: "Conflicts", icon: "⚡" },
+      { id: "recommendations", stepNumber: "07", label: "Recommendations", shortLabel: "Actions", icon: "💡" },
+      { id: "evidence", stepNumber: "08", label: "Evidence Repository", shortLabel: "Citations", icon: "🔍" },
+    ],
+  },
+  {
+    title: "GOVERNANCE & REPORTS",
+    items: [
+      { id: "comparison", stepNumber: "09", label: "Historical Trends", shortLabel: "Trends", icon: "📈" },
+      { id: "report", stepNumber: "10", label: "Diagnostic Report", shortLabel: "Report", icon: "📄" },
+      { id: "settings", stepNumber: "11", label: "Audit & Settings", shortLabel: "Audit", icon: "⚙️" },
+    ],
+  },
 ];
 
 function App() {
@@ -166,28 +194,29 @@ function App() {
   const companyPeriods = allPeriods.filter(
     (p) => p.company_id === selectedCompanyId
   );
+  const currentCompany = companies.find((c) => c.id === selectedCompanyId);
   const currentPeriod = allPeriods.find((p) => p.id === selectedPeriodId);
   const auth = getAuthContext();
 
   return (
-    <div className="min-h-screen flex bg-[#060913] text-slate-100 relative overflow-x-hidden">
+    <div className="min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden">
       {/* Background ambient accents */}
-      <div className="fixed top-0 right-1/4 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" />
       <div className="fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" />
 
       {/* Left Enterprise Sidebar */}
-      <aside className="w-64 bg-[#090d1a]/95 text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-800/80 backdrop-blur-xl relative z-20">
+      <aside className="w-64 bg-[#0d1322] text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-700/80 backdrop-blur-xl relative z-20 overflow-y-auto">
         <div>
-          <div className="p-5 border-b border-slate-800/80">
+          <div className="p-5 border-b border-slate-800">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center font-extrabold text-white text-sm shadow-md shadow-violet-500/30">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30">
                 SA
               </div>
               <div>
                 <div className="text-xs font-extrabold text-white tracking-wider uppercase">
                   Alignment Analyzer
                 </div>
-                <div className="text-[10px] text-violet-400 font-mono">
+                <div className="text-[10px] text-indigo-400 font-mono font-medium">
                   Enterprise AI Diagnostic
                 </div>
               </div>
@@ -195,13 +224,13 @@ function App() {
           </div>
 
           {/* Company & Period Selector in Sidebar */}
-          <div className="p-4 border-b border-slate-800/80 space-y-3 text-xs">
+          <div className="p-4 border-b border-slate-800 space-y-3 text-xs bg-slate-900/60">
             <div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 <span>1. Target Company</span>
                 <button
                   onClick={() => setShowNewCompanyModal(true)}
-                  className="text-violet-400 hover:text-violet-300 font-semibold"
+                  className="text-indigo-400 hover:text-indigo-300 font-bold"
                 >
                   + Add
                 </button>
@@ -211,7 +240,7 @@ function App() {
                 onChange={(e: any) =>
                   handleSelectCompany(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-lg bg-slate-900 border border-slate-700/80 p-2 text-white font-semibold focus:outline-none focus:border-violet-500"
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-indigo-500"
               >
                 {companies.map((c) => (
                   <option key={c.id} value={String(c.id)}>
@@ -222,13 +251,13 @@ function App() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 <span>2. Assessment Period</span>
                 <button
                   onClick={() => setShowNewPeriodModal(true)}
-                  className="text-cyan-400 hover:text-cyan-300 font-semibold"
+                  className="text-cyan-400 hover:text-cyan-300 font-bold"
                 >
-                  + New Period
+                  + New
                 </button>
               </div>
               <select
@@ -236,7 +265,7 @@ function App() {
                 onChange={(e: any) =>
                   setSelectedPeriodId(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-lg bg-slate-900 border border-slate-700/80 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
               >
                 {companyPeriods.map((p) => (
                   <option key={p.id} value={String(p.id)}>
@@ -247,45 +276,55 @@ function App() {
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="p-3 space-y-1">
-            {NAV_ITEMS.map((item) => {
-              const active = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all duration-200 ${
-                    active
-                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/25"
-                      : "text-slate-300 hover:bg-slate-900 hover:text-white"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                      active
-                        ? "bg-violet-950/70 text-violet-200"
-                        : "bg-slate-900 text-slate-500"
-                    }`}
-                  >
-                    {item.step}
-                  </span>
-                </button>
-              );
-            })}
+          {/* Categorized Navigation Menu */}
+          <nav className="p-3 space-y-4">
+            {NAV_SECTIONS.map((section) => (
+              <div key={section.title} className="space-y-1">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
+                  {section.title}
+                </div>
+                {section.items.map((item) => {
+                  const active = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${
+                        active
+                          ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25"
+                          : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <span className="text-sm shrink-0">{item.icon}</span>
+                        <span className="truncate">{item.label}</span>
+                      </div>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0 ml-1.5 ${
+                          active
+                            ? "bg-indigo-950/80 text-indigo-200 border border-indigo-400/40"
+                            : "bg-slate-900 text-slate-400"
+                        }`}
+                      >
+                        {item.stepNumber}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </div>
 
         {/* Footer Evaluator Context */}
-        <div className="p-4 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1 bg-slate-950/40">
-          <div className="font-bold text-slate-200 flex items-center gap-1.5">
+        <div className="p-4 border-t border-slate-800 text-[11px] text-slate-300 space-y-1 bg-slate-950/70">
+          <div className="font-bold text-white flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             {auth.name}
           </div>
           <div>
             Role:{" "}
-            <span className="px-1.5 py-0.5 rounded bg-violet-950 text-violet-300 font-bold border border-violet-800/50">
+            <span className="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-bold border border-indigo-700/50">
               {auth.role}
             </span>
           </div>
@@ -294,38 +333,80 @@ function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
-        {/* Top Multi-Step Workflow Progress Bar */}
-        <header className="bg-slate-950/80 border-b border-slate-800/80 px-6 py-3 backdrop-blur-md">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-1.5 overflow-x-auto py-1">
-              {NAV_ITEMS.map((item, idx) => {
-                const isCurrent = activeTab === item.id;
+        {/* Sleek Enterprise Top Application Bar */}
+        <header className="bg-slate-900/90 border-b border-slate-700/80 px-6 py-3.5 backdrop-blur-md sticky top-0 z-30">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* Breadcrumb Path */}
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-slate-400 font-medium">Platform</span>
+              <span className="text-slate-600">/</span>
+              <span className="text-white font-bold">{currentCompany ? currentCompany.name : "Company"}</span>
+              <span className="text-slate-600">/</span>
+              <span className="text-indigo-400 font-mono font-semibold bg-indigo-950/70 border border-indigo-700/50 px-2 py-0.5 rounded">
+                {currentPeriod ? currentPeriod.fiscal_year : "FY2025"}
+              </span>
+              {currentPeriod && currentPeriod.title.includes("Live SEC") ? (
+                <span className="px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold">
+                  19 SEC Filings
+                </span>
+              ) : null}
+            </div>
+
+            {/* Quick Company Switcher Tabs */}
+            <div className="flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+              {companies.map((c) => {
+                const isSel = c.id === selectedCompanyId;
                 return (
                   <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`px-3 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition-all duration-200 ${
-                      isCurrent
-                        ? "bg-violet-600 text-white shadow-sm shadow-violet-500/30 ring-1 ring-violet-400"
-                        : "bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+                    key={c.id}
+                    onClick={() => handleSelectCompany(c.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                      isSel
+                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
-                    {idx + 1}. {item.step}
+                    <span>{c.ticker || c.name.slice(0, 4)}</span>
+                    <span className={`text-[10px] font-normal ${isSel ? "text-indigo-200" : "text-slate-400"}`}>
+                      {c.name.split(" ")[0]}
+                    </span>
                   </button>
                 );
               })}
             </div>
 
-            {currentPeriod && currentPeriod.title.includes("Sample") ? (
-              <span className="px-3 py-1 rounded-full bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[11px] font-bold">
-                Representative Sample Dataset (Upload filings anytime)
-              </span>
-            ) : null}
+            {/* Actions: Run Analysis + Export Report */}
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={handleRunAnalysis}
+                disabled={isAnalyzing}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition-all card-hover"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Executing 6-Stage AI...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>⚡</span>
+                    <span>Run Full AI Diagnostic</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab("report")}
+                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition card-hover"
+              >
+                <span>📄</span>
+                <span>Export Report</span>
+              </button>
+            </div>
           </div>
         </header>
 
         {/* Main View Container */}
-        <main className="p-6 flex-1 overflow-y-auto max-w-7xl w-full mx-auto">
+        <main className="p-6 flex-1 overflow-y-auto max-w-7xl w-full mx-auto animate-fade-in">
           {activeTab === "dashboard" ? (
             <DashboardView
               summary={summary}

@@ -327,28 +327,28 @@
   function classificationBadge(status) {
     const map = {
       "Strong Alignment": {
-        bg: "bg-emerald-950/60 border-emerald-500/40",
-        text: "text-emerald-300",
-        dot: "bg-emerald-400 shadow-sm shadow-emerald-400/50"
+        bg: "bg-emerald-950/80 border-emerald-500/60",
+        text: "text-emerald-200 font-bold",
+        dot: "bg-emerald-400 shadow-sm shadow-emerald-400/80 animate-pulse"
       },
       "Partial Alignment": {
-        bg: "bg-amber-950/60 border-amber-500/40",
-        text: "text-amber-300",
-        dot: "bg-amber-400 shadow-sm shadow-amber-400/50"
+        bg: "bg-amber-950/80 border-amber-500/60",
+        text: "text-amber-200 font-bold",
+        dot: "bg-amber-400 shadow-sm shadow-amber-400/80"
       },
       "Potential Misalignment": {
-        bg: "bg-rose-950/60 border-rose-500/40",
-        text: "text-rose-300",
-        dot: "bg-rose-400 shadow-sm shadow-rose-400/50"
+        bg: "bg-rose-950/80 border-rose-500/60",
+        text: "text-rose-200 font-bold",
+        dot: "bg-rose-400 shadow-sm shadow-rose-400/80 animate-pulse"
       },
       "Insufficient Evidence": {
-        bg: "bg-slate-900/80 border-slate-700",
-        text: "text-slate-400",
+        bg: "bg-slate-900 border-slate-700",
+        text: "text-slate-300 font-medium",
         dot: "bg-slate-500"
       },
       "Not Applicable": {
-        bg: "bg-slate-900/50 border-slate-800",
-        text: "text-slate-500",
+        bg: "bg-slate-900/60 border-slate-800",
+        text: "text-slate-400 font-medium",
         dot: "bg-slate-600"
       }
     };
@@ -356,7 +356,7 @@
     return /* @__PURE__ */ h(
       "span",
       {
-        className: `inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${style.bg} ${style.text}`
+        className: `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs border ${style.bg} ${style.text} shadow-sm`
       },
       /* @__PURE__ */ h("span", { className: `w-1.5 h-1.5 rounded-full ${style.dot}` }),
       status
@@ -364,40 +364,40 @@
   }
   function evidenceClassBadge(evType) {
     const styles = {
-      FACT: "bg-blue-950/70 text-blue-300 border-blue-600/50 shadow-sm shadow-blue-500/10",
-      COMPANY_CLAIM: "bg-purple-950/70 text-purple-300 border-purple-600/50 shadow-sm shadow-purple-500/10",
-      THIRD_PARTY_CLAIM: "bg-teal-950/70 text-teal-300 border-teal-600/50 shadow-sm shadow-teal-500/10",
-      INFERENCE: "bg-orange-950/70 text-orange-300 border-orange-600/50 shadow-sm shadow-orange-500/10"
+      FACT: "bg-blue-950/90 text-blue-200 border-blue-500/70 shadow-sm shadow-blue-500/20 font-bold",
+      COMPANY_CLAIM: "bg-purple-950/90 text-purple-200 border-purple-500/70 shadow-sm shadow-purple-500/20 font-bold",
+      THIRD_PARTY_CLAIM: "bg-teal-950/90 text-teal-200 border-teal-500/70 shadow-sm shadow-teal-500/20 font-bold",
+      INFERENCE: "bg-orange-950/90 text-orange-200 border-orange-500/70 shadow-sm shadow-orange-500/20 font-bold"
     };
     return /* @__PURE__ */ h(
       "span",
       {
-        className: `inline-block px-2 py-0.5 rounded text-xs font-bold border font-mono tracking-wide ${styles[evType] || "bg-slate-800 text-slate-300 border-slate-700"}`
+        className: `inline-block px-2.5 py-0.5 rounded text-xs border font-mono tracking-wide ${styles[evType] || "bg-slate-800 text-slate-200 border-slate-700"}`
       },
       evType.replace(/_/g, " ")
     );
   }
   function priorityBadge(priority) {
     const styles = {
-      Critical: "bg-rose-600 text-white shadow-sm shadow-rose-500/30",
-      High: "bg-orange-500 text-white shadow-sm shadow-orange-500/30",
-      Medium: "bg-amber-500 text-slate-950 font-bold",
-      Low: "bg-slate-700 text-slate-300"
+      Critical: "bg-rose-600 text-white shadow-md shadow-rose-500/40 font-black",
+      High: "bg-orange-500 text-white shadow-md shadow-orange-500/40 font-black",
+      Medium: "bg-amber-500 text-slate-950 font-black",
+      Low: "bg-slate-700 text-slate-200 font-semibold"
     };
     return /* @__PURE__ */ h(
       "span",
       {
-        className: `inline-block px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${styles[priority] || styles.Medium}`
+        className: `inline-block px-2.5 py-0.5 rounded text-xs uppercase tracking-wider ${styles[priority] || styles.Medium}`
       },
       priority
     );
   }
   function RadialScoreGauge(props) {
     const pct = props.value !== null && props.value !== void 0 ? Math.max(0, Math.min(100, props.value)) : 0;
-    const radius = 48;
+    const radius = 46;
     const circumference = 2 * Math.PI * radius;
     const dashOffset = circumference - pct / 100 * circumference;
-    return /* @__PURE__ */ h("div", { className: "flex items-center gap-4 bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl relative overflow-hidden" }, /* @__PURE__ */ h("div", { className: "relative w-28 h-28 flex items-center justify-center shrink-0" }, /* @__PURE__ */ h("svg", { className: "w-28 h-28 -rotate-90", viewBox: "0 0 120 120" }, /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "flex items-center gap-4 bg-[#111827] p-5 rounded-2xl border border-slate-700/80 shadow-xl relative overflow-hidden card-hover" }, /* @__PURE__ */ h("div", { className: "relative w-24 h-24 flex items-center justify-center shrink-0" }, /* @__PURE__ */ h("svg", { className: "w-24 h-24 -rotate-90", viewBox: "0 0 120 120" }, /* @__PURE__ */ h(
       "circle",
       {
         cx: "60",
@@ -418,9 +418,10 @@
         "stroke-dasharray": String(circumference),
         "stroke-dashoffset": String(dashOffset),
         "stroke-linecap": "round",
-        fill: "none"
+        fill: "none",
+        className: "transition-all duration-1000 ease-out"
       }
-    )), /* @__PURE__ */ h("div", { className: "absolute inset-0 flex flex-col items-center justify-center" }, /* @__PURE__ */ h("span", { className: "text-xl font-extrabold text-white" }, props.value !== null && props.value !== void 0 ? `${props.value}%` : "N/A"))), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-sm font-bold text-slate-100" }, props.label), /* @__PURE__ */ h("div", { className: "text-xs text-slate-400 mt-1 leading-relaxed" }, props.sublabel)));
+    )), /* @__PURE__ */ h("div", { className: "absolute inset-0 flex flex-col items-center justify-center" }, /* @__PURE__ */ h("span", { className: "text-xl font-black text-white tracking-tight" }, props.value !== null && props.value !== void 0 ? `${props.value}%` : "N/A"))), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-sm font-extrabold text-white tracking-tight" }, props.label), /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1 leading-relaxed font-normal" }, props.sublabel)));
   }
 
   // src/components/ComparisonView.tsx
@@ -757,6 +758,7 @@
   // src/components/DashboardView.tsx
   function DashboardView(props) {
     const { summary, stakeholders, onNavigate, onRunAnalysis, isAnalyzing } = props;
+    const [showArchitecture, setShowArchitecture] = useState(false);
     const [aiQuestion, setAiQuestion] = useState(
       "What are the primary structural governance vulnerabilities and priority board-level reforms supported by the evidence?"
     );
@@ -780,38 +782,69 @@
         setIsGeneratingAi(false);
       }
     };
-    return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "glass-card rounded-2xl p-6 text-white border border-slate-800 bg-slate-900/90 shadow-2xl relative overflow-hidden" }, /* @__PURE__ */ h("div", { className: "absolute top-0 right-0 w-80 h-80 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ h("div", { className: "flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-violet-400 text-xs font-bold uppercase tracking-wider" }, /* @__PURE__ */ h("span", { className: "flex items-center gap-1.5" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }), "Organizational Alignment Intelligence"), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", { className: "text-cyan-300" }, assessment.fiscal_year), assessment.company_ticker ? /* @__PURE__ */ h("span", { className: "px-2 py-0.5 bg-violet-950/80 border border-violet-700/60 rounded text-cyan-300 font-mono" }, assessment.company_ticker) : null), /* @__PURE__ */ h("h1", { className: "text-2xl font-extrabold mt-1 tracking-tight text-white" }, assessment.company_name, " \u2014 ", assessment.title), /* @__PURE__ */ h("p", { className: "text-slate-400 text-xs mt-1" }, "Last Assessed:", " ", assessment.last_analyzed_at ? new Date(assessment.last_analyzed_at).toLocaleString() : "Not yet analyzed", " ", "| Pipeline Status:", " ", /* @__PURE__ */ h("span", { className: "uppercase font-semibold text-emerald-400" }, assessment.status))), /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center gap-3" }, /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "glass-card rounded-2xl p-6 text-white border border-slate-700/80 bg-[#111827] shadow-2xl relative overflow-hidden card-hover" }, /* @__PURE__ */ h("div", { className: "absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ h("div", { className: "flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1" }, /* @__PURE__ */ h("span", { className: "flex items-center gap-1.5 bg-indigo-950/80 border border-indigo-700/50 px-2.5 py-1 rounded-md" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }), "Organizational Diagnostic Intelligence"), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", { className: "text-cyan-300 font-bold" }, assessment.fiscal_year), assessment.company_ticker ? /* @__PURE__ */ h("span", { className: "px-2 py-0.5 bg-slate-900 border border-slate-700 rounded text-cyan-300 font-mono font-bold" }, assessment.company_ticker) : null), /* @__PURE__ */ h("h1", { className: "text-2xl font-black tracking-tight text-white mt-1" }, assessment.company_name, " \u2014 ", assessment.title), /* @__PURE__ */ h("p", { className: "text-slate-300 text-xs mt-1.5 flex items-center gap-3" }, /* @__PURE__ */ h("span", null, "Last Evaluated:", " ", /* @__PURE__ */ h("strong", { className: "text-slate-100" }, assessment.last_analyzed_at ? new Date(assessment.last_analyzed_at).toLocaleString() : "Not yet analyzed")), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", null, "Status:", " ", /* @__PURE__ */ h("span", { className: "uppercase font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-600/40" }, assessment.status)))), /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center gap-2.5" }, /* @__PURE__ */ h(
       "button",
       {
         onClick: () => onNavigate("documents"),
-        className: "px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition"
+        className: "px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-bold transition card-hover"
       },
-      "+ Ingest Documents"
+      "\u{1F4C1} Manage Filings (",
+      metrics.documents_processed,
+      ")"
     ), /* @__PURE__ */ h(
       "button",
       {
         onClick: onRunAnalysis,
         disabled: isAnalyzing,
-        className: "px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-violet-600/30 transition"
+        className: "px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition card-hover flex items-center gap-2"
       },
-      isAnalyzing ? "Running 6-Stage AI Analysis..." : "Run Full Diagnostic Analysis"
+      isAnalyzing ? /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", { className: "w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" }), /* @__PURE__ */ h("span", null, "Running AI Engine...")) : /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", null, "\u26A1"), /* @__PURE__ */ h("span", null, "Run AI Diagnostic"))
+    )))), /* @__PURE__ */ h("div", { className: "glass-card bg-[#111827] rounded-2xl p-5 border border-slate-700/80 shadow-xl" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between mb-3.5" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "text-xs font-bold uppercase tracking-wider text-slate-300" }, "Diagnostic Workflow (Click Any Step to Inspect)")), /* @__PURE__ */ h("span", { className: "text-[11px] text-indigo-400 font-mono font-semibold" }, "5-Stage Diagnostic Pipeline")), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" }, /* @__PURE__ */ h(
+      "div",
+      {
+        onClick: () => onNavigate("documents"),
+        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+      },
+      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 01"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-semibold" }, "\u2713 Ingested")),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Research Library"),
+      /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, metrics.documents_processed, " Filings \u2022 ", metrics.evidence_records_count, " Chunks")
     ), /* @__PURE__ */ h(
-      "button",
+      "div",
       {
-        onClick: () => onNavigate("report"),
-        className: "px-4 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-bold shadow-sm transition"
+        onClick: () => onNavigate("stakeholders"),
+        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
       },
-      "Export Report (PDF / DOCX)"
-    )))), /* @__PURE__ */ h(
-      EvidenceToInsightFlow,
+      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 02"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-semibold" }, "\u2713 Mapped")),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Stakeholders"),
+      /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, metrics.stakeholders_assessed, " Groups (4 Int / 6 Ext)")
+    ), /* @__PURE__ */ h(
+      "div",
       {
-        evidenceCount: metrics.evidence_records_count,
-        coveragePct: assessment.evidence_coverage_pct,
-        alignmentScore: assessment.overall_alignment_score,
-        conflictCount: metrics.conflicts_count,
-        recommendationCount: metrics.recommendations_count
-      }
-    ), assessment.evidence_coverage_pct < 85 ? /* @__PURE__ */ h("div", { className: "glass-card bg-amber-950/40 border border-amber-500/40 rounded-xl p-4 flex items-start gap-3 text-white" }, /* @__PURE__ */ h("div", { className: "w-2.5 h-2.5 rounded-full bg-amber-400 mt-1.5 shrink-0 animate-pulse" }), /* @__PURE__ */ h("div", { className: "text-xs text-amber-200 leading-relaxed" }, /* @__PURE__ */ h("strong", { className: "text-amber-100" }, "Evidence Coverage Notice (", assessment.evidence_coverage_pct, "%):"), " ", metrics.insufficient_evidence_count, " stakeholder requirement(s) currently lack sufficient documentary evidence and are excluded from the alignment score denominator rather than assigned zero. Upload additional governance charters, 10-K filings, or independent audits to increase evidence coverage.")) : null, /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" }, /* @__PURE__ */ h(
+        onClick: () => onNavigate("structure"),
+        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+      },
+      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 03"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-semibold" }, "\u2713 Extracted")),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Org Structure"),
+      /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, "7 Core Dimensions & Units")
+    ), /* @__PURE__ */ h(
+      "div",
+      {
+        onClick: () => onNavigate("matrix"),
+        className: "p-3.5 rounded-xl bg-gradient-to-br from-indigo-950/70 to-slate-900 border border-indigo-500/50 hover:border-indigo-400 cursor-pointer card-hover transition group"
+      },
+      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-indigo-300 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 04"), /* @__PURE__ */ h("span", { className: "text-indigo-300 font-bold" }, assessment.overall_alignment_score, "% Score")),
+      /* @__PURE__ */ h("div", { className: "text-sm font-extrabold text-white group-hover:text-cyan-300 transition" }, "Alignment Matrix"),
+      /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, totalReq, " Requirements Evaluated")
+    ), /* @__PURE__ */ h(
+      "div",
+      {
+        onClick: () => onNavigate("recommendations"),
+        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+      },
+      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 05"), /* @__PURE__ */ h("span", { className: "text-amber-400 font-bold" }, metrics.recommendations_count, " Actions")),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Action Plan"),
+      /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, metrics.conflicts_count, " Conflicts \u2022 Reforms")
+    ))), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" }, /* @__PURE__ */ h(
       RadialScoreGauge,
       {
         label: "Overall Alignment Score",
@@ -884,7 +917,33 @@
         className: "bg-slate-600 h-full",
         title: `Insufficient Evidence: ${metrics.insufficient_evidence_count}`
       }
-    ) : null), /* @__PURE__ */ h("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-xs" }, /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-emerald-300" }, "Strong Alignment (4)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-emerald-400 text-sm" }, metrics.strong_alignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-amber-950/40 border border-amber-500/30 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-amber-300" }, "Partial Alignment (3)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-amber-400 text-sm" }, metrics.partial_alignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-rose-950/40 border border-rose-500/30 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-rose-300" }, "Potential Misalignment (1)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-rose-400 text-sm" }, metrics.potential_misalignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-slate-300" }, "Insufficient Evidence (N/A)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-slate-400 text-sm" }, metrics.insufficient_evidence_count)))), /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-5 rounded-xl border border-violet-900/60 shadow-xl space-y-4 text-white" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "px-2.5 py-0.5 rounded bg-violet-600 text-white text-[10px] font-bold uppercase tracking-wider" }, "Groq AI Live Synthesis"), /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-white" }, "AI Executive Board Briefing & Evidence-Grounded Diagnostic Q&A")), /* @__PURE__ */ h("p", { className: "text-xs text-slate-400 mt-0.5" }, "Powered by Groq (llama-3.3-70b-versatile) with strict quotation guardrails. Synthesizes extracted citations and structural alignment gaps.")), /* @__PURE__ */ h(
+    ) : null), /* @__PURE__ */ h("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-xs" }, /* @__PURE__ */ h("div", { className: "p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-between card-hover" }, /* @__PURE__ */ h("span", { className: "font-bold text-emerald-200" }, "Strong Alignment (4)"), /* @__PURE__ */ h("span", { className: "font-black text-emerald-300 text-base" }, metrics.strong_alignments)), /* @__PURE__ */ h("div", { className: "p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 flex items-center justify-between card-hover" }, /* @__PURE__ */ h("span", { className: "font-bold text-amber-200" }, "Partial Alignment (3)"), /* @__PURE__ */ h("span", { className: "font-black text-amber-300 text-base" }, metrics.partial_alignments)), /* @__PURE__ */ h("div", { className: "p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 flex items-center justify-between card-hover" }, /* @__PURE__ */ h("span", { className: "font-bold text-rose-200" }, "Potential Misaligned (1)"), /* @__PURE__ */ h("span", { className: "font-black text-rose-300 text-base" }, metrics.potential_misalignments)), /* @__PURE__ */ h("div", { className: "p-3 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-between card-hover" }, /* @__PURE__ */ h("span", { className: "font-bold text-slate-300" }, "Insufficient Evidence"), /* @__PURE__ */ h("span", { className: "font-black text-slate-300 text-base" }, metrics.insufficient_evidence_count)))), /* @__PURE__ */ h("div", { className: "glass-card bg-[#111827] p-5 rounded-2xl border border-slate-700/80 shadow-xl space-y-3" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-black text-white tracking-tight flex items-center gap-2" }, /* @__PURE__ */ h("span", null, "\u{1F3AF}"), /* @__PURE__ */ h("span", null, "Key Diagnostic Findings & Priority Governance Gaps")), /* @__PURE__ */ h("p", { className: "text-xs text-slate-300 mt-0.5" }, "Identified through automated 6-stage cross-examination of corporate charters and 10-K disclosures")), /* @__PURE__ */ h(
+      "button",
+      {
+        onClick: () => onNavigate("recommendations"),
+        className: "text-xs text-indigo-400 font-bold hover:underline"
+      },
+      "View All ",
+      metrics.recommendations_count,
+      " Recommended Reforms \u2192"
+    )), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1" }, /* @__PURE__ */ h("div", { className: "p-4 rounded-xl bg-slate-900/90 border border-rose-500/30 card-hover flex flex-col justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-xs mb-2" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-bold text-[10px] border border-rose-800/60" }, "CRITICAL MISALIGNMENT"), /* @__PURE__ */ h("span", { className: "text-slate-400 font-mono text-[11px]" }, "Centralization")), /* @__PURE__ */ h("div", { className: "text-xs font-bold text-white leading-snug" }, "Dual-Class Founder Voting Power Concentration"), /* @__PURE__ */ h("p", { className: "text-[11px] text-slate-300 mt-2 leading-relaxed" }, "Class B shares hold >60% voting power, creating a severe governance imbalance between executive authority and independent minority shareholder accountability.")), /* @__PURE__ */ h("div", { className: "mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300 flex items-center justify-between" }, /* @__PURE__ */ h("span", null, "Reform: Independent lead director vote"), /* @__PURE__ */ h("span", { className: "text-slate-500" }, "Score 1.0"))), /* @__PURE__ */ h("div", { className: "p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 card-hover flex flex-col justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-xs mb-2" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-bold text-[10px] border border-amber-800/60" }, "PARTIAL ALIGNMENT (CLAIM CAPPED)"), /* @__PURE__ */ h("span", { className: "text-slate-400 font-mono text-[11px]" }, "Formalization")), /* @__PURE__ */ h("div", { className: "text-xs font-bold text-white leading-snug" }, "Teen Safety Controls & Pre-Launch Privacy Review"), /* @__PURE__ */ h("p", { className: "text-[11px] text-slate-300 mt-2 leading-relaxed" }, "Default Instagram Teen Accounts deployed; self-reported safety disclosures capped at Partial Alignment by the epistemic validator pending independent audit.")), /* @__PURE__ */ h("div", { className: "mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300 flex items-center justify-between" }, /* @__PURE__ */ h("span", null, "Action: Publish 3P safety verification"), /* @__PURE__ */ h("span", { className: "text-slate-500" }, "Score 3.0"))), /* @__PURE__ */ h("div", { className: "p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30 card-hover flex flex-col justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-xs mb-2" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-bold text-[10px] border border-emerald-800/60" }, "STRONG ALIGNMENT"), /* @__PURE__ */ h("span", { className: "text-slate-400 font-mono text-[11px]" }, "Governance")), /* @__PURE__ */ h("div", { className: "text-xs font-bold text-white leading-snug" }, "Audit & Privacy Committee Board Charter"), /* @__PURE__ */ h("p", { className: "text-[11px] text-slate-300 mt-2 leading-relaxed" }, "Direct board charter mandates quarterly reporting from Chief Privacy Officer, backed by AI Governance & Responsible Innovation Council.")), /* @__PURE__ */ h("div", { className: "mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300 flex items-center justify-between" }, /* @__PURE__ */ h("span", null, "Verified: Formal Board Charter (2025)"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-bold" }, "Score 4.0"))))), /* @__PURE__ */ h("div", { className: "glass-card bg-[#111827] rounded-2xl border border-slate-700/80 overflow-hidden shadow-xl" }, /* @__PURE__ */ h(
+      "button",
+      {
+        onClick: () => setShowArchitecture(!showArchitecture),
+        className: "w-full p-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition cursor-pointer"
+      },
+      /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("span", { className: "text-xl" }, "\u2699\uFE0F"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white" }, "Technical Multi-Agent Architecture (6-Stage Pipeline)"), /* @__PURE__ */ h("div", { className: "text-xs text-slate-400" }, "End-to-end evidence verification combining local RAG, Groq LLM inference, and deterministic scoring."))),
+      /* @__PURE__ */ h("span", { className: "text-xs text-indigo-300 font-bold px-3 py-1.5 rounded-lg bg-indigo-950 border border-indigo-700/60" }, showArchitecture ? "Hide Diagram \u25B2" : "Inspect Diagram \u25BC")
+    ), showArchitecture ? /* @__PURE__ */ h("div", { className: "p-5 border-t border-slate-800 animate-fade-in bg-slate-950/40" }, /* @__PURE__ */ h(
+      EvidenceToInsightFlow,
+      {
+        evidenceCount: metrics.evidence_records_count,
+        coveragePct: assessment.evidence_coverage_pct,
+        alignmentScore: assessment.overall_alignment_score,
+        conflictCount: metrics.conflicts_count,
+        recommendationCount: metrics.recommendations_count
+      }
+    )) : null), /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-5 rounded-xl border border-violet-900/60 shadow-xl space-y-4 text-white" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "px-2.5 py-0.5 rounded bg-violet-600 text-white text-[10px] font-bold uppercase tracking-wider" }, "Groq AI Live Synthesis"), /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-white" }, "AI Executive Board Briefing & Evidence-Grounded Diagnostic Q&A")), /* @__PURE__ */ h("p", { className: "text-xs text-slate-400 mt-0.5" }, "Powered by Groq (llama-3.3-70b-versatile) with strict quotation guardrails. Synthesizes extracted citations and structural alignment gaps.")), /* @__PURE__ */ h(
       "button",
       {
         onClick: handleRunGroqSynthesis,
@@ -1273,7 +1332,7 @@
             key: dim.code,
             className: "p-2 border-l border-slate-800/60 align-top"
           },
-          matchingCells.length === 0 ? /* @__PURE__ */ h("div", { className: "h-14 flex items-center justify-center text-[11px] text-slate-600 italic" }, "\u2014") : /* @__PURE__ */ h("div", { className: "space-y-1.5" }, matchingCells.map((cell) => {
+          matchingCells.length === 0 ? /* @__PURE__ */ h("div", { className: "h-14 flex items-center justify-center text-[11px] text-slate-400 font-mono" }, "\u2014") : /* @__PURE__ */ h("div", { className: "space-y-1.5" }, matchingCells.map((cell) => {
             const isAct = activeCell && activeCell.id === cell.id;
             return /* @__PURE__ */ h(
               "button",
@@ -1309,7 +1368,7 @@
       },
       /* @__PURE__ */ h("span", { className: "text-rose-400 font-bold shrink-0" }, "!"),
       /* @__PURE__ */ h("span", null, rc)
-    )))), /* @__PURE__ */ h("div", { className: "space-y-2" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider" }, /* @__PURE__ */ h("span", null, "Supporting Evidence Records (", activeCell.evidence_records.length, ")"), /* @__PURE__ */ h("span", { className: "text-[11px] text-cyan-300 font-normal" }, "Quotation Provenance Verified")), activeCell.evidence_records.length === 0 ? /* @__PURE__ */ h("div", { className: "p-4 rounded-lg bg-slate-950/60 border border-slate-800 text-xs text-slate-500 italic" }, "Insufficient Evidence: No supporting documents or verifiable disclosures were found in this assessment period.") : /* @__PURE__ */ h("div", { className: "space-y-3" }, activeCell.evidence_records.map((ev) => /* @__PURE__ */ h(
+    )))), /* @__PURE__ */ h("div", { className: "space-y-2" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider" }, /* @__PURE__ */ h("span", null, "Supporting Evidence Records (", activeCell.evidence_records.length, ")"), /* @__PURE__ */ h("span", { className: "text-[11px] text-cyan-300 font-normal" }, "Quotation Provenance Verified")), activeCell.evidence_records.length === 0 ? /* @__PURE__ */ h("div", { className: "p-4 rounded-lg bg-slate-900/80 border border-slate-700/60 text-xs text-slate-300 italic" }, "Insufficient Evidence: No supporting documents or verifiable disclosures were found in this assessment period.") : /* @__PURE__ */ h("div", { className: "space-y-3" }, activeCell.evidence_records.map((ev) => /* @__PURE__ */ h(
       "div",
       {
         key: ev.id,
@@ -1832,7 +1891,7 @@
         /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between gap-2 mb-2" }, /* @__PURE__ */ h("span", { className: "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-950 text-cyan-300 font-mono border border-slate-800" }, d.dimension_code), /* @__PURE__ */ h("span", { className: "text-[11px] text-slate-400" }, "Conf: ", /* @__PURE__ */ h("strong", { className: "text-slate-200" }, d.confidence_level))), /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-white" }, d.dimension_name), /* @__PURE__ */ h("div", { className: "mt-2" }, classificationBadge(d.suitability_classification)), /* @__PURE__ */ h("p", { className: "text-xs text-slate-400 mt-3 line-clamp-3" }, d.assessment_summary)),
         /* @__PURE__ */ h("div", { className: "mt-4 pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs text-violet-400 font-semibold" }, /* @__PURE__ */ h("span", null, d.evidence_count, " Citations"), /* @__PURE__ */ h("span", null, "Inspect \u2192"))
       );
-    })), activeDim ? /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-6 rounded-xl border border-slate-800 shadow-xl space-y-5" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800 pb-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-bold text-violet-400 uppercase tracking-wider" }, "Dimension Deep-Dive \u2022 ", activeDim.dimension_code.toUpperCase()), /* @__PURE__ */ h("h3", { className: "text-lg font-extrabold text-white mt-1" }, activeDim.dimension_name)), /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, classificationBadge(activeDim.suitability_classification), /* @__PURE__ */ h("span", { className: "text-xs text-slate-400" }, "Confidence: ", /* @__PURE__ */ h("strong", { className: "text-slate-200" }, activeDim.confidence_level)))), /* @__PURE__ */ h("p", { className: "text-xs text-slate-300 leading-relaxed bg-slate-950/80 p-3.5 rounded-lg border border-slate-800" }, activeDim.assessment_summary), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4 text-xs" }, /* @__PURE__ */ h("div", { className: "p-3.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30" }, /* @__PURE__ */ h("div", { className: "font-bold text-emerald-300 mb-1.5" }, "Observed Structural Strengths"), /* @__PURE__ */ h("ul", { className: "space-y-1 text-emerald-200 list-disc list-inside" }, (activeDim.strengths || []).map((s, idx) => /* @__PURE__ */ h("li", { key: idx }, s)))), /* @__PURE__ */ h("div", { className: "p-3.5 rounded-lg bg-rose-950/30 border border-rose-500/30" }, /* @__PURE__ */ h("div", { className: "font-bold text-rose-300 mb-1.5" }, "Observed Structural Weaknesses / Tensions"), /* @__PURE__ */ h("ul", { className: "space-y-1 text-rose-200 list-disc list-inside" }, (activeDim.weaknesses || []).map((w, idx) => /* @__PURE__ */ h("li", { key: idx }, w))))), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h4", { className: "text-xs font-bold text-slate-300 uppercase tracking-wider mb-2" }, "Documentary Citations for ", activeDim.dimension_name), /* @__PURE__ */ h("div", { className: "space-y-2" }, (evidenceByDim[activeDim.dimension_code] || []).length === 0 ? /* @__PURE__ */ h("div", { className: "text-xs text-slate-500 italic p-3 bg-slate-950/60 rounded-lg border border-slate-800" }, "No direct quotations indexed for this dimension in this assessment period.") : (evidenceByDim[activeDim.dimension_code] || []).map((ev) => /* @__PURE__ */ h(
+    })), activeDim ? /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-6 rounded-xl border border-slate-800 shadow-xl space-y-5" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800 pb-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-bold text-violet-400 uppercase tracking-wider" }, "Dimension Deep-Dive \u2022 ", activeDim.dimension_code.toUpperCase()), /* @__PURE__ */ h("h3", { className: "text-lg font-extrabold text-white mt-1" }, activeDim.dimension_name)), /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, classificationBadge(activeDim.suitability_classification), /* @__PURE__ */ h("span", { className: "text-xs text-slate-400" }, "Confidence: ", /* @__PURE__ */ h("strong", { className: "text-slate-200" }, activeDim.confidence_level)))), /* @__PURE__ */ h("p", { className: "text-xs text-slate-300 leading-relaxed bg-slate-950/80 p-3.5 rounded-lg border border-slate-800" }, activeDim.assessment_summary), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4 text-xs" }, /* @__PURE__ */ h("div", { className: "p-3.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30" }, /* @__PURE__ */ h("div", { className: "font-bold text-emerald-300 mb-1.5" }, "Observed Structural Strengths"), /* @__PURE__ */ h("ul", { className: "space-y-1 text-emerald-200 list-disc list-inside" }, (activeDim.strengths || []).map((s, idx) => /* @__PURE__ */ h("li", { key: idx }, s)))), /* @__PURE__ */ h("div", { className: "p-3.5 rounded-lg bg-rose-950/30 border border-rose-500/30" }, /* @__PURE__ */ h("div", { className: "font-bold text-rose-300 mb-1.5" }, "Observed Structural Weaknesses / Tensions"), /* @__PURE__ */ h("ul", { className: "space-y-1 text-rose-200 list-disc list-inside" }, (activeDim.weaknesses || []).map((w, idx) => /* @__PURE__ */ h("li", { key: idx }, w))))), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h4", { className: "text-xs font-bold text-slate-300 uppercase tracking-wider mb-2" }, "Documentary Citations for ", activeDim.dimension_name), /* @__PURE__ */ h("div", { className: "space-y-2" }, (evidenceByDim[activeDim.dimension_code] || []).length === 0 ? /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 italic p-3 bg-slate-900/80 rounded-lg border border-slate-700/60" }, "No direct quotations indexed for this dimension in this assessment period.") : (evidenceByDim[activeDim.dimension_code] || []).map((ev) => /* @__PURE__ */ h(
       "div",
       {
         key: ev.id,
@@ -1840,22 +1899,37 @@
       },
       /* @__PURE__ */ h("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, evidenceClassBadge(ev.evidence_classification), /* @__PURE__ */ h("span", { className: "font-bold text-slate-200" }, ev.document_name), /* @__PURE__ */ h("span", { className: "text-slate-400" }, "(p. ", ev.page_number, ")")), /* @__PURE__ */ h("span", { className: "text-[10px] text-cyan-300 font-mono" }, "FY: ", ev.financial_year || "N/A")),
       /* @__PURE__ */ h("p", { className: "font-serif italic text-slate-300 pl-2 border-l-2 border-violet-500" }, '"', ev.exact_quotation, '"')
-    ))))) : null, /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl overflow-hidden" }, /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800 flex items-center justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-white" }, "Explicitly Disclosed Organizational Units (", units.length, ")"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-400" }, "Committees, divisions, functions, and oversight boards extracted directly from filings"))), /* @__PURE__ */ h("div", { className: "overflow-x-auto" }, /* @__PURE__ */ h("table", { className: "w-full text-left border-collapse text-xs" }, /* @__PURE__ */ h("thead", null, /* @__PURE__ */ h("tr", { className: "bg-slate-950 text-slate-400 border-b border-slate-800" }, /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Unit Name"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Type"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Dimension"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Reporting Line"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Core Mandate & Responsibilities"))), /* @__PURE__ */ h("tbody", { className: "divide-y divide-slate-800/80" }, units.map((u) => /* @__PURE__ */ h("tr", { key: u.id, className: "hover:bg-slate-800/40 transition" }, /* @__PURE__ */ h("td", { className: "p-3 font-bold text-white" }, u.name), /* @__PURE__ */ h("td", { className: "p-3" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700" }, u.unit_type)), /* @__PURE__ */ h("td", { className: "p-3 uppercase font-semibold text-violet-300 font-mono" }, u.dimension_code), /* @__PURE__ */ h("td", { className: "p-3 text-slate-300" }, u.reporting_line.includes("Insufficient Evidence") ? /* @__PURE__ */ h("span", { className: "italic text-slate-500" }, u.reporting_line) : /* @__PURE__ */ h("strong", { className: "text-slate-200" }, u.reporting_line)), /* @__PURE__ */ h("td", { className: "p-3 text-slate-300 max-w-md" }, u.responsibilities))))))));
+    ))))) : null, /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl overflow-hidden" }, /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800 flex items-center justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-white" }, "Explicitly Disclosed Organizational Units (", units.length, ")"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-400" }, "Committees, divisions, functions, and oversight boards extracted directly from filings"))), /* @__PURE__ */ h("div", { className: "overflow-x-auto" }, /* @__PURE__ */ h("table", { className: "w-full text-left border-collapse text-xs" }, /* @__PURE__ */ h("thead", null, /* @__PURE__ */ h("tr", { className: "bg-slate-950 text-slate-400 border-b border-slate-800" }, /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Unit Name"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Type"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Dimension"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Reporting Line"), /* @__PURE__ */ h("th", { className: "p-3 font-bold" }, "Core Mandate & Responsibilities"))), /* @__PURE__ */ h("tbody", { className: "divide-y divide-slate-800/80" }, units.map((u) => /* @__PURE__ */ h("tr", { key: u.id, className: "hover:bg-slate-800/40 transition" }, /* @__PURE__ */ h("td", { className: "p-3 font-bold text-white" }, u.name), /* @__PURE__ */ h("td", { className: "p-3" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700" }, u.unit_type)), /* @__PURE__ */ h("td", { className: "p-3 uppercase font-semibold text-violet-300 font-mono" }, u.dimension_code), /* @__PURE__ */ h("td", { className: "p-3 text-slate-300" }, u.reporting_line.includes("Insufficient Evidence") ? /* @__PURE__ */ h("span", { className: "italic text-amber-300/80 font-mono text-[11px]" }, u.reporting_line) : /* @__PURE__ */ h("strong", { className: "text-slate-200" }, u.reporting_line)), /* @__PURE__ */ h("td", { className: "p-3 text-slate-300 max-w-md" }, u.responsibilities))))))));
   }
 
   // src/main.tsx
-  var NAV_ITEMS = [
-    { id: "dashboard", label: "1. Dashboard Overview", step: "Overview" },
-    { id: "documents", label: "2. Document Knowledge Base", step: "Ingest & RAG" },
-    { id: "stakeholders", label: "3. Stakeholder Profiles", step: "Stakeholders" },
-    { id: "structure", label: "4. Org Structure (7 Dims)", step: "Structure" },
-    { id: "matrix", label: "5. Alignment Matrix", step: "Evaluate" },
-    { id: "conflicts", label: "6. Conflict Analysis", step: "Conflicts" },
-    { id: "recommendations", label: "7. Recommendations", step: "Actions" },
-    { id: "evidence", label: "8. Evidence Repository", step: "Citations" },
-    { id: "comparison", label: "9. Historical Comparison", step: "Trends" },
-    { id: "report", label: "10. Diagnostic Report", step: "Export" },
-    { id: "settings", label: "11. Settings & Audit Trail", step: "Governance" }
+  var NAV_SECTIONS = [
+    {
+      title: "DIAGNOSTIC WORKFLOW",
+      items: [
+        { id: "dashboard", stepNumber: "01", label: "Executive Dashboard", shortLabel: "Cockpit", icon: "\u{1F4CA}" },
+        { id: "documents", stepNumber: "02", label: "Research Library", shortLabel: "Filings", icon: "\u{1F4C1}" },
+        { id: "stakeholders", stepNumber: "03", label: "Stakeholder Profiles", shortLabel: "Profiles", icon: "\u{1F465}" },
+        { id: "structure", stepNumber: "04", label: "Org Structure (7 Dims)", shortLabel: "Structure", icon: "\u{1F3DB}\uFE0F" },
+        { id: "matrix", stepNumber: "05", label: "Alignment Matrix", shortLabel: "Matrix", icon: "\u{1F3AF}" }
+      ]
+    },
+    {
+      title: "DEEP ANALYSIS",
+      items: [
+        { id: "conflicts", stepNumber: "06", label: "Conflict Matrix", shortLabel: "Conflicts", icon: "\u26A1" },
+        { id: "recommendations", stepNumber: "07", label: "Recommendations", shortLabel: "Actions", icon: "\u{1F4A1}" },
+        { id: "evidence", stepNumber: "08", label: "Evidence Repository", shortLabel: "Citations", icon: "\u{1F50D}" }
+      ]
+    },
+    {
+      title: "GOVERNANCE & REPORTS",
+      items: [
+        { id: "comparison", stepNumber: "09", label: "Historical Trends", shortLabel: "Trends", icon: "\u{1F4C8}" },
+        { id: "report", stepNumber: "10", label: "Diagnostic Report", shortLabel: "Report", icon: "\u{1F4C4}" },
+        { id: "settings", stepNumber: "11", label: "Audit & Settings", shortLabel: "Audit", icon: "\u2699\uFE0F" }
+      ]
+    }
   ];
   function App() {
     const [activeTab, setActiveTab] = useState("dashboard");
@@ -1973,13 +2047,14 @@
     const companyPeriods = allPeriods.filter(
       (p) => p.company_id === selectedCompanyId
     );
+    const currentCompany = companies.find((c) => c.id === selectedCompanyId);
     const currentPeriod = allPeriods.find((p) => p.id === selectedPeriodId);
     const auth = getAuthContext();
-    return /* @__PURE__ */ h("div", { className: "min-h-screen flex bg-[#060913] text-slate-100 relative overflow-x-hidden" }, /* @__PURE__ */ h("div", { className: "fixed top-0 right-1/4 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("div", { className: "fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("aside", { className: "w-64 bg-[#090d1a]/95 text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-800/80 backdrop-blur-xl relative z-20" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "p-5 border-b border-slate-800/80" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("div", { className: "w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center font-extrabold text-white text-sm shadow-md shadow-violet-500/30" }, "SA"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-extrabold text-white tracking-wider uppercase" }, "Alignment Analyzer"), /* @__PURE__ */ h("div", { className: "text-[10px] text-violet-400 font-mono" }, "Enterprise AI Diagnostic")))), /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800/80 space-y-3 text-xs" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" }, /* @__PURE__ */ h("span", null, "1. Target Company"), /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden" }, /* @__PURE__ */ h("div", { className: "fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("div", { className: "fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("aside", { className: "w-64 bg-[#0d1322] text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-700/80 backdrop-blur-xl relative z-20 overflow-y-auto" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "p-5 border-b border-slate-800" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("div", { className: "w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30" }, "SA"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-extrabold text-white tracking-wider uppercase" }, "Alignment Analyzer"), /* @__PURE__ */ h("div", { className: "text-[10px] text-indigo-400 font-mono font-medium" }, "Enterprise AI Diagnostic")))), /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800 space-y-3 text-xs bg-slate-900/60" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "1. Target Company"), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => setShowNewCompanyModal(true),
-        className: "text-violet-400 hover:text-violet-300 font-semibold"
+        className: "text-indigo-400 hover:text-indigo-300 font-bold"
       },
       "+ Add"
     )), /* @__PURE__ */ h(
@@ -1987,56 +2062,71 @@
       {
         value: String(selectedCompanyId),
         onChange: (e) => handleSelectCompany(parseInt(e.target.value, 10)),
-        className: "w-full rounded-lg bg-slate-900 border border-slate-700/80 p-2 text-white font-semibold focus:outline-none focus:border-violet-500"
+        className: "w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-indigo-500"
       },
       companies.map((c) => /* @__PURE__ */ h("option", { key: c.id, value: String(c.id) }, c.name, " ", c.ticker ? `(${c.ticker})` : ""))
-    )), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" }, /* @__PURE__ */ h("span", null, "2. Assessment Period"), /* @__PURE__ */ h(
+    )), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "2. Assessment Period"), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => setShowNewPeriodModal(true),
-        className: "text-cyan-400 hover:text-cyan-300 font-semibold"
+        className: "text-cyan-400 hover:text-cyan-300 font-bold"
       },
-      "+ New Period"
+      "+ New"
     )), /* @__PURE__ */ h(
       "select",
       {
         value: String(selectedPeriodId),
         onChange: (e) => setSelectedPeriodId(parseInt(e.target.value, 10)),
-        className: "w-full rounded-lg bg-slate-900 border border-slate-700/80 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
+        className: "w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
       },
       companyPeriods.map((p) => /* @__PURE__ */ h("option", { key: p.id, value: String(p.id) }, p.title))
-    ))), /* @__PURE__ */ h("nav", { className: "p-3 space-y-1" }, NAV_ITEMS.map((item) => {
+    ))), /* @__PURE__ */ h("nav", { className: "p-3 space-y-4" }, NAV_SECTIONS.map((section) => /* @__PURE__ */ h("div", { key: section.title, className: "space-y-1" }, /* @__PURE__ */ h("div", { className: "text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1" }, section.title), section.items.map((item) => {
       const active = activeTab === item.id;
       return /* @__PURE__ */ h(
         "button",
         {
           key: item.id,
           onClick: () => setActiveTab(item.id),
-          className: `w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all duration-200 ${active ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/25" : "text-slate-300 hover:bg-slate-900 hover:text-white"}`
+          className: `w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${active ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25" : "text-slate-300 hover:bg-slate-800/80 hover:text-white"}`
         },
-        /* @__PURE__ */ h("span", null, item.label),
+        /* @__PURE__ */ h("div", { className: "flex items-center gap-2.5 truncate" }, /* @__PURE__ */ h("span", { className: "text-sm shrink-0" }, item.icon), /* @__PURE__ */ h("span", { className: "truncate" }, item.label)),
         /* @__PURE__ */ h(
           "span",
           {
-            className: `text-[10px] px-1.5 py-0.5 rounded font-mono ${active ? "bg-violet-950/70 text-violet-200" : "bg-slate-900 text-slate-500"}`
+            className: `text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0 ml-1.5 ${active ? "bg-indigo-950/80 text-indigo-200 border border-indigo-400/40" : "bg-slate-900 text-slate-400"}`
           },
-          item.step
+          item.stepNumber
         )
       );
-    }))), /* @__PURE__ */ h("div", { className: "p-4 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1 bg-slate-950/40" }, /* @__PURE__ */ h("div", { className: "font-bold text-slate-200 flex items-center gap-1.5" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400" }), auth.name), /* @__PURE__ */ h("div", null, "Role:", " ", /* @__PURE__ */ h("span", { className: "px-1.5 py-0.5 rounded bg-violet-950 text-violet-300 font-bold border border-violet-800/50" }, auth.role)))), /* @__PURE__ */ h("div", { className: "flex-1 flex flex-col min-w-0 relative z-10" }, /* @__PURE__ */ h("header", { className: "bg-slate-950/80 border-b border-slate-800/80 px-6 py-3 backdrop-blur-md" }, /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center justify-between gap-3" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-1.5 overflow-x-auto py-1" }, NAV_ITEMS.map((item, idx) => {
-      const isCurrent = activeTab === item.id;
+    }))))), /* @__PURE__ */ h("div", { className: "p-4 border-t border-slate-800 text-[11px] text-slate-300 space-y-1 bg-slate-950/70" }, /* @__PURE__ */ h("div", { className: "font-bold text-white flex items-center gap-1.5" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400" }), auth.name), /* @__PURE__ */ h("div", null, "Role:", " ", /* @__PURE__ */ h("span", { className: "px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-bold border border-indigo-700/50" }, auth.role)))), /* @__PURE__ */ h("div", { className: "flex-1 flex flex-col min-w-0 relative z-10" }, /* @__PURE__ */ h("header", { className: "bg-slate-900/90 border-b border-slate-700/80 px-6 py-3.5 backdrop-blur-md sticky top-0 z-30" }, /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center justify-between gap-4" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-xs" }, /* @__PURE__ */ h("span", { className: "text-slate-400 font-medium" }, "Platform"), /* @__PURE__ */ h("span", { className: "text-slate-600" }, "/"), /* @__PURE__ */ h("span", { className: "text-white font-bold" }, currentCompany ? currentCompany.name : "Company"), /* @__PURE__ */ h("span", { className: "text-slate-600" }, "/"), /* @__PURE__ */ h("span", { className: "text-indigo-400 font-mono font-semibold bg-indigo-950/70 border border-indigo-700/50 px-2 py-0.5 rounded" }, currentPeriod ? currentPeriod.fiscal_year : "FY2025"), currentPeriod && currentPeriod.title.includes("Live SEC") ? /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold" }, "19 SEC Filings") : null), /* @__PURE__ */ h("div", { className: "flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800" }, companies.map((c) => {
+      const isSel = c.id === selectedCompanyId;
       return /* @__PURE__ */ h(
         "button",
         {
-          key: item.id,
-          onClick: () => setActiveTab(item.id),
-          className: `px-3 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition-all duration-200 ${isCurrent ? "bg-violet-600 text-white shadow-sm shadow-violet-500/30 ring-1 ring-violet-400" : "bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800"}`
+          key: c.id,
+          onClick: () => handleSelectCompany(c.id),
+          className: `px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${isSel ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`
         },
-        idx + 1,
-        ". ",
-        item.step
+        /* @__PURE__ */ h("span", null, c.ticker || c.name.slice(0, 4)),
+        /* @__PURE__ */ h("span", { className: `text-[10px] font-normal ${isSel ? "text-indigo-200" : "text-slate-400"}` }, c.name.split(" ")[0])
       );
-    })), currentPeriod && currentPeriod.title.includes("Sample") ? /* @__PURE__ */ h("span", { className: "px-3 py-1 rounded-full bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[11px] font-bold" }, "Representative Sample Dataset (Upload filings anytime)") : null)), /* @__PURE__ */ h("main", { className: "p-6 flex-1 overflow-y-auto max-w-7xl w-full mx-auto" }, activeTab === "dashboard" ? /* @__PURE__ */ h(
+    })), /* @__PURE__ */ h("div", { className: "flex items-center gap-2.5" }, /* @__PURE__ */ h(
+      "button",
+      {
+        onClick: handleRunAnalysis,
+        disabled: isAnalyzing,
+        className: "px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition-all card-hover"
+      },
+      isAnalyzing ? /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", { className: "w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" }), /* @__PURE__ */ h("span", null, "Executing 6-Stage AI...")) : /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", null, "\u26A1"), /* @__PURE__ */ h("span", null, "Run Full AI Diagnostic"))
+    ), /* @__PURE__ */ h(
+      "button",
+      {
+        onClick: () => setActiveTab("report"),
+        className: "px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition card-hover"
+      },
+      /* @__PURE__ */ h("span", null, "\u{1F4C4}"),
+      /* @__PURE__ */ h("span", null, "Export Report")
+    )))), /* @__PURE__ */ h("main", { className: "p-6 flex-1 overflow-y-auto max-w-7xl w-full mx-auto animate-fade-in" }, activeTab === "dashboard" ? /* @__PURE__ */ h(
       DashboardView,
       {
         summary,

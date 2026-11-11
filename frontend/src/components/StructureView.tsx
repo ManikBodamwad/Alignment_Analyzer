@@ -135,7 +135,7 @@ export function StructureView(props: { structureData: any | null }) {
             </h4>
             <div className="space-y-2">
               {(evidenceByDim[activeDim.dimension_code] || []).length === 0 ? (
-                <div className="text-xs text-slate-500 italic p-3 bg-slate-950/60 rounded-lg border border-slate-800">
+                <div className="text-xs text-slate-300 italic p-3 bg-slate-900/80 rounded-lg border border-slate-700/60">
                   No direct quotations indexed for this dimension in this assessment period.
                 </div>
               ) : (
@@ -206,7 +206,7 @@ export function StructureView(props: { structureData: any | null }) {
                   </td>
                   <td className="p-3 text-slate-300">
                     {u.reporting_line.includes("Insufficient Evidence") ? (
-                      <span className="italic text-slate-500">
+                      <span className="italic text-amber-300/80 font-mono text-[11px]">
                         {u.reporting_line}
                       </span>
                     ) : (
