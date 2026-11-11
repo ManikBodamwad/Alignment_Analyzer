@@ -253,6 +253,21 @@ def _extract_pdf_with_ocr_fallback(file_bytes: bytes) -> str:
     except Exception:
         pass
 
+    try:
+        from pypdf import PdfReader
+
+        reader = PdfReader(io.BytesIO(file_bytes))
+        pages_out = []
+        for idx, page in enumerate(reader.pages, start=1):
+            txt = page.extract_text() or ""
+            if txt.strip():
+                pages_out.append(f"[Page {idx}]\n{txt.strip()}")
+        combined = "\n\n".join(pages_out).strip()
+        if combined:
+            return combined
+    except Exception:
+        pass
+
     # Strategy 2: Native PDF stream parser (handles FlateDecode & text operators Tj / TJ)
     streams: List[bytes] = []
     for match in re.finditer(rb"stream\r?\n(.*?)\r?\nendstream", file_bytes, re.DOTALL):
