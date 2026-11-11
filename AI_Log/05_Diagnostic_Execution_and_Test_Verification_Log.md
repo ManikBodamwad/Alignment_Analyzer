@@ -10,9 +10,17 @@ Below are the empirical alignment scores, evidence coverage percentages, and req
 | **2** | **Meta Platforms, Inc.** | FY2025 Assessment `[Sample Data]` | **59.8%** | **77.8%** | 5 | 3 | 6 | 4 |
 | **3** | **Snap Inc.** | FY2025 Assessment `[Sample Data]` | **65.9%** | **88.9%** | 6 | 3 | 7 | 2 |
 | **4** | **Pinterest, Inc.** | FY2025 Assessment `[Sample Data]` | **68.1%** | **75.0%** | 3 | 6 | 3 | 4 |
+| **15** | **Meta Platforms, Inc.** | **FY2025 Comprehensive Assessment `[19 Live SEC Filings & Charters]`** | **79.7%** | **68.4%** | 3 | 9 | 1 | 6 |
 
 ### Key Analytical Takeaways Demonstrated by the Engine
-1. **Historical Trend Detection (Meta FY2024 $\rightarrow$ FY2025):**
+1. **Full SEC Corporate Filings Ingestion (Meta Assessment ID 15):**
+   - By indexing all 19 official Meta filings (896 chunks encompassing the 10-K, DEF 14A Proxy, Board Committee Charters, Code of Conduct, AI Safety, Sustainability, and Child Protection disclosures), the engine evaluated 19 structural requirements against real corporate governance documents.
+   - Overall Alignment calculated at **79.7%** with **68.4%** evidence coverage:
+     - **Strong Alignment (`3`):** Verified Board Oversight Independence (Audit & Privacy Committee Charter), Formalized Advertising Safety Standards, and AI Governance Framework (`Building Generative AI Features Responsibly`).
+     - **Partial Alignment (`9`):** Workforce Restructuring & Hierarchy Flattening, Teen Safety Controls, and Human Rights Policy disclosures that rely partly on company-reported claims capped by the evidence validator.
+     - **Potential Misalignment (`1`):** Concentrated founder voting power via Class B dual-class stock structure, creating persistent governance misalignment with minority public shareholders.
+     - **Insufficient Evidence (`6`):** Highly granular internal algorithmic ranking mediation workflows and informal escalation procedures undisclosed in public filings.
+2. **Historical Trend Detection (Meta FY2024 $\rightarrow$ FY2025):**
    - Alignment improved by **+25.5%** (`34.3%` $\rightarrow$ `59.8%`) due to the deployment of default Instagram Teen Accounts, pre-launch Privacy Review gating, and the AI Governance & Responsible Innovation Council, while persistent structural tensions remain around Class B dual-class voting centralization and EU Digital Services Act (DSA) regional autonomy.
 2. **Company-Specific Structural Differentiation:**
    - **Snap Inc. (`65.9%` Alignment, `88.9%` Coverage):** Demonstrates strong specialization in Teen Safety (`Family Center` and default teen privacy settings) alongside severe centralization misalignment due to its 3-class capital structure where public Class A shares hold zero voting rights.
