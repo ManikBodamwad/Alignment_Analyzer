@@ -321,3 +321,25 @@ def test_json_repair_utility():
     assert repaired["status"] == "ok"
     assert repaired["items"] == [1, 2, 3]
 
+
+def test_groq_llm_config_and_ai_synthesis_endpoint(client: TestClient):
+    """Verify Groq LLM configuration endpoint and evidence-grounded AI executive synthesis endpoint."""
+    cfg_res = client.get("/api/analysis/llm-config")
+    assert cfg_res.status_code == 200
+    cfg = cfg_res.json()
+    assert "llm_provider" in cfg
+    assert "llm_model" in cfg
+    assert "groq_configured" in cfg
+
+    syn_res = client.post(
+        "/api/analysis/2/ai-synthesize",
+        json={"question": "What are Meta's primary governance strengths and alignment gaps?"},
+    )
+    assert syn_res.status_code == 200
+    syn = syn_res.json()
+    assert "executive_summary" in syn
+    assert "key_strengths" in syn
+    assert "key_structural_gaps" in syn
+    assert "evidence_limitations_summary" in syn
+
+

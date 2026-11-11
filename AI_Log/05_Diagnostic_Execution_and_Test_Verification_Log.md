@@ -66,3 +66,4 @@ tests/test_alignment_analyzer.py::test_json_repair_utility PASSED        [100%]
 
 ============================== 13 passed in 0.85s ==============================
 ```
+

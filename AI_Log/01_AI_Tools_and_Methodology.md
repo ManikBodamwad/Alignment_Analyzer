@@ -7,7 +7,7 @@ In building the **Stakeholder–Structure Alignment Analyzer**, AI was utilized 
 | Dimension | Role | Tools / Components |
 |---|---|---|
 | **1. Development-Time AI (Software Engineering & Architecture)** | Assisted in scaffolding the 15-table normalized SQLAlchemy/PostgreSQL schema, FastAPI REST endpoints, TypeScript frontend components, and automated Pytest verification suite under human architectural direction. | Google Antigravity Agentic Coding Assistant (Gemini model family) |
-| **2. Runtime Diagnostic AI (In-Application Analysis Engine)** | Executes the 6-stage organizational diagnostic workflow inside the web application: indexing uploaded filings, retrieving relevant chunks via vector similarity, classifying evidence, mapping stakeholder expectations to organizational structures, diagnosing root causes, and generating recommendations. | Configurable LLM Provider Abstraction (`openai`, `anthropic`, `gemini`, and the deterministic `evidence_engine` fallback) + Hybrid Vector Store (`pgvector` / Cosine RAG) |
+| **2. Runtime Diagnostic AI (In-Application Analysis Engine)** | Executes the 6-stage organizational diagnostic workflow and live executive synthesis inside the web application: indexing uploaded filings, retrieving relevant chunks via vector similarity, classifying evidence, mapping stakeholder expectations to organizational structures, diagnosing root causes, and generating live AI executive board briefings & targeted Q&A. | **Groq Cloud LLM (`llama-3.3-70b-versatile`)** via Configurable LLM Provider Abstraction (`groq`, `openai`, `anthropic`, and deterministic `evidence_engine` fallback) + Hybrid Vector Store (`pgvector` / Cosine RAG) |
 
 ---
 
@@ -29,3 +29,4 @@ Rather than allowing an LLM to act as an unconstrained "black-box" scorer or gen
    - Statements made by a company about its own commitments without independent audit or structural verification are classified as `COMPANY_CLAIM` and **capped at `Partial Alignment` (`3.0`)**, never `Strong Alignment` (`4.0`).
 4. **Evaluator Manual Override & Immutable Audit Trail:**
    - Human evaluators retain final authority: any AI-generated classification or stakeholder weight can be overridden in the UI with a mandatory written justification, which is permanently recorded in the `manual_overrides` and `audit_logs` database tables.
+

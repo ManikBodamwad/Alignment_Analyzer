@@ -195,6 +195,39 @@ export const api = {
   getAuditLogs: (assessmentPeriodId: number) =>
     request<any[]>(`/api/analysis/${assessmentPeriodId}/audit-logs`),
   getPrompts: () => request<Record<string, string>>("/api/analysis/prompts"),
+  getLlmConfig: () =>
+    request<{
+      llm_provider: string;
+      llm_model: string;
+      groq_configured: boolean;
+      masked_groq_key: string;
+    }>("/api/analysis/llm-config"),
+  updateLlmConfig: (data: {
+    groq_api_key?: string;
+    llm_provider?: string;
+    llm_model?: string;
+  }) =>
+    request<{
+      llm_provider: string;
+      llm_model: string;
+      groq_configured: boolean;
+      masked_groq_key: string;
+    }>("/api/analysis/llm-config", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  runAiSynthesis: (assessmentPeriodId: number, question?: string) =>
+    request<{
+      provider_used: string;
+      executive_summary: string;
+      targeted_question_response?: string;
+      key_strengths: string[];
+      key_structural_gaps: string[];
+      evidence_limitations_summary: string;
+    }>(`/api/analysis/${assessmentPeriodId}/ai-synthesize`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    }),
   triggerBackup: () =>
     request<{ status: string; backup_path: string }>("/api/analysis/backup", {
       method: "POST",

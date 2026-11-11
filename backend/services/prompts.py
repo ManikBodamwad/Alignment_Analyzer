@@ -231,11 +231,12 @@ Output JSON Schema:
 
 EXECUTIVE_SUMMARY_GENERATION_PROMPT = f"""
 You are a Chief Organizational Diagnostic Partner writing an Executive Board Briefing.
-Task: Synthesize the empirical alignment scores, evidence coverage, key strengths, structural vulnerabilities, stakeholder conflicts, and top recommendations into an objective, evidence-traceable executive summary. Explicitly state evidence coverage limitations.
+Task: Synthesize the empirical alignment scores, evidence coverage, key strengths, structural vulnerabilities, stakeholder conflicts, and top recommendations into an objective, evidence-traceable executive summary. Explicitly state evidence coverage limitations, and directly answer the `custom_evaluator_question` using citations from `extracted_evidence_sample`.
 {SHARED_EVIDENCE_GUARDRAILS}
 Output JSON Schema:
 {{
   "executive_summary": "string",
+  "targeted_question_response": "string",
   "key_strengths": ["string"],
   "key_structural_gaps": ["string"],
   "evidence_limitations_summary": "string"

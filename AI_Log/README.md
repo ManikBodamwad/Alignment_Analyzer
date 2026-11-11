@@ -25,3 +25,4 @@ It separates AI usage into two distinct layers for academic evaluation:
 | [`03_Verification_Debugging_and_Human_Oversight.md`](./03_Verification_Debugging_and_Human_Oversight.md) | Detailed case studies of errors/limitations in initial AI outputs that were caught, diagnosed, and corrected through testing. | Critical evaluation & quality control |
 | [`04_System_Prompts_and_Guardrails_Catalog.md`](./04_System_Prompts_and_Guardrails_Catalog.md) | Complete catalog of the 10 internal AI system prompts, JSON validation schemas, prompt-injection defenses, and scoring rules. | Prompt engineering & epistemic rigor |
 | [`05_Diagnostic_Execution_and_Test_Verification_Log.md`](./05_Diagnostic_Execution_and_Test_Verification_Log.md) | Empirical diagnostic outputs for Meta, Snap, and Pinterest and the 13/13 automated Pytest verification transcript. | Empirical validation & reproducibility |
+

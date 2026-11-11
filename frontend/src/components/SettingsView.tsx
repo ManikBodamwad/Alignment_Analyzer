@@ -15,11 +15,46 @@ export function SettingsView(props: {
     "alignment_assessment"
   );
   const [backupMsg, setBackupMsg] = useState<string | null>(null);
+  const [llmConfig, setLlmConfig] = useState<any>({
+    llm_provider: "groq",
+    llm_model: "llama-3.3-70b-versatile",
+    groq_configured: false,
+    masked_groq_key: "Checking...",
+  });
+  const [newGroqKey, setNewGroqKey] = useState("");
+  const [llmModelInput, setLlmModelInput] = useState("llama-3.3-70b-versatile");
+  const [llmMsg, setLlmMsg] = useState<string | null>(null);
 
   useEffect(() => {
     api.getAuditLogs(assessmentPeriodId).then(setAuditLogs).catch(() => {});
     api.getPrompts().then(setPrompts).catch(() => {});
+    api
+      .getLlmConfig()
+      .then((cfg) => {
+        setLlmConfig(cfg);
+        if (cfg.llm_model) setLlmModelInput(cfg.llm_model);
+      })
+      .catch(() => {});
   }, [assessmentPeriodId]);
+
+  const handleSaveLlmConfig = async (ev: Event) => {
+    ev.preventDefault();
+    setLlmMsg(null);
+    try {
+      const updated = await api.updateLlmConfig({
+        groq_api_key: newGroqKey.trim() || undefined,
+        llm_provider: "groq",
+        llm_model: llmModelInput,
+      });
+      setLlmConfig(updated);
+      setNewGroqKey("");
+      setLlmMsg(
+        `Groq AI configuration active (${updated.llm_model}, Key: ${updated.masked_groq_key})`
+      );
+    } catch (err: any) {
+      setLlmMsg(`Failed to update LLM config: ${err.message}`);
+    }
+  };
 
   const handleSaveRole = (ev: Event) => {
     ev.preventDefault();
@@ -38,6 +73,82 @@ export function SettingsView(props: {
 
   return (
     <div className="space-y-6">
+      {/* Groq AI Provider Configuration */}
+      <div className="bg-white p-5 rounded-xl border border-indigo-200 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider">
+                Groq Cloud LLM
+              </span>
+              <h3 className="text-sm font-bold text-slate-900">
+                AI Inference Engine & Groq API Configuration
+              </h3>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Active Provider: <strong>{llmConfig.llm_provider}</strong> | Model:{" "}
+              <strong>{llmConfig.llm_model}</strong> | Key Status:{" "}
+              <span
+                className={
+                  llmConfig.groq_configured
+                    ? "text-emerald-700 font-bold"
+                    : "text-amber-700 font-bold"
+                }
+              >
+                {llmConfig.masked_groq_key}
+              </span>
+            </p>
+          </div>
+        </div>
+        <form onSubmit={handleSaveLlmConfig} className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label className="block font-semibold text-slate-700 mb-1">
+              Groq Model
+            </label>
+            <select
+              value={llmModelInput}
+              onChange={(e: any) => setLlmModelInput(e.target.value)}
+              className="w-full border border-slate-300 rounded-lg p-2 bg-white font-semibold"
+            >
+              <option value="llama-3.3-70b-versatile">
+                llama-3.3-70b-versatile (Recommended)
+              </option>
+              <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+              <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-semibold text-slate-700 mb-1">
+              Update Groq API Key (Optional if set in .env)
+            </label>
+            <input
+              type="password"
+              value={newGroqKey}
+              onInput={(e: any) => setNewGroqKey(e.target.value)}
+              placeholder={
+                llmConfig.groq_configured
+                  ? `Active: ${llmConfig.masked_groq_key}`
+                  : "gsk_..."
+              }
+              className="w-full border border-slate-300 rounded-lg p-2 font-mono"
+            />
+          </div>
+          <div className="flex items-end">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-500"
+            >
+              Save Groq AI Settings
+            </button>
+          </div>
+        </form>
+        {llmMsg ? (
+          <div className="p-2.5 rounded bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
+            {llmMsg}
+          </div>
+        ) : null}
+      </div>
+
       {/* RBAC & Database Backup */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">

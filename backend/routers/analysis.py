@@ -1,13 +1,16 @@
 """Analysis, Alignment Matrix, Overrides, Conflicts, Recommendations & Audit REST API Router."""
 
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from backend.config import settings
 from backend.database import create_database_backup, get_db
 from backend.models import (
     AlignmentAssessment,
+    AssessmentPeriod,
     AuditLog,
+    Company,
     EvidenceRecord,
     ManualOverride,
     OrganizationalDimension,
@@ -32,6 +35,7 @@ from backend.security import (
     require_write_access,
 )
 from backend.services.analysis_engine import run_full_diagnostic_analysis
+from backend.services.llm_provider import generate_ai_executive_synthesis
 from backend.services.prompts import PROMPT_REGISTRY
 from backend.services.scoring_engine import (
     map_classification_to_score,
@@ -39,6 +43,96 @@ from backend.services.scoring_engine import (
 )
 
 router = APIRouter(prefix="/api/analysis", tags=["Analysis & Diagnostics"])
+
+
+@router.get("/llm-config", response_model=Dict[str, Any])
+def get_llm_config():
+    """Return active LLM provider configuration and masked Groq API status."""
+    key = settings.groq_api_key or ""
+    masked = f"{key[:7]}...{key[-4:]}" if len(key) > 12 else ("Configured" if key else "Not Configured")
+    return {
+        "llm_provider": settings.llm_provider,
+        "llm_model": settings.llm_model,
+        "groq_configured": bool(settings.groq_api_key),
+        "masked_groq_key": masked,
+    }
+
+
+@router.post("/llm-config", response_model=Dict[str, Any])
+def update_llm_config(
+    payload: Dict[str, Any] = Body(...),
+    user: UserContext = Depends(get_current_user),
+):
+    """Update runtime LLM provider settings (e.g., Groq API key and model)."""
+    require_write_access(user)
+    if "groq_api_key" in payload and payload["groq_api_key"]:
+        settings.groq_api_key = str(payload["groq_api_key"]).strip()
+        settings.llm_provider = "groq"
+    if "llm_provider" in payload and payload["llm_provider"]:
+        settings.llm_provider = str(payload["llm_provider"]).strip()
+    if "llm_model" in payload and payload["llm_model"]:
+        settings.llm_model = str(payload["llm_model"]).strip()
+    return get_llm_config()
+
+
+@router.post("/{assessment_id}/ai-synthesize", response_model=Dict[str, Any])
+def run_ai_executive_synthesis_endpoint(
+    assessment_id: int,
+    payload: Optional[Dict[str, Any]] = Body(default=None),
+    db: Session = Depends(get_db),
+):
+    """Run live Groq AI executive diagnostic synthesis and Q&A grounded in assessment evidence."""
+    period = (
+        db.query(AssessmentPeriod)
+        .filter(AssessmentPeriod.id == assessment_id)
+        .first()
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Assessment period not found.")
+    company = db.query(Company).filter(Company.id == period.company_id).first()
+    evidence = (
+        db.query(EvidenceRecord)
+        .filter(EvidenceRecord.assessment_period_id == assessment_id)
+        .order_by(EvidenceRecord.quality_score.desc())
+        .all()
+    )
+    assessments = (
+        db.query(AlignmentAssessment)
+        .filter(AlignmentAssessment.assessment_period_id == assessment_id)
+        .all()
+    )
+    ev_items = [
+        {
+            "id": e.id,
+            "dimension": e.organizational_dimension,
+            "classification": e.evidence_classification,
+            "document_name": e.document_name,
+            "page_number": e.page_number,
+            "section_heading": e.section_heading,
+            "exact_quotation": e.exact_quotation,
+        }
+        for e in evidence
+    ]
+    gap_items = [
+        {
+            "dimension": a.organizational_dimension,
+            "classification": a.classification,
+            "rationale": a.rationale,
+            "root_causes": a.root_cause_diagnosis,
+        }
+        for a in assessments
+        if a.classification in ("Potential Misalignment", "Partial Alignment", "Insufficient Evidence")
+    ]
+    custom_q = (payload or {}).get("question")
+    return generate_ai_executive_synthesis(
+        company_name=company.name if company else "Organization",
+        period_title=period.title,
+        overall_score=period.overall_alignment_score,
+        coverage_pct=period.evidence_coverage_pct,
+        evidence_items=ev_items,
+        gap_items=gap_items,
+        custom_question=custom_q,
+    )
 
 
 @router.get("/prompts", response_model=Dict[str, str])

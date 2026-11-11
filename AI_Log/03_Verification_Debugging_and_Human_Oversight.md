@@ -77,3 +77,4 @@ This guarantees that **zero unsupported AI opinions** can ever enter the alignme
 ### The Engineered Correction
 1. Updated `frontend/build.mjs` to embed `INDEX_HTML` and `BUNDLE_JS` directly into `backend/static_assets.py` as a Python module and mirror them into root `public/`.
 2. Reordered `createDomNode` in `frontend/src/lib/react-lite.ts` so child nodes are appended prior to setting `.value` and added input focus/cursor state preservation across re-renders.
+

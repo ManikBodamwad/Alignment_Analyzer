@@ -48,3 +48,16 @@ This log documents the step-by-step prompts, engineering milestones, and archite
 - **Timestamp:** `2026-11-11 22:29 IST`
 - **Prompt Summary:** *"Make an AI log folder in this; my professor has specifically asked to have an AI log submitted with the assignment, which will be used for the evaluation."*
 - **Outcome:** Created the structured `AI_Log/` folder containing methodology, prompt trajectory, debugging/oversight case studies, the 10 system prompts catalog, and empirical test verification logs.
+
+---
+
+## Entry 5: Groq Cloud LLM (`llama-3.3-70b-versatile`) Integration for Live AI Diagnostic Features
+- **Timestamp:** `2026-11-11 22:38 IST`
+- **Prompt Summary:** *"Add Groq API key for AI features."*
+- **Engineering & Security Actions Taken:**
+  1. **Secret Protection:** Stored `GROQ_API_KEY` in the gitignored `.env` file (never hardcoded in tracked Git files, preventing GitHub Push Protection secret-scanning blocks) and updated [`backend/config.py`](../backend/config.py) to auto-load `.env` at startup and default `LLM_PROVIDER=groq` and `LLM_MODEL=llama-3.3-70b-versatile`.
+  2. **Zero-Dependency Groq Client:** Implemented `_call_groq_chat_completion` and `generate_ai_executive_synthesis` in [`backend/services/llm_provider.py`](../backend/services/llm_provider.py) using Python's standard library `urllib.request` against `https://api.groq.com/openai/v1/chat/completions` with JSON mode (`response_format={"type": "json_object"}`) and automatic JSON repair/fallback.
+  3. **Live AI Synthesis & Runtime Configuration Endpoints:** Added `GET/POST /api/analysis/llm-config` and `POST /api/analysis/{assessment_id}/ai-synthesize` in [`backend/routers/analysis.py`](../backend/routers/analysis.py).
+  4. **Interactive Frontend Controls:** Added the **Live Groq AI Executive Diagnostic & Evidence Q&A Synthesis** panel in [`frontend/src/components/DashboardView.tsx`](../frontend/src/components/DashboardView.tsx) and the **Groq Cloud LLM Configuration** card in [`frontend/src/components/SettingsView.tsx`](../frontend/src/components/SettingsView.tsx).
+
+

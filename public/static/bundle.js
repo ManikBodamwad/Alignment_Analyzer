@@ -121,6 +121,15 @@
     },
     getAuditLogs: (assessmentPeriodId) => request(`/api/analysis/${assessmentPeriodId}/audit-logs`),
     getPrompts: () => request("/api/analysis/prompts"),
+    getLlmConfig: () => request("/api/analysis/llm-config"),
+    updateLlmConfig: (data) => request("/api/analysis/llm-config", {
+      method: "POST",
+      body: JSON.stringify(data)
+    }),
+    runAiSynthesis: (assessmentPeriodId, question) => request(`/api/analysis/${assessmentPeriodId}/ai-synthesize`, {
+      method: "POST",
+      body: JSON.stringify({ question })
+    }),
     triggerBackup: () => request("/api/analysis/backup", {
       method: "POST"
     }),
@@ -642,11 +651,29 @@
   // src/components/DashboardView.tsx
   function DashboardView(props) {
     const { summary, stakeholders, onNavigate, onRunAnalysis, isAnalyzing } = props;
+    const [aiQuestion, setAiQuestion] = useState(
+      "What are the primary structural governance vulnerabilities and priority board-level reforms supported by the evidence?"
+    );
+    const [aiResult, setAiResult] = useState(null);
+    const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+    const [aiError, setAiError] = useState(null);
     if (!summary) {
       return /* @__PURE__ */ h("div", { className: "p-8 text-center text-slate-500" }, "Loading organizational diagnostic overview...");
     }
     const { assessment, metrics, dimensions_summary } = summary;
     const totalReq = metrics.strong_alignments + metrics.partial_alignments + metrics.potential_misalignments + metrics.insufficient_evidence_count;
+    const handleRunGroqSynthesis = async () => {
+      setIsGeneratingAi(true);
+      setAiError(null);
+      try {
+        const res = await api.runAiSynthesis(assessment.id, aiQuestion);
+        setAiResult(res);
+      } catch (err) {
+        setAiError(err.message || "Failed to generate Groq AI synthesis");
+      } finally {
+        setIsGeneratingAi(false);
+      }
+    };
     return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-2xl p-6 text-white shadow-md" }, /* @__PURE__ */ h("div", { className: "flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider" }, /* @__PURE__ */ h("span", null, "Organizational Alignment Diagnostic"), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", null, assessment.fiscal_year), assessment.company_ticker ? /* @__PURE__ */ h("span", { className: "px-2 py-0.5 bg-indigo-900/80 border border-indigo-600 rounded text-white" }, assessment.company_ticker) : null), /* @__PURE__ */ h("h1", { className: "text-2xl font-extrabold mt-1" }, assessment.company_name, " \u2014 ", assessment.title), /* @__PURE__ */ h("p", { className: "text-slate-300 text-xs mt-1" }, "Last Assessed:", " ", assessment.last_analyzed_at ? new Date(assessment.last_analyzed_at).toLocaleString() : "Not yet analyzed", " ", "| Status:", " ", /* @__PURE__ */ h("span", { className: "uppercase font-semibold text-emerald-300" }, assessment.status))), /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center gap-3" }, /* @__PURE__ */ h(
       "button",
       {
@@ -742,7 +769,24 @@
         className: "bg-slate-300 h-full",
         title: `Insufficient Evidence: ${metrics.insufficient_evidence_count}`
       }
-    ) : null), /* @__PURE__ */ h("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-xs" }, /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-emerald-900" }, "Strong Alignment (4)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-emerald-700 text-sm" }, metrics.strong_alignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-amber-900" }, "Partial Alignment (3)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-amber-700 text-sm" }, metrics.partial_alignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-rose-900" }, "Potential Misalignment (1)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-rose-700 text-sm" }, metrics.potential_misalignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-slate-700" }, "Insufficient Evidence (N/A)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-slate-700 text-sm" }, metrics.insufficient_evidence_count)))), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6" }, /* @__PURE__ */ h("div", { className: "bg-white p-5 rounded-xl border border-slate-200 shadow-sm" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between mb-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-slate-900" }, "Stakeholder Alignment Score vs. Evidence Coverage"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-500" }, "Weighted by evaluator importance weights")), /* @__PURE__ */ h(
+    ) : null), /* @__PURE__ */ h("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-xs" }, /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-emerald-900" }, "Strong Alignment (4)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-emerald-700 text-sm" }, metrics.strong_alignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-amber-900" }, "Partial Alignment (3)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-amber-700 text-sm" }, metrics.partial_alignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-rose-900" }, "Potential Misalignment (1)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-rose-700 text-sm" }, metrics.potential_misalignments)), /* @__PURE__ */ h("div", { className: "p-2.5 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-between" }, /* @__PURE__ */ h("span", { className: "font-semibold text-slate-700" }, "Insufficient Evidence (N/A)"), /* @__PURE__ */ h("span", { className: "font-extrabold text-slate-700 text-sm" }, metrics.insufficient_evidence_count)))), /* @__PURE__ */ h("div", { className: "bg-white p-5 rounded-xl border border-indigo-200 shadow-sm space-y-4" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider" }, "Groq AI Live Synthesis"), /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-slate-900" }, "AI Executive Board Briefing & Evidence-Grounded Diagnostic Q&A")), /* @__PURE__ */ h("p", { className: "text-xs text-slate-500 mt-0.5" }, "Powered by Groq (llama-3.3-70b-versatile) with strict evidence guardrails. Synthesizes extracted citations and structural alignment gaps.")), /* @__PURE__ */ h(
+      "button",
+      {
+        onClick: handleRunGroqSynthesis,
+        disabled: isGeneratingAi,
+        className: "px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-bold shadow-sm transition shrink-0"
+      },
+      isGeneratingAi ? "Querying Groq AI (llama-3.3-70b)..." : "Generate Groq AI Executive Synthesis"
+    )), /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row gap-2" }, /* @__PURE__ */ h(
+      "input",
+      {
+        type: "text",
+        value: aiQuestion,
+        onInput: (e) => setAiQuestion(e.target.value),
+        placeholder: "Ask an organizational alignment question grounded in this period's evidence...",
+        className: "flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800"
+      }
+    )), aiError ? /* @__PURE__ */ h("div", { className: "p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-800" }, aiError) : null, aiResult ? /* @__PURE__ */ h("div", { className: "p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between border-b border-slate-200 pb-2" }, /* @__PURE__ */ h("span", { className: "font-bold text-indigo-950" }, "Executive Diagnostic Briefing (", assessment.company_name, ")"), /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold text-[11px]" }, "Engine: ", aiResult.provider_used)), /* @__PURE__ */ h("p", { className: "text-slate-800 leading-relaxed" }, aiResult.executive_summary), aiResult.targeted_question_response && aiResult.targeted_question_response !== aiResult.executive_summary ? /* @__PURE__ */ h("div", { className: "p-3 rounded-lg bg-indigo-50/70 border border-indigo-200" }, /* @__PURE__ */ h("div", { className: "font-bold text-indigo-900 mb-1" }, "Targeted Diagnostic Response:"), /* @__PURE__ */ h("p", { className: "text-indigo-950 leading-relaxed" }, aiResult.targeted_question_response)) : null, /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-3 pt-1" }, /* @__PURE__ */ h("div", { className: "p-3 rounded-lg bg-emerald-50/60 border border-emerald-200" }, /* @__PURE__ */ h("div", { className: "font-bold text-emerald-900 mb-1" }, "Key Structural Strengths"), /* @__PURE__ */ h("ul", { className: "list-disc pl-4 space-y-1 text-emerald-950" }, (aiResult.key_strengths || []).map((s, i) => /* @__PURE__ */ h("li", { key: i }, s)))), /* @__PURE__ */ h("div", { className: "p-3 rounded-lg bg-amber-50/60 border border-amber-200" }, /* @__PURE__ */ h("div", { className: "font-bold text-amber-900 mb-1" }, "Key Structural Alignment Gaps"), /* @__PURE__ */ h("ul", { className: "list-disc pl-4 space-y-1 text-amber-950" }, (aiResult.key_structural_gaps || []).map((g, i) => /* @__PURE__ */ h("li", { key: i }, g))))), /* @__PURE__ */ h("div", { className: "text-[11px] text-slate-500 italic" }, /* @__PURE__ */ h("strong", null, "Evidence Limitation Disclosure:"), " ", aiResult.evidence_limitations_summary)) : null), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6" }, /* @__PURE__ */ h("div", { className: "bg-white p-5 rounded-xl border border-slate-200 shadow-sm" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between mb-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-slate-900" }, "Stakeholder Alignment Score vs. Evidence Coverage"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-500" }, "Weighted by evaluator importance weights")), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => onNavigate("stakeholders"),
@@ -1426,12 +1470,44 @@
       "alignment_assessment"
     );
     const [backupMsg, setBackupMsg] = useState(null);
+    const [llmConfig, setLlmConfig] = useState({
+      llm_provider: "groq",
+      llm_model: "llama-3.3-70b-versatile",
+      groq_configured: false,
+      masked_groq_key: "Checking..."
+    });
+    const [newGroqKey, setNewGroqKey] = useState("");
+    const [llmModelInput, setLlmModelInput] = useState("llama-3.3-70b-versatile");
+    const [llmMsg, setLlmMsg] = useState(null);
     useEffect(() => {
       api.getAuditLogs(assessmentPeriodId).then(setAuditLogs).catch(() => {
       });
       api.getPrompts().then(setPrompts).catch(() => {
       });
+      api.getLlmConfig().then((cfg) => {
+        setLlmConfig(cfg);
+        if (cfg.llm_model) setLlmModelInput(cfg.llm_model);
+      }).catch(() => {
+      });
     }, [assessmentPeriodId]);
+    const handleSaveLlmConfig = async (ev) => {
+      ev.preventDefault();
+      setLlmMsg(null);
+      try {
+        const updated = await api.updateLlmConfig({
+          groq_api_key: newGroqKey.trim() || void 0,
+          llm_provider: "groq",
+          llm_model: llmModelInput
+        });
+        setLlmConfig(updated);
+        setNewGroqKey("");
+        setLlmMsg(
+          `Groq AI configuration active (${updated.llm_model}, Key: ${updated.masked_groq_key})`
+        );
+      } catch (err) {
+        setLlmMsg(`Failed to update LLM config: ${err.message}`);
+      }
+    };
     const handleSaveRole = (ev) => {
       ev.preventDefault();
       setAuthContext(userName, userRole);
@@ -1445,7 +1521,39 @@
         setBackupMsg(`Backup failed: ${err.message}`);
       }
     };
-    return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6" }, /* @__PURE__ */ h("div", { className: "bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-slate-900" }, "Authentication & Role-Based Access Control (RBAC)"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-500" }, "Configure active evaluator identity and role permissions (Admin, Analyst, Viewer) for audit logging.")), /* @__PURE__ */ h("form", { onSubmit: handleSaveRole, className: "space-y-3 text-xs" }, /* @__PURE__ */ h("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-3" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("label", { className: "block font-semibold text-slate-700 mb-1" }, "Evaluator Name"), /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "bg-white p-5 rounded-xl border border-indigo-200 shadow-sm space-y-4" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider" }, "Groq Cloud LLM"), /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-slate-900" }, "AI Inference Engine & Groq API Configuration")), /* @__PURE__ */ h("p", { className: "text-xs text-slate-500 mt-0.5" }, "Active Provider: ", /* @__PURE__ */ h("strong", null, llmConfig.llm_provider), " | Model:", " ", /* @__PURE__ */ h("strong", null, llmConfig.llm_model), " | Key Status:", " ", /* @__PURE__ */ h(
+      "span",
+      {
+        className: llmConfig.groq_configured ? "text-emerald-700 font-bold" : "text-amber-700 font-bold"
+      },
+      llmConfig.masked_groq_key
+    )))), /* @__PURE__ */ h("form", { onSubmit: handleSaveLlmConfig, className: "grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("label", { className: "block font-semibold text-slate-700 mb-1" }, "Groq Model"), /* @__PURE__ */ h(
+      "select",
+      {
+        value: llmModelInput,
+        onChange: (e) => setLlmModelInput(e.target.value),
+        className: "w-full border border-slate-300 rounded-lg p-2 bg-white font-semibold"
+      },
+      /* @__PURE__ */ h("option", { value: "llama-3.3-70b-versatile" }, "llama-3.3-70b-versatile (Recommended)"),
+      /* @__PURE__ */ h("option", { value: "llama-3.1-8b-instant" }, "llama-3.1-8b-instant"),
+      /* @__PURE__ */ h("option", { value: "mixtral-8x7b-32768" }, "mixtral-8x7b-32768")
+    )), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("label", { className: "block font-semibold text-slate-700 mb-1" }, "Update Groq API Key (Optional if set in .env)"), /* @__PURE__ */ h(
+      "input",
+      {
+        type: "password",
+        value: newGroqKey,
+        onInput: (e) => setNewGroqKey(e.target.value),
+        placeholder: llmConfig.groq_configured ? `Active: ${llmConfig.masked_groq_key}` : "gsk_...",
+        className: "w-full border border-slate-300 rounded-lg p-2 font-mono"
+      }
+    )), /* @__PURE__ */ h("div", { className: "flex items-end" }, /* @__PURE__ */ h(
+      "button",
+      {
+        type: "submit",
+        className: "w-full px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-500"
+      },
+      "Save Groq AI Settings"
+    ))), llmMsg ? /* @__PURE__ */ h("div", { className: "p-2.5 rounded bg-emerald-50 border border-emerald-200 text-xs text-emerald-900" }, llmMsg) : null), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6" }, /* @__PURE__ */ h("div", { className: "bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-slate-900" }, "Authentication & Role-Based Access Control (RBAC)"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-500" }, "Configure active evaluator identity and role permissions (Admin, Analyst, Viewer) for audit logging.")), /* @__PURE__ */ h("form", { onSubmit: handleSaveRole, className: "space-y-3 text-xs" }, /* @__PURE__ */ h("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-3" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("label", { className: "block font-semibold text-slate-700 mb-1" }, "Evaluator Name"), /* @__PURE__ */ h(
       "input",
       {
         type: "text",

@@ -54,3 +54,4 @@ Before any uploaded document (`PDF`, `DOCX`, `TXT`, `CSV`, `XLSX`, `PPTX`) is ch
 - `override scoring methodology`
 
 Any matching line is replaced with `[SECURITY REDACTED: Untrusted directive / prompt-injection attempt neutralized]` and the document is flagged with `prompt_injection_flag = True` in the database and UI.
+

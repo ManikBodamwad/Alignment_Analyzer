@@ -10,22 +10,52 @@ IS_VERCEL = bool(os.getenv("VERCEL") or os.getenv("VERCEL_ENV"))
 RUNTIME_WRITABLE_DIR = Path("/tmp") if IS_VERCEL else BASE_DIR
 
 
+def _load_dotenv_if_present() -> None:
+    env_file = BASE_DIR / ".env"
+    if not env_file.exists():
+        return
+    try:
+        for raw_line in env_file.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, val = line.split("=", 1)
+            key = key.strip()
+            val = val.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = val
+    except OSError:
+        pass
+
+
+_load_dotenv_if_present()
+
+
 def _default_database_url() -> str:
     env_url = os.getenv("DATABASE_URL", "").strip()
     if env_url:
-        # Normalize postgres:// to postgresql:// for SQLAlchemy 2.0 compatibility
         if env_url.startswith("postgres://"):
             return env_url.replace("postgres://", "postgresql://", 1)
         return env_url
     return f"sqlite:///{RUNTIME_WRITABLE_DIR / 'alignment_analyzer.db'}"
 
 
+def _default_llm_provider() -> str:
+    explicit = os.getenv("LLM_PROVIDER", "").strip()
+    if explicit:
+        return explicit
+    if os.getenv("GROQ_API_KEY", "").strip():
+        return "groq"
+    return "evidence_engine"
+
+
 class Settings(BaseModel):
     app_name: str = "Stakeholder–Structure Alignment Analyzer"
     app_version: str = "1.0.0"
     database_url: str = _default_database_url()
-    llm_provider: str = os.getenv("LLM_PROVIDER", "evidence_engine")
-    llm_model: str = os.getenv("LLM_MODEL", "gpt-4o")
+    llm_provider: str = _default_llm_provider()
+    llm_model: str = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+    groq_api_key: str = os.getenv("GROQ_API_KEY", "")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")

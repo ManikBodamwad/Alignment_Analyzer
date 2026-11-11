@@ -1,4 +1,5 @@
-import { h } from "../lib/react-lite";
+import { api } from "../api";
+import { h, useState } from "../lib/react-lite";
 import { AssessmentFullSummary, StakeholderProfile } from "../types";
 import { classificationBadge, RadialScoreGauge } from "./badges";
 
@@ -10,6 +11,13 @@ export function DashboardView(props: {
   isAnalyzing: boolean;
 }) {
   const { summary, stakeholders, onNavigate, onRunAnalysis, isAnalyzing } = props;
+  const [aiQuestion, setAiQuestion] = useState(
+    "What are the primary structural governance vulnerabilities and priority board-level reforms supported by the evidence?"
+  );
+  const [aiResult, setAiResult] = useState<any | null>(null);
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   if (!summary) {
     return (
       <div className="p-8 text-center text-slate-500">
@@ -24,6 +32,19 @@ export function DashboardView(props: {
     metrics.partial_alignments +
     metrics.potential_misalignments +
     metrics.insufficient_evidence_count;
+
+  const handleRunGroqSynthesis = async () => {
+    setIsGeneratingAi(true);
+    setAiError(null);
+    try {
+      const res = await api.runAiSynthesis(assessment.id, aiQuestion);
+      setAiResult(res);
+    } catch (err: any) {
+      setAiError(err.message || "Failed to generate Groq AI synthesis");
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -260,6 +281,103 @@ export function DashboardView(props: {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Live Groq AI Executive Diagnostic & Evidence Q&A Synthesis */}
+      <div className="bg-white p-5 rounded-xl border border-indigo-200 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider">
+                Groq AI Live Synthesis
+              </span>
+              <h3 className="text-sm font-bold text-slate-900">
+                AI Executive Board Briefing & Evidence-Grounded Diagnostic Q&A
+              </h3>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Powered by Groq (llama-3.3-70b-versatile) with strict evidence guardrails. Synthesizes extracted citations and structural alignment gaps.
+            </p>
+          </div>
+          <button
+            onClick={handleRunGroqSynthesis}
+            disabled={isGeneratingAi}
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-bold shadow-sm transition shrink-0"
+          >
+            {isGeneratingAi
+              ? "Querying Groq AI (llama-3.3-70b)..."
+              : "Generate Groq AI Executive Synthesis"}
+          </button>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={aiQuestion}
+            onInput={(e: any) => setAiQuestion(e.target.value)}
+            placeholder="Ask an organizational alignment question grounded in this period's evidence..."
+            className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800"
+          />
+        </div>
+
+        {aiError ? (
+          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-800">
+            {aiError}
+          </div>
+        ) : null}
+
+        {aiResult ? (
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <span className="font-bold text-indigo-950">
+                Executive Diagnostic Briefing ({assessment.company_name})
+              </span>
+              <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold text-[11px]">
+                Engine: {aiResult.provider_used}
+              </span>
+            </div>
+            <p className="text-slate-800 leading-relaxed">
+              {aiResult.executive_summary}
+            </p>
+            {aiResult.targeted_question_response &&
+            aiResult.targeted_question_response !== aiResult.executive_summary ? (
+              <div className="p-3 rounded-lg bg-indigo-50/70 border border-indigo-200">
+                <div className="font-bold text-indigo-900 mb-1">
+                  Targeted Diagnostic Response:
+                </div>
+                <p className="text-indigo-950 leading-relaxed">
+                  {aiResult.targeted_question_response}
+                </p>
+              </div>
+            ) : null}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <div className="p-3 rounded-lg bg-emerald-50/60 border border-emerald-200">
+                <div className="font-bold text-emerald-900 mb-1">
+                  Key Structural Strengths
+                </div>
+                <ul className="list-disc pl-4 space-y-1 text-emerald-950">
+                  {(aiResult.key_strengths || []).map((s: string, i: number) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
+                <div className="font-bold text-amber-900 mb-1">
+                  Key Structural Alignment Gaps
+                </div>
+                <ul className="list-disc pl-4 space-y-1 text-amber-950">
+                  {(aiResult.key_structural_gaps || []).map((g: string, i: number) => (
+                    <li key={i}>{g}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="text-[11px] text-slate-500 italic">
+              <strong>Evidence Limitation Disclosure:</strong>{" "}
+              {aiResult.evidence_limitations_summary}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {/* Two-Column Chart Grid: Stakeholder Alignment vs Coverage & 7 Organizational Dimensions */}
