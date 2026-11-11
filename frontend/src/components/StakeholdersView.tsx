@@ -48,14 +48,17 @@ export function StakeholdersView(props: {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       {/* Header & Category Filter */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-slate-900">
-            Stakeholder Classification & Weight Calibration Framework
-          </h2>
-          <p className="text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+            <h2 className="text-base font-bold text-white">
+              Stakeholder Classification & Weight Calibration Framework
+            </h2>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
             Internal (4 groups) & External (6 groups). Adjust importance weights to dynamically recalculate overall alignment.
           </p>
         </div>
@@ -64,10 +67,10 @@ export function StakeholdersView(props: {
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
                 categoryFilter === cat
-                  ? "bg-indigo-600 text-white"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  ? "bg-violet-600 text-white shadow-md shadow-violet-600/30"
+                  : "bg-slate-800 text-slate-300 hover:bg-slate-700"
               }`}
             >
               {cat === "ALL" ? "All Stakeholders (10)" : `${cat} Stakeholders`}
@@ -92,63 +95,63 @@ export function StakeholdersView(props: {
             <div
               key={sh.id}
               onClick={() => setSelectedShId(sh.id)}
-              className={`cursor-pointer bg-white rounded-xl p-5 border transition shadow-sm ${
+              className={`cursor-pointer glass-card rounded-xl p-5 border transition-all duration-200 relative ${
                 isSelected
-                  ? "border-indigo-600 ring-2 ring-indigo-500/20"
-                  : "border-slate-200 hover:border-indigo-300"
+                  ? "bg-slate-800/90 border-violet-500 ring-2 ring-violet-500/40 shadow-lg shadow-violet-500/20"
+                  : "bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50"
               }`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <span
-                    className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                    className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                       sh.category === "Internal"
-                        ? "bg-purple-50 text-purple-700 border border-purple-200"
-                        : "bg-sky-50 text-sky-700 border border-sky-200"
+                        ? "bg-violet-950/70 text-violet-300 border border-violet-700/60"
+                        : "bg-cyan-950/70 text-cyan-300 border border-cyan-700/60"
                     }`}
                   >
-                    {sh.category} Stakeholder
+                    {sh.category}
                   </span>
-                  <h3 className="text-sm font-bold text-slate-900 mt-1.5">
+                  <h3 className="text-sm font-bold text-white mt-1.5">
                     {sh.name}
                   </h3>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-extrabold text-slate-900">
+                  <div className="text-lg font-extrabold text-cyan-300 font-mono">
                     {sh.alignment_score !== null ? `${sh.alignment_score}%` : "N/A"}
                   </div>
-                  <div className="text-[10px] text-slate-500">
-                    Coverage: <strong>{sh.evidence_coverage_pct}%</strong>
+                  <div className="text-[10px] text-slate-400">
+                    Cov: <strong className="text-slate-200">{sh.evidence_coverage_pct}%</strong>
                   </div>
                 </div>
               </div>
 
               {/* Counts Grid */}
               <div className="grid grid-cols-4 gap-1.5 mt-4 text-center text-[11px]">
-                <div className="p-1.5 rounded bg-emerald-50 text-emerald-800">
-                  <div className="font-extrabold">{sh.strong_count}</div>
-                  <div className="text-[9px]">Strong</div>
+                <div className="p-1.5 rounded bg-emerald-950/40 text-emerald-300 border border-emerald-500/30">
+                  <div className="font-extrabold text-emerald-400">{sh.strong_count}</div>
+                  <div className="text-[9px] text-emerald-500">Strong</div>
                 </div>
-                <div className="p-1.5 rounded bg-amber-50 text-amber-800">
-                  <div className="font-extrabold">{sh.partial_count}</div>
-                  <div className="text-[9px]">Partial</div>
+                <div className="p-1.5 rounded bg-amber-950/40 text-amber-300 border border-amber-500/30">
+                  <div className="font-extrabold text-amber-400">{sh.partial_count}</div>
+                  <div className="text-[9px] text-amber-500">Partial</div>
                 </div>
-                <div className="p-1.5 rounded bg-rose-50 text-rose-800">
-                  <div className="font-extrabold">{sh.misalignment_count}</div>
-                  <div className="text-[9px]">Misaligned</div>
+                <div className="p-1.5 rounded bg-rose-950/40 text-rose-300 border border-rose-500/30">
+                  <div className="font-extrabold text-rose-400">{sh.misalignment_count}</div>
+                  <div className="text-[9px] text-rose-500">Misaligned</div>
                 </div>
-                <div className="p-1.5 rounded bg-slate-100 text-slate-600">
-                  <div className="font-extrabold">{sh.insufficient_count}</div>
-                  <div className="text-[9px]">Insuff.</div>
+                <div className="p-1.5 rounded bg-slate-800/80 text-slate-300 border border-slate-700">
+                  <div className="font-extrabold text-slate-400">{sh.insufficient_count}</div>
+                  <div className="text-[9px] text-slate-500">Insuff.</div>
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
                 <span>
-                  Assessed: <strong>{assessedReq}/{totalReq}</strong> reqs
+                  Assessed: <strong className="text-slate-200">{assessedReq}/{totalReq}</strong> reqs
                 </span>
                 <span>
-                  Importance Weight: <strong>{sh.importance_weight}x</strong>
+                  Weight: <strong className="text-violet-300 font-mono">{sh.importance_weight}x</strong>
                 </span>
               </div>
             </div>
@@ -158,33 +161,33 @@ export function StakeholdersView(props: {
 
       {/* Selected Stakeholder Detailed Profile & Weight Editor */}
       {selectedSh ? (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-200 pb-4">
+        <div className="glass-card bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl p-6 space-y-5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-800 pb-4">
             <div>
-              <div className="text-xs font-bold text-indigo-600 uppercase">
+              <div className="text-xs font-bold text-violet-400 uppercase tracking-wider">
                 Detailed Stakeholder Diagnostic Profile
               </div>
-              <h3 className="text-lg font-extrabold text-slate-900">
+              <h3 className="text-lg font-extrabold text-white mt-1">
                 {selectedSh.name} ({selectedSh.category})
               </h3>
-              <div className="flex flex-wrap gap-3 mt-1 text-xs text-slate-600">
+              <div className="flex flex-wrap gap-3 mt-1.5 text-xs text-slate-400">
                 <span>
-                  Influence over Company:{" "}
-                  <strong className="text-slate-900">
+                  Influence:{" "}
+                  <strong className="text-slate-200">
                     {selectedSh.influence_level}
                   </strong>
                 </span>
                 <span>•</span>
                 <span>
-                  Dependence on Company:{" "}
-                  <strong className="text-slate-900">
+                  Dependence:{" "}
+                  <strong className="text-slate-200">
                     {selectedSh.dependence_level}
                   </strong>
                 </span>
                 <span>•</span>
                 <span>
                   Alignment Score:{" "}
-                  <strong className="text-indigo-700">
+                  <strong className="text-cyan-300 font-mono">
                     {selectedSh.alignment_score !== null
                       ? `${selectedSh.alignment_score}%`
                       : "Insufficient Evidence"}
@@ -194,12 +197,12 @@ export function StakeholdersView(props: {
             </div>
 
             {/* Importance Weight Selector */}
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+            <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center gap-3">
               <div className="text-xs">
-                <div className="font-bold text-slate-800">
+                <div className="font-bold text-slate-200">
                   Stakeholder Importance Weight
                 </div>
-                <div className="text-[11px] text-slate-500">
+                <div className="text-[11px] text-slate-400">
                   Recalculates Overall Alignment Score
                 </div>
               </div>
@@ -212,7 +215,7 @@ export function StakeholdersView(props: {
                     parseFloat(e.target.value)
                   )
                 }
-                className="text-xs font-bold border border-slate-300 rounded-lg p-2 bg-white text-indigo-700"
+                className="text-xs font-bold border border-slate-700 rounded-lg p-2 bg-slate-900 text-violet-300 focus:outline-none"
               >
                 {[0.5, 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 2.0, 2.5, 3.0].map(
                   (w) => (
@@ -227,41 +230,41 @@ export function StakeholdersView(props: {
 
           {/* Interests, Risks, Policies & Conflicts */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-            <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
-              <div className="font-bold text-slate-800 mb-2">
+            <div className="p-3.5 rounded-lg bg-slate-950/80 border border-slate-800">
+              <div className="font-bold text-slate-200 mb-2">
                 Primary Interests
               </div>
-              <ul className="space-y-1 text-slate-600 list-disc list-inside">
+              <ul className="space-y-1 text-slate-300 list-disc list-inside">
                 {(selectedSh.key_interests || []).map((it, idx) => (
                   <li key={idx}>{it}</li>
                 ))}
               </ul>
             </div>
-            <div className="p-3.5 rounded-lg bg-rose-50/50 border border-rose-200">
-              <div className="font-bold text-rose-900 mb-2">
+            <div className="p-3.5 rounded-lg bg-rose-950/30 border border-rose-500/30">
+              <div className="font-bold text-rose-300 mb-2">
                 Concerns & Potential Risks
               </div>
-              <ul className="space-y-1 text-rose-800 list-disc list-inside">
+              <ul className="space-y-1 text-rose-200 list-disc list-inside">
                 {(selectedSh.concerns_and_risks || []).map((it, idx) => (
                   <li key={idx}>{it}</li>
                 ))}
               </ul>
             </div>
-            <div className="p-3.5 rounded-lg bg-indigo-50/50 border border-indigo-200">
-              <div className="font-bold text-indigo-900 mb-2">
-                Relevant Company Policies
+            <div className="p-3.5 rounded-lg bg-violet-950/30 border border-violet-500/30">
+              <div className="font-bold text-violet-300 mb-2">
+                Relevant Corporate Policies
               </div>
-              <ul className="space-y-1 text-indigo-800 list-disc list-inside">
+              <ul className="space-y-1 text-violet-200 list-disc list-inside">
                 {(selectedSh.relevant_policies || []).map((it, idx) => (
                   <li key={idx}>{it}</li>
                 ))}
               </ul>
             </div>
-            <div className="p-3.5 rounded-lg bg-amber-50/50 border border-amber-200">
-              <div className="font-bold text-amber-900 mb-2">
-                Potential Stakeholder Conflicts
+            <div className="p-3.5 rounded-lg bg-amber-950/30 border border-amber-500/30">
+              <div className="font-bold text-amber-300 mb-2">
+                Potential Stakeholder Tensions
               </div>
-              <ul className="space-y-1 text-amber-800 list-disc list-inside">
+              <ul className="space-y-1 text-amber-200 list-disc list-inside">
                 {(selectedSh.potential_conflicts || []).map((it, idx) => (
                   <li key={idx}>{it}</li>
                 ))}
@@ -269,47 +272,45 @@ export function StakeholdersView(props: {
             </div>
           </div>
 
-          {/* Stakeholder Expectations & Requirement Weights */}
-          <div>
-            <h4 className="text-sm font-bold text-slate-900 mb-2">
-              Extracted & Baseline Stakeholder Expectations (
-              {(selectedSh.expectations || []).length})
-            </h4>
-            <div className="space-y-2.5">
-              {(selectedSh.expectations || []).map((exp) => (
+          {/* Detailed Expectations List */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                Assessed Expectations for {selectedSh.name} ({selectedSh.expectations.length})
+              </h4>
+              <span className="text-[11px] text-slate-500">
+                Adjust requirement weights individually
+              </span>
+            </div>
+            <div className="space-y-2">
+              {selectedSh.expectations.map((exp) => (
                 <div
                   key={exp.id}
-                  className="p-3.5 rounded-lg border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-slate-50"
+                  className="p-3 rounded-lg bg-slate-950/80 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-900">
-                        {exp.title}
-                      </span>
+                      <span className="font-bold text-slate-100">{exp.title}</span>
                       {exp.is_discovered_from_docs ? (
-                        <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                          AI Discovered from Uploaded Filings
+                        <span className="px-1.5 py-0.2 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800/50 text-[10px] font-mono">
+                          Discovered from Filings
                         </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px]">
-                          Core Framework
-                        </span>
-                      )}
+                      ) : null}
                     </div>
-                    <p className="text-xs text-slate-600">{exp.description}</p>
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {(exp.mapped_dimension_codes || []).map((dc) => (
+                    <p className="text-slate-400 text-[11px]">{exp.description}</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {(exp.mapped_dimension_codes || []).map((d) => (
                         <span
-                          key={dc}
-                          className="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-[10px] font-semibold uppercase"
+                          key={d}
+                          className="px-2 py-0.5 rounded bg-slate-900 text-slate-300 text-[10px] border border-slate-700"
                         >
-                          Dimension: {dc}
+                          {d}
                         </span>
                       ))}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-slate-500">Req. Weight:</span>
+                    <span className="text-slate-400 text-[11px]">Weight:</span>
                     <select
                       disabled={savingWeight}
                       value={String(exp.requirement_weight)}
@@ -319,9 +320,9 @@ export function StakeholdersView(props: {
                           parseFloat(e.target.value)
                         )
                       }
-                      className="text-xs font-bold border border-slate-300 rounded p-1.5 bg-white"
+                      className="text-xs font-bold border border-slate-700 rounded p-1 bg-slate-900 text-cyan-300"
                     >
-                      {[0.5, 0.8, 1.0, 1.2, 1.3, 1.4, 1.5, 2.0].map((w) => (
+                      {[0.5, 0.8, 1.0, 1.2, 1.4, 1.5, 1.8, 2.0].map((w) => (
                         <option key={w} value={String(w)}>
                           {w.toFixed(1)}x
                         </option>
@@ -337,4 +338,3 @@ export function StakeholdersView(props: {
     </div>
   );
 }
-

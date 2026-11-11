@@ -343,3 +343,22 @@ def test_groq_llm_config_and_ai_synthesis_endpoint(client: TestClient):
     assert "evidence_limitations_summary" in syn
 
 
+def test_evidence_validator_provenance_and_hallucination_rejection():
+    """Verify that evidence validator verifies exact substrings and rejects unverified hallucinations."""
+    from backend.services.evidence_validator import verify_quotation_in_chunk, normalize_text_for_comparison
+
+    chunk = "The Audit & Risk Committee comprises independent directors and meets quarterly."
+    valid_quote = "Audit & Risk Committee comprises independent directors"
+    hallucinated_quote = "The CEO has unilateral authority to dissolve the Audit Committee at will."
+
+    is_valid, ratio, match = verify_quotation_in_chunk(valid_quote, chunk)
+    assert is_valid is True
+    assert ratio >= 0.90
+    assert "Audit & Risk Committee" in match
+
+    is_valid_bad, ratio_bad, match_bad = verify_quotation_in_chunk(hallucinated_quote, chunk)
+    assert is_valid_bad is False
+    assert match_bad is None
+
+
+

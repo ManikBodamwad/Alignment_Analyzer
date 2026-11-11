@@ -1,0 +1,154 @@
+/* =============================================================================
+   Stakeholder–Structure Alignment Analyzer Design Tokens & Premium Dark Theme
+   Inspired by EcoVault / Vercel Geist Developer Experience
+   ============================================================================= */
+
+:root {
+  /* Surface Palette */
+  --bg-app: #060913;
+  --bg-sidebar: #090d1a;
+  --bg-surface-1: #0d1326;
+  --bg-surface-2: #131b35;
+  --bg-surface-3: #1a2548;
+  --bg-glass: rgba(13, 19, 38, 0.72);
+  --bg-glass-card: rgba(19, 27, 53, 0.65);
+  --bg-glass-subtle: rgba(255, 255, 255, 0.03);
+
+  /* Border Tokens */
+  --border-subtle: rgba(148, 163, 184, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(139, 92, 246, 0.35);
+  --border-active: #8b5cf6;
+
+  /* Accent & Brand Colors */
+  --accent-violet: #8b5cf6;
+  --accent-violet-glow: rgba(139, 92, 246, 0.35);
+  --accent-cyan: #06b6d4;
+  --accent-cyan-glow: rgba(6, 182, 212, 0.3);
+  --accent-blue: #3b82f6;
+
+  /* Semantic Alignment Colors */
+  --status-strong: #10b981;
+  --status-strong-bg: rgba(16, 185, 129, 0.12);
+  --status-strong-border: rgba(16, 185, 129, 0.3);
+
+  --status-partial: #f59e0b;
+  --status-partial-bg: rgba(245, 158, 11, 0.12);
+  --status-partial-border: rgba(245, 158, 11, 0.3);
+
+  --status-misaligned: #f43f5e;
+  --status-misaligned-bg: rgba(244, 63, 94, 0.12);
+  --status-misaligned-border: rgba(244, 63, 94, 0.35);
+
+  --status-insufficient: #64748b;
+  --status-insufficient-bg: rgba(100, 116, 139, 0.12);
+  --status-insufficient-border: rgba(100, 116, 139, 0.25);
+
+  /* Typography Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-highlight: #c4b5fd;
+
+  /* Elevation Shadows */
+  --shadow-ambient: 0 0 50px -10px rgba(139, 92, 246, 0.08);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Reset & Ambient Glows */
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: -150px;
+  right: -100px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.04) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -200px;
+  left: 10%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glassmorphism Containers */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-card {
+  background: var(--bg-glass-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 30px -4px rgba(139, 92, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.45);
+  }
+}
+
+.animate-entrance {
+  animation: fadeInSlideUp 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

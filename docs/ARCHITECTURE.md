@@ -148,3 +148,75 @@ Alignment_Analyzer/
 - **Phase 5: Diagnostics, Conflicts & Recommendations** — Root-cause diagnosis engine, Stakeholder Conflict Matrix & Network visualization, actionable Recommendation engine with status tracking, and Evidence Repository inspector.
 - **Phase 6: Advanced Analytics, Reports & Testing** — Periodic historical & cross-company comparison module, 14-section report generator with PDF/DOCX/CSV/XLSX exports, representative multi-company sample document suite, and automated Pytest verification across all 10 test scenarios.
 
+---
+
+## 5. Intelligence Engine Upgrade & Design System Architecture (Master Upgrade)
+
+In the Master Development Phase, the platform was elevated with an enterprise-grade AI intelligence engine and a dark glassmorphic design system:
+
+```mermaid
+flowchart TD
+    subgraph Client["Client UI Layer (Dark Glassmorphic SaaS)"]
+        Dashboard["Executive Dashboard & Radial Gauges"]
+        Flow["Evidence-to-Insight 6-Stage Flow Diagram"]
+        Matrix["Alignment Matrix + Slide-Over Drawer"]
+        Conflicts["Conflict Matrix & Force Graph"]
+    end
+
+    subgraph Backend["Diagnostic & Validation Pipeline"]
+        RAG["Local Embeddings (all-MiniLM-L6-v2) + FAISS"]
+        LLM["Groq Llama 3.3 70B (llama-3.3-70b-versatile)"]
+        Cache["Stage Content-Hash Cache (storage/cache)"]
+        Validator["Strict Evidence Validator (evidence_validator.py)"]
+        Scorer["Pure Deterministic Python Scorer (scoring_engine.py)"]
+    end
+
+    subgraph Database["Persistence Layer (SQLite / Postgres)"]
+        Chunks["Document Chunks with Exact Text"]
+        Assessments["Assessments, Alignments & Evidence"]
+        Overrides["Audit Logs & Manual Overrides"]
+    end
+
+    Dashboard --> Flow --> Matrix
+    Matrix -->|"Trigger Full Analysis"| Backend
+    RAG -->|"Retrieve Top-K Chunks"| LLM
+    Cache <-->|"Check / Store Cache"| LLM
+    LLM -->|"Raw Structured JSON"| Validator
+    Chunks -->|"Verify Verbatim Quotes"| Validator
+    Validator -->|"Validated Classifications & Provenance"| Scorer
+    Scorer --> Assessments
+    Validator --> Assessments
+    Overrides --> Scorer
+```
+
+### 5.1 Hybrid RAG & Groq LLM Intelligence Engine
+- **Local Embedding Generation:** Integrated `sentence-transformers/all-MiniLM-L6-v2` generating 384-dimensional dense vectors locally with no external API charges, falling back seamlessly to deterministic semantic hashing if torch/transformers are unavailable.
+- **Groq Runtime Provider:** High-throughput `llama-3.3-70b-versatile` integration with temperature=0.1, structured JSON system prompting, and automatic exponential backoff on HTTP 429 rate limits (handling `retry-after` headers).
+- **Disk Stage Caching:** High-performance SHA-256 content-hash caching persisted in `storage/cache/`, preventing redundant LLM calls across identical input passages.
+
+### 5.2 Strict Evidence Validation & Anti-Hallucination Gate (`backend/services/evidence_validator.py`)
+1. **Verbatim Quotation Verification:** Normalizes whitespace and punctuation to locate extracted quotes inside actual database chunks. Unlocatable quotations trigger an automatic fallback or rejection.
+2. **Provenance Enforcement:** Matches every statement to verified source metadata: `document_id`, `chunk_id`, `page_number`, `section_heading`, and `exact_quotation`.
+3. **Company Claim Scoring Cap:** Any requirement supported solely by self-reported company claims (`COMPANY_CLAIM`) without third-party or factual corroboration is strictly capped at `Partial Alignment` (score 3.0), mathematically preventing unsupported `Strong Alignment` (score 4.0).
+4. **Epistemic Silence Handling:** Missing evidence is strictly cataloged as `Insufficient Evidence` (`numeric_score = None`), adjusting evidence coverage without penalizing alignment scores as artificial misalignment.
+5. **Prompt Injection Sanitizer:** Scans document text for adversarial injection tokens before vector indexing, redacting malicious commands and setting audit security flags.
+
+### 5.3 10 Typed Diagnostic Stages & Schemas (`backend/schemas.py`)
+Each stage in `backend/services/analysis_engine.py` validates its LLM output against explicit Pydantic v2 schemas:
+1. `StakeholderProfileResponse` (`stakeholder_identification`)
+2. `StakeholderExpectationListResponse` (`stakeholder_expectation_extraction`)
+3. `OrganizationalStructureResponse` (`organizational_structure_extraction`)
+4. `EvidenceClassificationResponse` (`evidence_classification`)
+5. `StakeholderStructureMappingResponse` (`stakeholder_structure_mapping`)
+6. `AlignmentAssessmentListResponse` (`alignment_assessment`)
+7. `RootCauseDiagnosisResponse` (`root_cause_diagnosis`)
+8. `StakeholderConflictListResponse` (`stakeholder_conflicts`)
+9. `RecommendationListResponse` (`recommendation_generation`)
+10. `ExecutiveSummaryResponse` (`executive_summary_generation`)
+
+### 5.4 Premium Dark Glassmorphic Design System
+- **Theme Palette:** Deep space obsidian background (`#060913`, `#0d1326`) paired with luminescent violet (`#8b5cf6`), electric cyan (`#06b6d4`), emerald (`#10b981`), amber (`#f59e0b`), and crimson (`#ef4444`).
+- **Signature Component:** `EvidenceToInsightFlow.tsx` displays an interactive 6-node reactive pipeline illustrating how raw document passages flow into chunked embeddings, verified evidence classifications, structural mappings, deterministic score calculation, and executive reporting.
+- **Glassmorphic Cards & Drawers:** High-contrast frosted glass panels with glowing borders, radial score gauges, and slide-over evidence drawers for real-time auditability.
+
+

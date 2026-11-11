@@ -170,34 +170,38 @@ function App() {
   const auth = getAuthContext();
 
   return (
-    <div className="min-h-screen flex bg-slate-100 text-slate-900">
+    <div className="min-h-screen flex bg-[#060913] text-slate-100 relative overflow-x-hidden">
+      {/* Background ambient accents */}
+      <div className="fixed top-0 right-1/4 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" />
+
       {/* Left Enterprise Sidebar */}
-      <aside className="w-64 bg-slate-950 text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-800">
+      <aside className="w-64 bg-[#090d1a]/95 text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-800/80 backdrop-blur-xl relative z-20">
         <div>
-          <div className="p-5 border-b border-slate-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-extrabold text-white text-sm">
+          <div className="p-5 border-b border-slate-800/80">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center font-extrabold text-white text-sm shadow-md shadow-violet-500/30">
                 SA
               </div>
               <div>
-                <div className="text-xs font-extrabold text-white tracking-wide uppercase">
+                <div className="text-xs font-extrabold text-white tracking-wider uppercase">
                   Alignment Analyzer
                 </div>
-                <div className="text-[10px] text-indigo-400">
-                  Stakeholder–Structure Diagnostic
+                <div className="text-[10px] text-violet-400 font-mono">
+                  Enterprise AI Diagnostic
                 </div>
               </div>
             </div>
           </div>
 
           {/* Company & Period Selector in Sidebar */}
-          <div className="p-4 border-b border-slate-800 space-y-3 text-xs">
+          <div className="p-4 border-b border-slate-800/80 space-y-3 text-xs">
             <div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase mb-1">
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 <span>1. Target Company</span>
                 <button
                   onClick={() => setShowNewCompanyModal(true)}
-                  className="text-indigo-400 hover:underline"
+                  className="text-violet-400 hover:text-violet-300 font-semibold"
                 >
                   + Add
                 </button>
@@ -207,7 +211,7 @@ function App() {
                 onChange={(e: any) =>
                   handleSelectCompany(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-lg bg-slate-900 border border-slate-700 p-2 text-white font-semibold"
+                className="w-full rounded-lg bg-slate-900 border border-slate-700/80 p-2 text-white font-semibold focus:outline-none focus:border-violet-500"
               >
                 {companies.map((c) => (
                   <option key={c.id} value={String(c.id)}>
@@ -218,11 +222,11 @@ function App() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase mb-1">
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 <span>2. Assessment Period</span>
                 <button
                   onClick={() => setShowNewPeriodModal(true)}
-                  className="text-indigo-400 hover:underline"
+                  className="text-cyan-400 hover:text-cyan-300 font-semibold"
                 >
                   + New Period
                 </button>
@@ -232,7 +236,7 @@ function App() {
                 onChange={(e: any) =>
                   setSelectedPeriodId(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-lg bg-slate-900 border border-slate-700 p-2 text-white font-semibold"
+                className="w-full rounded-lg bg-slate-900 border border-slate-700/80 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
               >
                 {companyPeriods.map((p) => (
                   <option key={p.id} value={String(p.id)}>
@@ -251,17 +255,17 @@ function App() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition ${
+                  className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all duration-200 ${
                     active
-                      ? "bg-indigo-600 text-white shadow"
+                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/25"
                       : "text-slate-300 hover:bg-slate-900 hover:text-white"
                   }`}
                 >
                   <span>{item.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
                       active
-                        ? "bg-indigo-800 text-indigo-200"
+                        ? "bg-violet-950/70 text-violet-200"
                         : "bg-slate-900 text-slate-500"
                     }`}
                   >
@@ -274,11 +278,14 @@ function App() {
         </div>
 
         {/* Footer Evaluator Context */}
-        <div className="p-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
-          <div className="font-bold text-slate-200">{auth.name}</div>
+        <div className="p-4 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1 bg-slate-950/40">
+          <div className="font-bold text-slate-200 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            {auth.name}
+          </div>
           <div>
             Role:{" "}
-            <span className="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-bold">
+            <span className="px-1.5 py-0.5 rounded bg-violet-950 text-violet-300 font-bold border border-violet-800/50">
               {auth.role}
             </span>
           </div>
@@ -286,9 +293,9 @@ function App() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Multi-Step Workflow Progress Bar (Section 2) */}
-        <header className="bg-white border-b border-slate-200 px-6 py-3">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+        {/* Top Multi-Step Workflow Progress Bar */}
+        <header className="bg-slate-950/80 border-b border-slate-800/80 px-6 py-3 backdrop-blur-md">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-1.5 overflow-x-auto py-1">
               {NAV_ITEMS.map((item, idx) => {
@@ -297,10 +304,10 @@ function App() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition ${
+                    className={`px-3 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition-all duration-200 ${
                       isCurrent
-                        ? "bg-indigo-600 text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        ? "bg-violet-600 text-white shadow-sm shadow-violet-500/30 ring-1 ring-violet-400"
+                        : "bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
                     }`}
                   >
                     {idx + 1}. {item.step}
@@ -310,8 +317,8 @@ function App() {
             </div>
 
             {currentPeriod && currentPeriod.title.includes("Sample") ? (
-              <span className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-[11px] font-bold">
-                Representative Sample Dataset (Upload your own filings or create a new period anytime)
+              <span className="px-3 py-1 rounded-full bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[11px] font-bold">
+                Representative Sample Dataset (Upload filings anytime)
               </span>
             ) : null}
           </div>
@@ -414,50 +421,50 @@ function App() {
 
       {/* Modal: Create New Assessment Period */}
       {showNewPeriodModal ? (
-        <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <form
             onSubmit={handleCreatePeriod}
-            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl space-y-4 text-xs"
+            className="glass-card bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs text-white border border-slate-700"
           >
-            <h3 className="text-base font-extrabold text-slate-900">
+            <h3 className="text-base font-extrabold text-white">
               Create New Periodic Assessment
             </h3>
-            <p className="text-slate-500">
+            <p className="text-slate-400">
               Initializes an isolated document collection, 10 stakeholder groups, and 7 organizational structure dimensions.
             </p>
             <div>
-              <label className="block font-bold text-slate-700 mb-1">
+              <label className="block font-bold text-slate-300 mb-1">
                 Assessment Title
               </label>
               <input
                 type="text"
                 value={newPeriodTitle}
                 onInput={(e: any) => setNewPeriodTitle(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg p-2.5"
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
               />
             </div>
             <div>
-              <label className="block font-bold text-slate-700 mb-1">
+              <label className="block font-bold text-slate-300 mb-1">
                 Financial Year
               </label>
               <input
                 type="text"
                 value={newPeriodFy}
                 onInput={(e: any) => setNewPeriodFy(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg p-2.5"
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowNewPeriodModal(false)}
-                className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold"
+                className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold"
+                className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold shadow-md shadow-violet-600/30"
               >
                 Create Assessment Period
               </button>
@@ -468,16 +475,16 @@ function App() {
 
       {/* Modal: Create New Company */}
       {showNewCompanyModal ? (
-        <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <form
             onSubmit={handleCreateCompany}
-            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl space-y-4 text-xs"
+            className="glass-card bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs text-white border border-slate-700"
           >
-            <h3 className="text-base font-extrabold text-slate-900">
+            <h3 className="text-base font-extrabold text-white">
               Add New Company to Diagnostic Platform
             </h3>
             <div>
-              <label className="block font-bold text-slate-700 mb-1">
+              <label className="block font-bold text-slate-300 mb-1">
                 Company Name
               </label>
               <input
@@ -485,12 +492,12 @@ function App() {
                 value={newCompName}
                 onInput={(e: any) => setNewCompName(e.target.value)}
                 placeholder="e.g., Alphabet Inc."
-                className="w-full border border-slate-300 rounded-lg p-2.5"
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-300 mb-1">
                   Ticker Symbol
                 </label>
                 <input
@@ -498,43 +505,43 @@ function App() {
                   value={newCompTicker}
                   onInput={(e: any) => setNewCompTicker(e.target.value)}
                   placeholder="GOOGL"
-                  className="w-full border border-slate-300 rounded-lg p-2.5"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
                 />
               </div>
               <div>
-                <label className="block font-bold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-300 mb-1">
                   Industry
                 </label>
                 <input
                   type="text"
                   value={newCompIndustry}
                   onInput={(e: any) => setNewCompIndustry(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg p-2.5"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
                 />
               </div>
             </div>
             <div>
-              <label className="block font-bold text-slate-700 mb-1">
+              <label className="block font-bold text-slate-300 mb-1">
                 Company-Specific Analysis Priorities (Comma-separated)
               </label>
               <textarea
                 rows={2}
                 value={newCompPriorities}
                 onInput={(e: any) => setNewCompPriorities(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg p-2.5"
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
               ></textarea>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowNewCompanyModal(false)}
-                className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold"
+                className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold"
+                className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold shadow-md shadow-violet-600/30"
               >
                 Create Company
               </button>
@@ -550,4 +557,3 @@ const rootEl = document.getElementById("app");
 if (rootEl) {
   mountApp(App, rootEl);
 }
-

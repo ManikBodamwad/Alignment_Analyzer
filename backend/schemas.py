@@ -342,6 +342,59 @@ class RecommendationStatusUpdate(BaseModel):
 # Structured LLM Output Validation Schemas (Section 17)
 # =============================================================================
 
+class LLMStakeholderItem(BaseModel):
+    name: str
+    category: StakeholderCategoryType
+    slug: str
+    influence_level: Literal["High", "Medium", "Low"] = "High"
+    dependence_level: Literal["High", "Medium", "Low"] = "High"
+    key_interests: List[str] = Field(default_factory=list)
+    concerns_and_risks: List[str] = Field(default_factory=list)
+    relevant_policies: List[str] = Field(default_factory=list)
+    potential_conflicts: List[str] = Field(default_factory=list)
+
+
+class LLMStakeholderList(BaseModel):
+    stakeholders: List[LLMStakeholderItem]
+
+
+class LLMExpectationItem(BaseModel):
+    stakeholder_slug: str
+    title: str
+    description: str
+    priority_category: str = "Discovered Requirement"
+    is_discovered_from_docs: bool = True
+    mapped_dimension_codes: List[str] = Field(default_factory=list)
+
+
+class LLMExpectationList(BaseModel):
+    expectations: List[LLMExpectationItem]
+
+
+class LLMStructureDimensionItem(BaseModel):
+    dimension_code: DimensionCodeType
+    suitability_classification: AlignmentClassType
+    assessment_summary: str
+    strengths: List[str] = Field(default_factory=list)
+    weaknesses: List[str] = Field(default_factory=list)
+    confidence_level: Literal["High", "Medium", "Low"] = "Medium"
+
+
+class LLMOrganizationalUnitItem(BaseModel):
+    unit_name: str
+    unit_type: str
+    dimension_code: str = "governance"
+    reporting_line: str = "Insufficient Evidence"
+    responsibilities: str
+    authority_scope: str = "Disclosed in filing"
+    evidence_classification: EvidenceClassType = "FACT"
+
+
+class LLMStructureOutput(BaseModel):
+    dimensions: List[LLMStructureDimensionItem] = Field(default_factory=list)
+    organizational_units: List[LLMOrganizationalUnitItem] = Field(default_factory=list)
+
+
 class LLMEvidenceExtractionItem(BaseModel):
     stakeholder_slug: str
     organizational_dimension: DimensionCodeType
@@ -355,12 +408,79 @@ class LLMEvidenceExtractionItem(BaseModel):
     is_contradictory: bool = False
 
 
+class LLMEvidenceList(BaseModel):
+    evidence_records: List[LLMEvidenceExtractionItem]
+
+
+class LLMMappingItem(BaseModel):
+    expectation_id: int
+    organizational_dimension: str
+    mapped_mechanisms: List[str]
+    supporting_evidence_ids: List[int] = Field(default_factory=list)
+
+
+class LLMMappingList(BaseModel):
+    mappings: List[LLMMappingItem]
+
+
 class LLMAlignmentEvaluationItem(BaseModel):
     expectation_id: int
     organizational_dimension: DimensionCodeType
-    mapped_mechanisms: List[str]
     classification: AlignmentClassType
     rationale: str
-    root_cause_diagnosis: List[str]
-    evidence_ids: List[int]
+    evidence_ids: List[int] = Field(default_factory=list)
+
+
+class LLMAlignmentList(BaseModel):
+    assessments: List[LLMAlignmentEvaluationItem]
+
+
+class LLMRootCauseItem(BaseModel):
+    assessment_id: int
+    root_causes: List[str] = Field(default_factory=list)
+
+
+class LLMRootCauseList(BaseModel):
+    diagnoses: List[LLMRootCauseItem]
+
+
+class LLMConflictItem(BaseModel):
+    stakeholder_a_name: str
+    stakeholder_b_name: str
+    conflicting_expectations: str
+    organizational_units_involved: List[str] = Field(default_factory=list)
+    current_resolution_mechanisms: str
+    structural_weaknesses: str
+    recommended_governance_mechanism: str
+    severity: Literal["Critical", "High", "Medium", "Low"] = "High"
+    evidence_ids: List[int] = Field(default_factory=list)
+
+
+class LLMConflictList(BaseModel):
+    conflicts: List[LLMConflictItem]
+
+
+class LLMRecommendationItem(BaseModel):
+    stakeholder_slug: str
+    organizational_dimension: DimensionCodeType
+    title: str
+    identified_issue: str
+    suggested_organizational_change: str
+    expected_benefit: str
+    priority: RecommendationPriorityType = "High"
+    implementation_difficulty: Literal["High", "Medium", "Low"] = "Medium"
+    possible_tradeoffs: str
+    evidence_ids: List[int] = Field(default_factory=list)
+
+
+class LLMRecommendationList(BaseModel):
+    recommendations: List[LLMRecommendationItem]
+
+
+class LLMExecutiveSummaryOutput(BaseModel):
+    executive_summary: str
+    targeted_question_response: Optional[str] = None
+    key_strengths: List[str] = Field(default_factory=list)
+    key_structural_gaps: List[str] = Field(default_factory=list)
+    evidence_limitations_summary: str
 

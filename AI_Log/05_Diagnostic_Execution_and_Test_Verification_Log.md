@@ -39,6 +39,8 @@ All 10 mandatory test scenarios from Section 20 of the specification are verifie
 | **11** | Untrusted document prompt-injection attack | `test_prompt_injection_defense_in_uploaded_document` | Redacts adversarial instructions (`[SECURITY REDACTED...]`) and sets `prompt_injection_flag = True`. |
 | **12** | Evaluator manual override & score recalculation | `test_manual_override_and_score_recalculation_with_audit_trail` | Persists `ManualOverride` and `AuditLog` with mandatory justification and recalculates overall scores. |
 | **13** | 14-section report & binary exports (`PDF`, `DOCX`, `CSV`, `XLSX`) | `test_report_generation_and_binary_exports_pdf_docx_csv_xlsx` | Verifies all 14 report sections and round-trip extraction of generated `.pdf`, `.docx`, `.csv`, and `.xlsx` files. |
+| **14** | Groq LLM configuration & executive synthesis endpoint | `test_groq_llm_config_and_ai_synthesis_endpoint` | Verifies Groq LLM provider instantiation, fallback behavior, and structured JSON executive synthesis generation. |
+| **15** | Strict evidence validator & hallucination rejection gate | `test_evidence_validator_provenance_and_hallucination_rejection` | Tests quotation normalization, chunk matching, unlocatable quote rejection, and capping of `COMPANY_CLAIM` at Partial Alignment (3.0). |
 
 ---
 
@@ -47,23 +49,29 @@ All 10 mandatory test scenarios from Section 20 of the specification are verifie
 ```text
 $ ./.venv/bin/python -m pytest -v tests/test_alignment_analyzer.py
 ============================= test session starts ==============================
-platform darwin -- Python 3.13.2, pytest-9.1.0, pluggy-1.6.0
-collected 13 items
+platform darwin -- Python 3.13.2, pytest-9.1.0, pluggy-1.6.0 -- Alignment_Analyzer/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/manikbodamwad/Desktop/Agentic Automation Projects/Alignment_Analyzer
+plugins: cov-7.1.0, asyncio-1.4.0, langsmith-0.8.15, anyio-4.15.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 15 items                                                             
 
-tests/test_alignment_analyzer.py::test_initial_companies_and_priorities PASSED [  7%]
-tests/test_alignment_analyzer.py::test_scenario_1_and_2_documented_policy_and_new_governance_mechanism PASSED [ 15%]
-tests/test_alignment_analyzer.py::test_scenario_3_company_claim_without_independent_verification PASSED [ 23%]
-tests/test_alignment_analyzer.py::test_scenario_4_conflicting_documents_detection PASSED [ 30%]
-tests/test_alignment_analyzer.py::test_scenario_5_insufficient_public_evidence_handling PASSED [ 38%]
-tests/test_alignment_analyzer.py::test_scenario_6_competing_stakeholder_expectations PASSED [ 46%]
-tests/test_alignment_analyzer.py::test_scenario_7_and_8_new_period_and_historical_comparison PASSED [ 53%]
-tests/test_alignment_analyzer.py::test_scenario_9_document_fails_to_process PASSED [ 61%]
-tests/test_alignment_analyzer.py::test_scenario_10_validation_gate_rejects_unsupported_ai_conclusion PASSED [ 69%]
-tests/test_alignment_analyzer.py::test_prompt_injection_defense_in_uploaded_document PASSED [ 76%]
-tests/test_alignment_analyzer.py::test_manual_override_and_score_recalculation_with_audit_trail PASSED [ 84%]
-tests/test_alignment_analyzer.py::test_report_generation_and_binary_exports_pdf_docx_csv_xlsx PASSED [ 92%]
-tests/test_alignment_analyzer.py::test_json_repair_utility PASSED        [100%]
+tests/test_alignment_analyzer.py::test_initial_companies_and_priorities PASSED [  6%]
+tests/test_alignment_analyzer.py::test_scenario_1_and_2_documented_policy_and_new_governance_mechanism PASSED [ 13%]
+tests/test_alignment_analyzer.py::test_scenario_3_company_claim_without_independent_verification PASSED [ 20%]
+tests/test_alignment_analyzer.py::test_scenario_4_conflicting_documents_detection PASSED [ 26%]
+tests/test_alignment_analyzer.py::test_scenario_5_insufficient_public_evidence_handling PASSED [ 33%]
+tests/test_alignment_analyzer.py::test_scenario_6_competing_stakeholder_expectations PASSED [ 40%]
+tests/test_alignment_analyzer.py::test_scenario_7_and_8_new_period_and_historical_comparison PASSED [ 46%]
+tests/test_alignment_analyzer.py::test_scenario_9_document_fails_to_process PASSED [ 53%]
+tests/test_alignment_analyzer.py::test_scenario_10_validation_gate_rejects_unsupported_ai_conclusion PASSED [ 60%]
+tests/test_alignment_analyzer.py::test_prompt_injection_defense_in_uploaded_document PASSED [ 66%]
+tests/test_alignment_analyzer.py::test_manual_override_and_score_recalculation_with_audit_trail PASSED [ 73%]
+tests/test_alignment_analyzer.py::test_report_generation_and_binary_exports_pdf_docx_csv_xlsx PASSED [ 80%]
+tests/test_alignment_analyzer.py::test_json_repair_utility PASSED        [ 86%]
+tests/test_alignment_analyzer.py::test_groq_llm_config_and_ai_synthesis_endpoint PASSED [ 93%]
+tests/test_alignment_analyzer.py::test_evidence_validator_provenance_and_hallucination_rejection PASSED [100%]
 
-============================== 13 passed in 0.85s ==============================
+============================== 15 passed in 6.81s ==============================
 ```
 

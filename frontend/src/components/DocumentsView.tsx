@@ -120,48 +120,51 @@ export function DocumentsView(props: {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       {/* Upload Panel */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+      <div className="glass-card bg-slate-900/90 p-6 rounded-xl border border-slate-800 shadow-xl">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-base font-bold text-slate-900">
-              Document Ingestion & Metadata-Aware Indexing Pipeline
-            </h2>
-            <p className="text-xs text-slate-500">
-              Supported formats: <strong>PDF, DOCX, TXT, CSV, XLSX, PPTX</strong>{" "}
-              (with OCR fallback, heading-preserving chunker, and prompt-injection sanitization)
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+              <h2 className="text-base font-bold text-white">
+                Document Ingestion & Metadata-Aware Indexing Pipeline
+              </h2>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              Supported formats: <strong className="text-cyan-300">PDF, DOCX, TXT, CSV, XLSX, PPTX</strong>{" "}
+              (with heading-preserving chunker and prompt-injection defense)
             </p>
           </div>
           <button
             onClick={onRunAnalysis}
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-sm"
+            className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold shadow-md shadow-violet-600/30 transition shrink-0"
           >
-            Re-Run Diagnostic Analysis on Knowledge Base
+            Re-Run Diagnostic Analysis
           </button>
         </div>
 
         <form onSubmit={handleFileUpload} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Select File(s) (Multiple Allowed)
               </label>
               <input
                 type="file"
                 multiple
                 accept=".pdf,.docx,.txt,.csv,.xlsx,.pptx,.md"
-                className="w-full text-xs text-slate-700 border border-slate-300 rounded-lg p-2 bg-slate-50"
+                className="w-full text-xs text-slate-300 border border-slate-700 rounded-lg p-2 bg-slate-950 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Document Category
               </label>
               <select
                 value={category}
                 onChange={(e: any) => setCategory(e.target.value)}
-                className="w-full text-xs border border-slate-300 rounded-lg p-2.5 bg-white"
+                className="w-full text-xs border border-slate-700 rounded-lg p-2.5 bg-slate-950 text-white focus:outline-none"
               >
                 {DOCUMENT_CATEGORIES.map((c) => (
                   <option key={c} value={c}>
@@ -171,44 +174,44 @@ export function DocumentsView(props: {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Custom Title (Optional for single file)
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Custom Title (Optional)
               </label>
               <input
                 type="text"
                 value={customTitle}
                 onInput={(e: any) => setCustomTitle(e.target.value)}
                 placeholder="e.g., FY2025 Form 10-K Governance Excerpt"
-                className="w-full text-xs border border-slate-300 rounded-lg p-2.5"
+                className="w-full text-xs border border-slate-700 rounded-lg p-2.5 bg-slate-950 text-white placeholder-slate-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Financial Year
               </label>
               <input
                 type="text"
                 value={docFy}
                 onInput={(e: any) => setDocFy(e.target.value)}
-                className="w-full text-xs border border-slate-300 rounded-lg p-2"
+                className="w-full text-xs border border-slate-700 rounded-lg p-2 bg-slate-950 text-white focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Publication Date
               </label>
               <input
                 type="date"
                 value={pubDate}
                 onInput={(e: any) => setPubDate(e.target.value)}
-                className="w-full text-xs border border-slate-300 rounded-lg p-2"
+                className="w-full text-xs border border-slate-700 rounded-lg p-2 bg-slate-950 text-white focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Source URL (Optional)
               </label>
               <input
@@ -216,14 +219,14 @@ export function DocumentsView(props: {
                 value={sourceUrl}
                 onInput={(e: any) => setSourceUrl(e.target.value)}
                 placeholder="https://investor..."
-                className="w-full text-xs border border-slate-300 rounded-lg p-2"
+                className="w-full text-xs border border-slate-700 rounded-lg p-2 bg-slate-950 text-white placeholder-slate-500 focus:outline-none"
               />
             </div>
             <div>
               <button
                 type="submit"
                 disabled={uploading}
-                className="w-full py-2.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition"
+                className="w-full py-2.5 px-4 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-md shadow-cyan-600/30"
               >
                 {uploading ? "Processing Pipeline..." : "Upload & Index Documents"}
               </button>
@@ -232,26 +235,26 @@ export function DocumentsView(props: {
         </form>
 
         {uploadStatus ? (
-          <div className="mt-3 p-3 rounded-lg bg-indigo-50 border border-indigo-200 text-xs text-indigo-900 font-medium">
+          <div className="mt-3 p-3 rounded-lg bg-violet-950/70 border border-violet-700/60 text-xs text-violet-200 font-medium">
             {uploadStatus}
           </div>
         ) : null}
       </div>
 
       {/* Uploaded Documents Repository Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">
+      <div className="glass-card bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl overflow-hidden">
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-white">
             Indexed Assessment Documents ({documents.length})
           </h3>
-          <span className="text-xs text-slate-500">
-            Historical documents are preserved and never overwritten
+          <span className="text-xs text-slate-400">
+            Source documents preserved with immutable coordinates
           </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 text-slate-600 border-b border-slate-200">
+              <tr className="bg-slate-950 text-slate-400 border-b border-slate-800">
                 <th className="p-3 font-bold">ID & Title</th>
                 <th className="p-3 font-bold">Category</th>
                 <th className="p-3 font-bold">FY / Pub Date</th>
@@ -261,10 +264,10 @@ export function DocumentsView(props: {
                 <th className="p-3 font-bold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-800/80">
               {documents.map((doc) => (
-                <tr key={doc.id} className="hover:bg-slate-50">
-                  <td className="p-3 font-semibold text-slate-900">
+                <tr key={doc.id} className="hover:bg-slate-800/40 transition">
+                  <td className="p-3 font-semibold text-slate-100">
                     <div>
                       #{doc.id} — {doc.title}
                     </div>
@@ -273,22 +276,22 @@ export function DocumentsView(props: {
                         href={doc.source_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[11px] text-indigo-600 hover:underline font-normal"
+                        className="text-[11px] text-cyan-400 hover:underline font-normal"
                       >
                         {doc.source_url}
                       </a>
                     ) : null}
                   </td>
-                  <td className="p-3 text-slate-700">{doc.category}</td>
-                  <td className="p-3 text-slate-600">
+                  <td className="p-3 text-slate-300">{doc.category}</td>
+                  <td className="p-3 text-slate-400 font-mono">
                     {doc.financial_year} • {doc.publication_date || "N/A"}
                   </td>
                   <td className="p-3">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 font-bold text-slate-700">
+                    <span className="px-2 py-0.5 rounded bg-slate-800 font-mono font-bold text-slate-300 border border-slate-700">
                       {doc.file_type}
                     </span>
                   </td>
-                  <td className="p-3 font-bold text-indigo-700">
+                  <td className="p-3 font-bold text-violet-300 font-mono">
                     {doc.chunk_count} chunks
                   </td>
                   <td className="p-3">
@@ -296,18 +299,18 @@ export function DocumentsView(props: {
                       <span
                         className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
                           doc.processing_status === "completed"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-rose-50 text-rose-700 border border-rose-200"
+                            ? "bg-emerald-950/60 text-emerald-300 border border-emerald-500/40"
+                            : "bg-rose-950/60 text-rose-300 border border-rose-500/40"
                         }`}
                       >
                         {doc.processing_status}
                       </span>
                       {doc.prompt_injection_flag ? (
-                        <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">
-                          Prompt Injection Neutralized
+                        <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-600 text-[10px] font-bold">
+                          Injection Neutralized
                         </span>
                       ) : (
-                        <span className="text-[10px] text-emerald-700">
+                        <span className="text-[10px] text-emerald-400">
                           ✓ Clean Source
                         </span>
                       )}
@@ -316,13 +319,13 @@ export function DocumentsView(props: {
                   <td className="p-3 text-right space-x-2">
                     <button
                       onClick={() => inspectDoc(doc.id)}
-                      className="px-2.5 py-1 rounded bg-indigo-50 text-indigo-700 font-semibold hover:bg-indigo-100"
+                      className="px-2.5 py-1 rounded bg-violet-950/70 text-violet-300 border border-violet-700/60 font-semibold hover:bg-violet-900/60"
                     >
                       Inspect Chunks
                     </button>
                     <button
                       onClick={() => handleArchiveDoc(doc.id)}
-                      className="px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-700"
+                      className="px-2.5 py-1 rounded bg-slate-800 text-slate-400 hover:bg-rose-950 hover:text-rose-300 border border-slate-700"
                     >
                       Archive
                     </button>
@@ -336,10 +339,10 @@ export function DocumentsView(props: {
 
       {/* Selected Document Chunk Inspector */}
       {selectedDocDetails ? (
-        <div className="bg-slate-900 text-white p-5 rounded-xl shadow-lg space-y-3">
+        <div className="glass-card bg-slate-950 p-5 rounded-xl border border-violet-800/80 shadow-2xl space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-bold text-indigo-300">
+              <h4 className="text-sm font-bold text-violet-300">
                 Metadata-Aware Chunk Inspector: {selectedDocDetails.title}
               </h4>
               <p className="text-xs text-slate-400">
@@ -349,7 +352,7 @@ export function DocumentsView(props: {
             </div>
             <button
               onClick={() => setSelectedDocDetails(null)}
-              className="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs hover:bg-slate-700"
+              className="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 border border-slate-700"
             >
               Close Inspector ✕
             </button>
@@ -358,20 +361,20 @@ export function DocumentsView(props: {
             {(selectedDocDetails.chunks || []).map((ch: any) => (
               <div
                 key={ch.id}
-                className="p-3 rounded-lg bg-slate-800 border border-slate-700 text-xs space-y-1.5"
+                className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs space-y-1.5"
               >
-                <div className="flex items-center justify-between text-indigo-300 font-bold">
+                <div className="flex items-center justify-between text-violet-300 font-bold">
                   <span>
                     Chunk #{ch.chunk_index + 1} • Page {ch.page_number}
                   </span>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-slate-400 font-mono">
                     {ch.token_count} tokens
                   </span>
                 </div>
-                <div className="font-semibold text-amber-300">
+                <div className="font-semibold text-cyan-300">
                   Section: {ch.section_heading}
                 </div>
-                <p className="text-slate-200 leading-relaxed whitespace-pre-wrap">
+                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap font-serif">
                   {ch.content}
                 </p>
               </div>
@@ -381,12 +384,12 @@ export function DocumentsView(props: {
       ) : null}
 
       {/* Vector RAG Search Tester */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+      <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl space-y-4">
         <div>
-          <h3 className="text-sm font-bold text-slate-900">
+          <h3 className="text-sm font-bold text-white">
             Knowledge Base Vector RAG Retrieval & Metadata Filter
           </h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             Query the vector index directly with metadata filtering by category and assessment period
           </p>
         </div>
@@ -396,12 +399,12 @@ export function DocumentsView(props: {
             value={ragQuery}
             onInput={(e: any) => setRagQuery(e.target.value)}
             placeholder="Search organizational mechanisms (e.g., 'dual-class voting', 'teen safety', 'privacy committee')..."
-            className="flex-1 text-xs border border-slate-300 rounded-lg p-2.5"
+            className="flex-1 text-xs border border-slate-700 rounded-lg p-2.5 bg-slate-950 text-white placeholder-slate-500 focus:outline-none"
           />
           <select
             value={ragCategoryFilter}
             onChange={(e: any) => setRagCategoryFilter(e.target.value)}
-            className="text-xs border border-slate-300 rounded-lg p-2.5 bg-white"
+            className="text-xs border border-slate-700 rounded-lg p-2.5 bg-slate-950 text-white focus:outline-none"
           >
             <option value="">All Document Categories</option>
             {DOCUMENT_CATEGORIES.map((c) => (
@@ -413,7 +416,7 @@ export function DocumentsView(props: {
           <button
             type="submit"
             disabled={searchingRag}
-            className="px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-500"
+            className="px-4 py-2.5 rounded-lg bg-violet-600 text-white text-xs font-bold hover:bg-violet-500 shadow-md shadow-violet-600/30"
           >
             {searchingRag ? "Searching..." : "Retrieve Vector Chunks"}
           </button>
@@ -424,20 +427,20 @@ export function DocumentsView(props: {
             {ragResults.map((r) => (
               <div
                 key={r.chunk_id}
-                className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1"
+                className="p-3.5 rounded-lg bg-slate-950/80 border border-slate-800 text-xs space-y-1"
               >
-                <div className="flex items-center justify-between font-bold text-slate-800">
+                <div className="flex items-center justify-between font-bold text-slate-200">
                   <span>
                     Page {r.page_number} — {r.section_heading}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
+                  <span className="px-2 py-0.5 rounded bg-cyan-950/70 text-cyan-300 border border-cyan-700/60 font-mono">
                     Similarity: {(r.similarity_score * 100).toFixed(1)}%
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-500">
+                <div className="text-[11px] text-slate-400">
                   Category: {r.document_category} | FY: {r.financial_year}
                 </div>
-                <p className="text-slate-700 leading-relaxed mt-1">{r.content}</p>
+                <p className="text-slate-300 leading-relaxed mt-1 font-serif">{r.content}</p>
               </div>
             ))}
           </div>
@@ -446,4 +449,3 @@ export function DocumentsView(props: {
     </div>
   );
 }
-

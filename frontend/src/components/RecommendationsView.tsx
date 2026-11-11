@@ -33,45 +33,48 @@ export function RecommendationsView(props: {
   };
 
   const statusStyles: Record<string, string> = {
-    Proposed: "bg-slate-100 text-slate-800 border-slate-300",
-    Accepted: "bg-indigo-100 text-indigo-800 border-indigo-300",
-    Implemented: "bg-emerald-100 text-emerald-800 border-emerald-300",
-    Rejected: "bg-rose-100 text-rose-800 border-rose-300",
+    Proposed: "bg-slate-800 text-slate-300 border-slate-700",
+    Accepted: "bg-violet-950/80 text-violet-300 border-violet-700/60",
+    Implemented: "bg-emerald-950/80 text-emerald-300 border-emerald-700/60",
+    Rejected: "bg-rose-950/80 text-rose-300 border-rose-700/60",
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       {/* Header & Filters */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-slate-900">
-            Actionable Structural & Governance Recommendations ({recommendations.length})
-          </h2>
-          <p className="text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-violet-400 animate-pulse" />
+            <h2 className="text-base font-bold text-white">
+              Actionable Structural & Governance Recommendations ({recommendations.length})
+            </h2>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
             Specific organizational design changes, reporting line reforms, and governance controls with implementation trade-offs.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="font-semibold text-slate-600">Priority:</span>
+          <span className="font-semibold text-slate-400">Priority:</span>
           {["ALL", "Critical", "High", "Medium", "Low"].map((p) => (
             <button
               key={p}
               onClick={() => setPriorityFilter(p)}
-              className={`px-2.5 py-1 rounded-lg font-bold transition ${
+              className={`px-3 py-1 rounded-lg font-bold transition ${
                 priorityFilter === p
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  ? "bg-violet-600 text-white shadow-sm shadow-violet-600/30"
+                  : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
               }`}
             >
               {p}
             </button>
           ))}
-          <span className="font-semibold text-slate-600 ml-2">Status:</span>
+          <span className="font-semibold text-slate-400 ml-2">Status:</span>
           <select
             value={statusFilter}
             onChange={(e: any) => setStatusFilter(e.target.value)}
-            className="border border-slate-300 rounded-lg p-1.5 bg-white font-semibold"
+            className="border border-slate-700 rounded-lg p-1.5 bg-slate-950 text-white font-semibold focus:outline-none"
           >
             <option value="ALL">All Statuses</option>
             <option value="Proposed">Proposed</option>
@@ -87,27 +90,27 @@ export function RecommendationsView(props: {
         {filtered.map((rec) => (
           <div
             key={rec.id}
-            className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4"
+            className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl space-y-4"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-800 pb-3">
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   {priorityBadge(rec.priority)}
-                  <span className="px-2 py-0.5 rounded bg-indigo-50 text-indigo-800 text-xs font-bold uppercase">
+                  <span className="px-2.5 py-0.5 rounded bg-violet-950/70 text-violet-300 text-xs font-mono border border-violet-700/60 uppercase">
                     Dimension: {rec.organizational_dimension}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs">
-                    Difficulty: <strong>{rec.implementation_difficulty}</strong>
+                  <span className="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 text-xs border border-slate-700 font-mono">
+                    Difficulty: <strong className="text-white">{rec.implementation_difficulty}</strong>
                   </span>
                 </div>
-                <h3 className="text-sm font-extrabold text-slate-900 pt-1">
+                <h3 className="text-sm font-extrabold text-white pt-1">
                   {rec.title}
                 </h3>
               </div>
 
               {/* Status Workflow Selector */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs font-semibold text-slate-500">
+                <span className="text-xs font-semibold text-slate-400">
                   Workflow Status:
                 </span>
                 <select
@@ -116,7 +119,7 @@ export function RecommendationsView(props: {
                   onChange={(e: any) =>
                     handleStatusChange(rec.id, e.target.value)
                   }
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border ${
+                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border focus:outline-none ${
                     statusStyles[rec.status] || statusStyles.Proposed
                   }`}
                 >
@@ -129,43 +132,43 @@ export function RecommendationsView(props: {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="p-3.5 rounded-lg bg-rose-50/50 border border-rose-200 space-y-1">
-                <div className="font-bold text-rose-900">
+              <div className="p-3.5 rounded-lg bg-rose-950/30 border border-rose-500/30 space-y-1">
+                <div className="font-bold text-rose-300">
                   Identified Structural Issue
                 </div>
-                <p className="text-rose-900 leading-relaxed">
+                <p className="text-rose-200 leading-relaxed">
                   {rec.identified_issue}
                 </p>
               </div>
-              <div className="p-3.5 rounded-lg bg-indigo-50/60 border border-indigo-200 space-y-1">
-                <div className="font-bold text-indigo-950">
-                  Required Organizational / Governance Change
+              <div className="p-3.5 rounded-lg bg-violet-950/30 border border-violet-500/30 space-y-1">
+                <div className="font-bold text-violet-300">
+                  Required Governance Change
                 </div>
-                <p className="text-indigo-950 leading-relaxed font-medium">
+                <p className="text-violet-200 leading-relaxed font-medium">
                   {rec.suggested_organizational_change}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="p-3 rounded-lg bg-emerald-50/60 border border-emerald-200">
-                <span className="font-bold text-emerald-900">
+              <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/30">
+                <span className="font-bold text-emerald-300">
                   Expected Benefit:{" "}
                 </span>
-                <span className="text-emerald-800">{rec.expected_benefit}</span>
+                <span className="text-emerald-200">{rec.expected_benefit}</span>
               </div>
-              <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
-                <span className="font-bold text-amber-900">
+              <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/30">
+                <span className="font-bold text-amber-300">
                   Implementation Trade-offs:{" "}
                 </span>
-                <span className="text-amber-800">{rec.possible_tradeoffs}</span>
+                <span className="text-amber-200">{rec.possible_tradeoffs}</span>
               </div>
             </div>
 
             {/* Linked Evidence Citations */}
             {(rec.evidence_ids || []).length > 0 ? (
-              <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2 text-[11px] text-slate-600">
-                <span className="font-bold text-slate-700">
+              <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
+                <span className="font-bold text-slate-300">
                   Traceable Evidence Citations:
                 </span>
                 {rec.evidence_ids
@@ -174,7 +177,7 @@ export function RecommendationsView(props: {
                   .map((ev) => (
                     <span
                       key={ev!.id}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-slate-100 border border-slate-200"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300"
                     >
                       {evidenceClassBadge(ev!.evidence_classification)}
                       <span>
@@ -190,4 +193,3 @@ export function RecommendationsView(props: {
     </div>
   );
 }
-

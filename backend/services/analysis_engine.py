@@ -3,6 +3,8 @@
 """
 
 from datetime import datetime, timezone
+import json
+import logging
 import re
 from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
@@ -21,11 +23,30 @@ from backend.models import (
     StakeholderConflict,
     StakeholderExpectation,
 )
+from backend.schemas import (
+    LLMAlignmentList,
+    LLMConflictList,
+    LLMEvidenceList,
+    LLMExpectationList,
+    LLMMappingList,
+    LLMRecommendationList,
+    LLMRootCauseList,
+    LLMStakeholderList,
+    LLMStructureOutput,
+)
+from backend.services.evidence_validator import (
+    enforce_company_claim_cap,
+    find_matching_chunk_for_quotation,
+    verify_quotation_in_chunk,
+)
+from backend.services.llm_provider import call_external_llm_json
 from backend.services.scoring_engine import (
     map_classification_to_score,
     recalculate_assessment_scores,
 )
 from backend.services.vector_store import search_relevant_chunks
+
+logger = logging.getLogger(__name__)
 
 
 DIMENSION_DEFINITIONS: List[Dict[str, Any]] = [
@@ -540,6 +561,124 @@ def _sentiment_polarity(text: str) -> Tuple[int, int]:
     return pos, neg
 
 
+def _extract_evidence_via_llm(
+    db: Session,
+    period: AssessmentPeriod,
+    chunks: List[DocumentChunk],
+    expectations: List[StakeholderExpectation],
+    sh_by_id: Dict[int, Stakeholder],
+    doc_map: Dict[int, Document],
+) -> List[EvidenceRecord]:
+    """
+    Extract structured evidence records from document chunks using Groq LLM (Prompt: evidence_classification).
+    Enforces Section 6 & 17 verification:
+    - Every quotation is verified against source chunks in the database.
+    - If quotation is unverified or hallucinated, it is discarded.
+    - Evidence classification (FACT, COMPANY_CLAIM, etc.) is preserved with provenance.
+    """
+    from backend.config import settings
+
+    if not settings.groq_api_key and settings.llm_provider.lower() != "groq":
+        return []
+
+    # Free-tier token economy: Select top relevant passages
+    passages = []
+    for c in chunks[:10]:
+        doc = doc_map.get(c.document_id)
+        doc_title = doc.title if doc else "Document"
+        passages.append({
+            "chunk_id": c.id,
+            "document_name": doc_title,
+            "page_number": c.page_number,
+            "section_heading": c.section_heading,
+            "content": c.content[:500],
+        })
+
+    prompt_payload = json.dumps({
+        "assessment_period_id": period.id,
+        "company_name": period.company.name if period.company else "Company",
+        "passages": passages,
+        "expectations": [
+            {
+                "id": exp.id,
+                "stakeholder_slug": sh_by_id[exp.stakeholder_id].slug if exp.stakeholder_id in sh_by_id else "general",
+                "title": exp.title,
+                "dimensions": exp.mapped_dimension_codes,
+            }
+            for exp in expectations[:8]
+        ],
+    })
+
+    try:
+        res = call_external_llm_json("evidence_classification", prompt_payload, LLMEvidenceList)
+        if not res or "evidence_records" not in res:
+            return []
+
+        saved: List[EvidenceRecord] = []
+        slug_to_sh = {s.slug: s for s in sh_by_id.values()}
+
+        for item in res["evidence_records"]:
+            quotation = (item.get("exact_quotation") or item.get("extracted_statement") or "").strip()
+            if not quotation:
+                continue
+
+            # Provenance Verification Gate
+            match_res = find_matching_chunk_for_quotation(
+                db, period.id, quotation, preferred_doc_name=item.get("document_name")
+            )
+            if not match_res:
+                logger.debug(f"LLM quotation rejected: '{quotation[:60]}...' not found in chunks.")
+                continue
+
+            matched_chunk, matched_doc = match_res
+            ev_class = item.get("evidence_classification", "COMPANY_CLAIM")
+            sh = slug_to_sh.get(item.get("stakeholder_slug", ""))
+
+            # Quality scoring based on classification
+            reliability = 0.92 if ev_class == "FACT" else (0.88 if ev_class == "THIRD_PARTY_CLAIM" else 0.68)
+            independence = 0.85 if ev_class == "FACT" else (0.95 if ev_class == "THIRD_PARTY_CLAIM" else 0.35)
+            quality_score = round((0.4 * reliability) + (0.4 * independence) + 0.2, 2)
+
+            ev = EvidenceRecord(
+                company_id=period.company_id,
+                assessment_period_id=period.id,
+                document_id=matched_doc.id,
+                chunk_id=matched_chunk.id,
+                stakeholder_id=sh.id if sh else None,
+                organizational_dimension=item.get("organizational_dimension", "governance"),
+                extracted_statement=item.get("extracted_statement", quotation),
+                exact_quotation=quotation,
+                document_name=matched_doc.title,
+                page_number=matched_chunk.page_number,
+                section_heading=matched_chunk.section_heading,
+                source_url=matched_chunk.source_url,
+                publication_date=matched_chunk.publication_date,
+                financial_year=matched_chunk.financial_year,
+                evidence_classification=ev_class,
+                confidence_level=item.get("confidence_level", "Medium"),
+                quality_score=quality_score,
+                quality_breakdown={
+                    "source_reliability": reliability,
+                    "source_independence": independence,
+                    "recency": 0.90,
+                    "specificity": 0.85,
+                    "relevance": 0.85,
+                },
+                is_contradictory=item.get("is_contradictory", False),
+            )
+            db.add(ev)
+            saved.append(ev)
+
+        if saved:
+            db.commit()
+            for s in saved:
+                db.refresh(s)
+        return saved
+    except Exception as exc:
+        logger.warning(f"LLM evidence extraction failed or skipped: {exc}")
+        return []
+
+
 def run_full_diagnostic_analysis(
     db: Session, assessment_period_id: int
 ) -> Dict[str, Any]:
@@ -663,7 +802,18 @@ def run_full_diagnostic_analysis(
 
     created_evidence: List[EvidenceRecord] = []
 
+    # First attempt LLM evidence extraction across top retrieved passages
+    llm_extracted_evidence = _extract_evidence_via_llm(
+        db, period, chunks, expectations, sh_by_id, doc_map
+    )
+    if llm_extracted_evidence:
+        created_evidence.extend(llm_extracted_evidence)
+
+    # Supplement with deterministic extraction for any expectations not covered
+    covered_exp_ids = {e.expectation_id for e in created_evidence if e.expectation_id}
     for exp in expectations:
+        if exp.id in covered_exp_ids:
+            continue
         sh = sh_by_id.get(exp.stakeholder_id)
         if not sh:
             continue
@@ -676,7 +826,6 @@ def run_full_diagnostic_analysis(
             top_k=4,
         )
 
-        # Filter to chunks with meaningful relevance and keyword overlap
         sh_keywords = STAKEHOLDER_KEYWORDS.get(sh.slug, [])
         exp_words = [
             w.lower()
@@ -700,7 +849,6 @@ def run_full_diagnostic_analysis(
             doc_title = doc.title if doc else "Uploaded Document"
             doc_cat = doc.category if doc else "General Disclosure"
 
-            # Extract the best matching sentence/passage as verbatim quotation
             sentences = [
                 s.strip()
                 for s in re.split(r"(?<=[.!?])\s+|\n+", chunk.content)
@@ -714,8 +862,12 @@ def run_full_diagnostic_analysis(
                 key=lambda s: sum(1 for w in (sh_keywords + exp_words) if w in s.lower()),
             )
 
+            # Verify quotation in chunk
+            is_valid, _, exact_sub = verify_quotation_in_chunk(best_sent, chunk.content)
+            final_quotation = exact_sub if is_valid else best_sent
+
             ev_class, conf, q_score, q_breakdown = classify_sentence_evidence_type(
-                best_sent, doc_cat, doc_title
+                final_quotation, doc_cat, doc_title
             )
             primary_dim = (
                 exp.mapped_dimension_codes[0]
@@ -731,8 +883,8 @@ def run_full_diagnostic_analysis(
                 stakeholder_id=sh.id,
                 expectation_id=exp.id,
                 organizational_dimension=primary_dim,
-                extracted_statement=f"[{sh.name} — {exp.title}] {best_sent[:260]}",
-                exact_quotation=best_sent,
+                extracted_statement=f"[{sh.name} — {exp.title}] {final_quotation[:260]}",
+                exact_quotation=final_quotation,
                 document_name=doc_title,
                 page_number=chunk.page_number,
                 section_heading=chunk.section_heading,
@@ -747,6 +899,8 @@ def run_full_diagnostic_analysis(
             )
             db.add(ev)
             created_evidence.append(ev)
+            covered_exp_ids.add(exp.id)
+            break
 
     db.flush()
 
@@ -976,6 +1130,63 @@ def validate_and_create_alignment_assessment(
     )
 
 
+def _discover_expectations_via_llm(
+    db: Session,
+    period: AssessmentPeriod,
+    chunks: List[DocumentChunk],
+    sh_by_slug: Dict[str, Stakeholder],
+    company: Optional[Company],
+) -> None:
+    from backend.config import settings
+
+    if not settings.groq_api_key and settings.llm_provider.lower() != "groq":
+        return
+
+    passages = [{"chunk_id": c.id, "heading": c.section_heading, "text": c.content[:400]} for c in chunks[:8]]
+    payload = json.dumps({
+        "company_name": company.name if company else "Company",
+        "passages": passages,
+        "existing_stakeholders": list(sh_by_slug.keys()),
+    })
+
+    try:
+        res = call_external_llm_json("stakeholder_expectation_extraction", payload, LLMExpectationList)
+        if not res or "expectations" not in res:
+            return
+
+        existing_titles = {
+            e.title.lower()
+            for e in db.query(StakeholderExpectation)
+            .filter(StakeholderExpectation.assessment_period_id == period.id)
+            .all()
+        }
+
+        for item in res["expectations"]:
+            t = item.get("title", "").strip()
+            if not t or t.lower() in existing_titles:
+                continue
+            slug = item.get("stakeholder_slug", "").lower()
+            sh = sh_by_slug.get(slug)
+            if not sh:
+                continue
+
+            exp = StakeholderExpectation(
+                stakeholder_id=sh.id,
+                assessment_period_id=period.id,
+                title=t,
+                description=item.get("description", t),
+                requirement_weight=1.3,
+                priority_category=f"Discovered ({company.name if company else 'AI'} Priority)",
+                is_discovered_from_docs=True,
+                mapped_dimension_codes=item.get("mapped_dimension_codes") or ["governance"],
+            )
+            db.add(exp)
+            existing_titles.add(t.lower())
+        db.flush()
+    except Exception as exc:
+        logger.debug(f"LLM expectation discovery skipped: {exc}")
+
+
 def _discover_expectations_from_chunks(
     db: Session,
     period: AssessmentPeriod,
@@ -984,6 +1195,8 @@ def _discover_expectations_from_chunks(
     company: Optional[Company],
 ) -> None:
     """Discover company-specific stakeholder expectations directly from uploaded documents."""
+    _discover_expectations_via_llm(db, period, chunks, sh_by_slug, company)
+
     combined_text = " ".join(c.content.lower() for c in chunks)
     existing_titles = {
         e.title.lower()
@@ -1047,6 +1260,54 @@ def _discover_expectations_from_chunks(
     db.flush()
 
 
+def _extract_units_via_llm(
+    db: Session,
+    period: AssessmentPeriod,
+    chunks: List[DocumentChunk],
+    dim_by_code: Dict[str, OrganizationalDimension],
+    seen_units: set,
+) -> None:
+    from backend.config import settings
+
+    if not settings.groq_api_key and settings.llm_provider.lower() != "groq":
+        return
+
+    passages = [{"heading": c.section_heading, "text": c.content[:500]} for c in chunks[:8]]
+    payload = json.dumps({
+        "company_name": period.company.name if period.company else "Company",
+        "passages": passages,
+    })
+
+    try:
+        res = call_external_llm_json("organizational_structure_extraction", payload, LLMStructureOutput)
+        if not res or "organizational_units" not in res:
+            return
+
+        for u in res["organizational_units"]:
+            u_name = u.get("unit_name", "").strip()
+            if not u_name or u_name in seen_units:
+                continue
+            d_code = u.get("dimension_code", "governance")
+            dim_obj = dim_by_code.get(d_code)
+
+            unit = OrganizationalUnit(
+                assessment_period_id=period.id,
+                dimension_id=dim_obj.id if dim_obj else None,
+                name=u_name,
+                unit_type=u.get("unit_type", "Operational Team"),
+                dimension_code=d_code,
+                reporting_line=u.get("reporting_line", "Insufficient Evidence (Reporting line not explicitly disclosed in filing)"),
+                responsibilities=u.get("responsibilities", "Disclosed organizational function"),
+                authority_scope=u.get("authority_scope", "Operational scope defined in filings"),
+                evidence_classification=u.get("evidence_classification", "FACT"),
+            )
+            db.add(unit)
+            seen_units.add(u_name)
+        db.flush()
+    except Exception as exc:
+        logger.debug(f"LLM structure unit extraction skipped: {exc}")
+
+
 def _extract_organizational_structure_and_units(
     db: Session,
     period: AssessmentPeriod,
@@ -1059,6 +1320,9 @@ def _extract_organizational_structure_and_units(
     Evaluate all 7 organizational dimensions and extract explicitly disclosed OrganizationalUnits.
     Never invents reporting lines: uses 'Insufficient Evidence' when reporting lines are not stated.
     """
+    seen_units = set()
+    _extract_units_via_llm(db, period, chunks, dim_by_code, seen_units)
+
     unit_patterns = [
         (
             r"Audit(?:\s*(?:and|&)\s*Risk)?(?:\s+Oversight)?\s+Committee",
@@ -1246,6 +1510,62 @@ def _infer_root_causes(
     return causes
 
 
+def _extract_conflicts_via_llm(
+    db: Session,
+    period: AssessmentPeriod,
+    sh_by_slug: Dict[str, Stakeholder],
+    created_evidence: List[EvidenceRecord],
+) -> bool:
+    from backend.config import settings
+
+    if not settings.groq_api_key and settings.llm_provider.lower() != "groq":
+        return False
+
+    all_ev_ids = [e.id for e in created_evidence]
+    evidence_samples = [
+        {"id": e.id, "statement": e.extracted_statement, "class": e.evidence_classification}
+        for e in created_evidence[:10]
+    ]
+    payload = json.dumps({
+        "company_name": period.company.name if period.company else "Company",
+        "evidence_records": evidence_samples,
+        "stakeholders": list(sh_by_slug.keys()),
+    })
+
+    try:
+        res = call_external_llm_json("stakeholder_conflicts", payload, LLMConflictList)
+        if not res or "conflicts" not in res or not res["conflicts"]:
+            return False
+
+        for c_item in res["conflicts"]:
+            sh_a_name = c_item.get("stakeholder_a_name", "")
+            sh_b_name = c_item.get("stakeholder_b_name", "")
+            sh_a = next((s for s in sh_by_slug.values() if s.name.lower() == sh_a_name.lower() or s.slug in sh_a_name.lower()), None)
+            sh_b = next((s for s in sh_by_slug.values() if s.name.lower() == sh_b_name.lower() or s.slug in sh_b_name.lower()), None)
+
+            linked_evs = c_item.get("evidence_ids") or all_ev_ids[:3]
+            conflict = StakeholderConflict(
+                assessment_period_id=period.id,
+                stakeholder_a_id=sh_a.id if sh_a else None,
+                stakeholder_b_id=sh_b.id if sh_b else None,
+                stakeholder_a_name=sh_a_name or "Stakeholder A",
+                stakeholder_b_name=sh_b_name or "Stakeholder B",
+                conflicting_expectations=c_item.get("conflicting_expectations", "Structural priority tension"),
+                organizational_units_involved=c_item.get("organizational_units_involved", ["Governance Committee"]),
+                current_resolution_mechanisms=c_item.get("current_resolution_mechanisms", "Informal committee reviews"),
+                structural_weaknesses=c_item.get("structural_weaknesses", "Asymmetric decision authority"),
+                recommended_governance_mechanism=c_item.get("recommended_governance_mechanism", "Cross-functional escalation board"),
+                severity=c_item.get("severity", "High"),
+                evidence_ids=linked_evs,
+            )
+            db.add(conflict)
+        db.flush()
+        return True
+    except Exception as exc:
+        logger.debug(f"LLM conflict extraction skipped: {exc}")
+        return False
+
+
 def _generate_stakeholder_conflicts(
     db: Session,
     period: AssessmentPeriod,
@@ -1253,6 +1573,10 @@ def _generate_stakeholder_conflicts(
     created_evidence: List[EvidenceRecord],
 ) -> None:
     """Identify and store evidence-linked Stakeholder Conflicts (Section 9)."""
+    has_llm_conflicts = _extract_conflicts_via_llm(db, period, sh_by_slug, created_evidence)
+    if has_llm_conflicts:
+        return
+
     all_ev_ids = [e.id for e in created_evidence]
 
     conflict_specs = [
@@ -1336,6 +1660,65 @@ def _generate_stakeholder_conflicts(
     db.flush()
 
 
+def _generate_recommendations_via_llm(
+    db: Session,
+    period: AssessmentPeriod,
+    sh_by_id: Dict[int, Stakeholder],
+    assessments: List[AlignmentAssessment],
+) -> bool:
+    from backend.config import settings
+
+    if not settings.groq_api_key and settings.llm_provider.lower() != "groq":
+        return False
+
+    misaligned_items = [
+        {
+            "assessment_id": a.id,
+            "dimension": a.organizational_dimension,
+            "classification": a.classification,
+            "rationale": a.rationale[:200],
+            "evidence_ids": a.evidence_ids,
+        }
+        for a in assessments
+        if a.classification in {"Potential Misalignment", "Partial Alignment"}
+    ][:8]
+    if not misaligned_items:
+        return False
+
+    payload = json.dumps({
+        "company_name": period.company.name if period.company else "Company",
+        "misaligned_assessments": misaligned_items,
+    })
+
+    try:
+        res = call_external_llm_json("recommendations", payload, LLMRecommendationList)
+        if not res or "recommendations" not in res or not res["recommendations"]:
+            return False
+
+        for r in res["recommendations"]:
+            rec = Recommendation(
+                assessment_period_id=period.id,
+                stakeholder_id=r.get("stakeholder_id"),
+                alignment_assessment_id=r.get("alignment_assessment_id"),
+                organizational_dimension=r.get("organizational_dimension", "governance"),
+                title=r.get("title", "Governance Improvement"),
+                identified_issue=r.get("identified_issue", "Identified structural gap"),
+                suggested_organizational_change=r.get("suggested_organizational_change", "Actionable structural reform"),
+                expected_benefit=r.get("expected_benefit", "Enhanced alignment and risk mitigation"),
+                priority=r.get("priority", "High"),
+                implementation_difficulty=r.get("implementation_difficulty", "Moderate"),
+                possible_tradeoffs=r.get("possible_tradeoffs", "Operational friction"),
+                status="Proposed",
+                evidence_ids=r.get("evidence_ids") or [],
+            )
+            db.add(rec)
+        db.flush()
+        return True
+    except Exception as exc:
+        logger.debug(f"LLM recommendation generation skipped: {exc}")
+        return False
+
+
 def _generate_recommendations(
     db: Session,
     period: AssessmentPeriod,
@@ -1350,6 +1733,10 @@ def _generate_recommendations(
         .filter(AlignmentAssessment.assessment_period_id == period.id)
         .all()
     )
+    has_llm_recs = _generate_recommendations_via_llm(db, period, sh_by_id, assessments)
+    if has_llm_recs:
+        return
+
     expectations = {
         e.id: e
         for e in db.query(StakeholderExpectation)

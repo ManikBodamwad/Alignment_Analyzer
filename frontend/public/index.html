@@ -7,17 +7,43 @@
   <style>
     /* Reset & Base Typography */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-app: #060913;
+      --bg-surface-1: #0d1326;
+      --bg-surface-2: #131b35;
+      --accent-violet: #8b5cf6;
+      --accent-cyan: #06b6d4;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
-      background-color: #f1f5f9;
-      color: #0f172a;
+      background-color: #060913;
+      color: #f8fafc;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; border: none; background: none; }
     a { text-decoration: none; color: inherit; }
     table { width: 100%; border-collapse: collapse; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #090d1a; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    .glass-card {
+      background: rgba(13, 19, 38, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-panel {
+      background: rgba(9, 13, 26, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
 
     /* Layout & Flex/Grid Utilities */
     .min-h-screen { min-height: 100vh; }

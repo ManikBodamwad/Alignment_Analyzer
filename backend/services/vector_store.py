@@ -1,13 +1,78 @@
-"""Configurable Embedding Provider and Vector Retrieval Engine (pgvector / FAISS / Pure-Python Cosine)."""
+"""Configurable Embedding Provider and Vector Retrieval Engine (SentenceTransformers / FAISS / Hybrid)."""
 
 import hashlib
+import logging
 import math
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 
 from backend.config import settings
 from backend.models import DocumentChunk
+
+logger = logging.getLogger(__name__)
+
+# Global singleton cache for local SentenceTransformer model
+_LOCAL_MODEL_INSTANCE: Any = None
+_LOCAL_MODEL_LOAD_FAILED = False
+
+
+def get_embedding_engine_status() -> Dict[str, Any]:
+    """Report the active embedding model, backend type, and fallback status."""
+    global _LOCAL_MODEL_INSTANCE, _LOCAL_MODEL_LOAD_FAILED
+    provider = settings.embedding_provider.lower()
+    if provider in ("sentence_transformers", "local", "all-minilm-l6-v2"):
+        if _LOCAL_MODEL_LOAD_FAILED:
+            return {
+                "active_backend": "deterministic_feature_hash_fallback",
+                "model_name": "Semantic Concept + Feature Hashing (Fallback)",
+                "is_fallback": True,
+                "dimension": settings.embedding_dimension,
+                "reason": "sentence_transformers failed to initialize or download model weights",
+            }
+        return {
+            "active_backend": "sentence_transformers",
+            "model_name": settings.embedding_model,
+            "is_fallback": False,
+            "dimension": settings.embedding_dimension,
+            "device": "cpu",
+        }
+    elif provider == "openai" and settings.openai_api_key:
+        return {
+            "active_backend": "openai",
+            "model_name": "text-embedding-3-small",
+            "is_fallback": False,
+            "dimension": settings.embedding_dimension,
+        }
+    return {
+        "active_backend": "deterministic_feature_hash_fallback",
+        "model_name": "Semantic Concept + N-Gram Feature Hashing",
+        "is_fallback": True,
+        "dimension": settings.embedding_dimension,
+    }
+
+
+def _get_sentence_transformer_model():
+    """Lazy-load the SentenceTransformer model once on first use."""
+    global _LOCAL_MODEL_INSTANCE, _LOCAL_MODEL_LOAD_FAILED
+    if _LOCAL_MODEL_INSTANCE is not None:
+        return _LOCAL_MODEL_INSTANCE
+    if _LOCAL_MODEL_LOAD_FAILED:
+        return None
+
+    try:
+        from sentence_transformers import SentenceTransformer  # type: ignore
+
+        logger.info(f"Loading local SentenceTransformer model: {settings.embedding_model}")
+        _LOCAL_MODEL_INSTANCE = SentenceTransformer(settings.embedding_model)
+        return _LOCAL_MODEL_INSTANCE
+    except Exception as exc:
+        logger.warning(
+            f"SentenceTransformer initialization failed ({exc}). "
+            "Falling back to deterministic semantic feature hashing."
+        )
+        _LOCAL_MODEL_LOAD_FAILED = True
+        return None
 
 
 DOMAIN_CONCEPT_CLUSTERS: Dict[str, List[str]] = {
@@ -54,24 +119,8 @@ DOMAIN_CONCEPT_CLUSTERS: Dict[str, List[str]] = {
 }
 
 
-def compute_embedding(text: str, dim: int = 384) -> List[float]:
-    """
-    Generate a 384-dimensional normalized embedding vector.
-    Uses OpenAI API if configured with an API key, or a deterministic
-    Semantic Concept + N-gram Feature Hashing vector representation.
-    """
-    if settings.embedding_provider == "openai" and settings.openai_api_key:
-        try:
-            from openai import OpenAI  # type: ignore
-
-            client = OpenAI(api_key=settings.openai_api_key)
-            resp = client.embeddings.create(
-                input=text[:8000], model="text-embedding-3-small", dimensions=dim
-            )
-            return list(resp.data[0].embedding)
-        except Exception:
-            pass
-
+def _compute_fallback_hashing_embedding(text: str, dim: int = 384) -> List[float]:
+    """Deterministic fallback using semantic concept dimensions + MD5 feature hashing."""
     vec = [0.0] * dim
     lower_text = text.lower()
     tokens = re.findall(r"[a-z0-9]+", lower_text)
@@ -106,6 +155,39 @@ def compute_embedding(text: str, dim: int = 384) -> List[float]:
     if norm > 1e-8:
         vec = [round(x / norm, 6) for x in vec]
     return vec
+
+
+def compute_embedding(text: str, dim: int = 384) -> List[float]:
+    """
+    Generate a normalized embedding vector for the given text.
+    1. First tries sentence-transformers/all-MiniLM-L6-v2 (local, free, 384-d).
+    2. Uses OpenAI if explicitly configured.
+    3. Falls back to deterministic semantic feature hashing if local model is unavailable.
+    """
+    provider = settings.embedding_provider.lower()
+
+    if provider in ("sentence_transformers", "local", "all-minilm-l6-v2", "hybrid_vector"):
+        model = _get_sentence_transformer_model()
+        if model is not None:
+            try:
+                emb = model.encode(text[:4000], convert_to_numpy=True, normalize_embeddings=True)
+                return [round(float(v), 6) for v in emb.tolist()]
+            except Exception as e:
+                logger.warning(f"Local sentence-transformers encode error ({e}), falling back to hashing")
+
+    if provider == "openai" and settings.openai_api_key:
+        try:
+            from openai import OpenAI  # type: ignore
+
+            client = OpenAI(api_key=settings.openai_api_key)
+            resp = client.embeddings.create(
+                input=text[:8000], model="text-embedding-3-small", dimensions=dim
+            )
+            return list(resp.data[0].embedding)
+        except Exception:
+            pass
+
+    return _compute_fallback_hashing_embedding(text, dim)
 
 
 def _dot_product(a: List[float], b: List[float]) -> float:
@@ -167,3 +249,25 @@ def search_relevant_chunks(
 
     scored_results.sort(key=lambda x: x[1], reverse=True)
     return scored_results[:top_k]
+
+
+def build_faiss_index_if_available(chunks: List[DocumentChunk]):
+    """Optionally index chunks using FAISS if available for sub-millisecond retrieval."""
+    try:
+        import faiss  # type: ignore
+        import numpy as np  # type: ignore
+
+        vectors = []
+        for c in chunks:
+            v = c.embedding_json or compute_embedding(c.content)
+            vectors.append(v)
+        if not vectors:
+            return None, []
+        dim = len(vectors[0])
+        index = faiss.IndexFlatIP(dim)
+        data = np.array(vectors, dtype=np.float32)
+        faiss.normalize_L2(data)
+        index.add(data)
+        return index, chunks
+    except Exception:
+        return None, chunks

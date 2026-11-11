@@ -24,5 +24,17 @@ It separates AI usage into two distinct layers for academic evaluation:
 | [`02_Prompt_and_Development_Trajectory.md`](./02_Prompt_and_Development_Trajectory.md) | Chronological log of user prompts, architectural decisions, and iterative refinements across Phases 1–6 and deployment. | Prompt progression & iterative design |
 | [`03_Verification_Debugging_and_Human_Oversight.md`](./03_Verification_Debugging_and_Human_Oversight.md) | Detailed case studies of errors/limitations in initial AI outputs that were caught, diagnosed, and corrected through testing. | Critical evaluation & quality control |
 | [`04_System_Prompts_and_Guardrails_Catalog.md`](./04_System_Prompts_and_Guardrails_Catalog.md) | Complete catalog of the 10 internal AI system prompts, JSON validation schemas, prompt-injection defenses, and scoring rules. | Prompt engineering & epistemic rigor |
-| [`05_Diagnostic_Execution_and_Test_Verification_Log.md`](./05_Diagnostic_Execution_and_Test_Verification_Log.md) | Empirical diagnostic outputs for Meta, Snap, and Pinterest and the 13/13 automated Pytest verification transcript. | Empirical validation & reproducibility |
+| [`05_Diagnostic_Execution_and_Test_Verification_Log.md`](./05_Diagnostic_Execution_and_Test_Verification_Log.md) | Empirical diagnostic outputs for Meta, Snap, and Pinterest and the 15/15 automated Pytest verification transcript. | Empirical validation & reproducibility |
+
+---
+
+## Master Development Upgrade Summary
+
+The platform incorporates the complete Master Development Prompt specifications:
+- **Phase 0 Audit & Architecture Alignment**: Verification of deterministic scoring boundaries, retrieval pipelines, and API integrations.
+- **Phase 1 Hybrid RAG & Embeddings**: Local 384-dimensional dense vectors via `sentence-transformers/all-MiniLM-L6-v2` with deterministic semantic hashing fallback.
+- **Phase 2 Modular AI Diagnostic Pipeline**: End-to-end integration of all 10 diagnostic prompts with Groq `llama-3.3-70b-versatile`, disk-based stage caching (`storage/cache/`), and exponential backoff retry.
+- **Phase 3 Epistemic Evidence Validation Gate**: Verbatim quotation normalization and matching in `evidence_validator.py`, rejection of fabricated quotes, automatic capping of uncorroborated `COMPANY_CLAIM` at Partial Alignment (3.0), and non-punitive `Insufficient Evidence` handling.
+- **Phase 4 Enterprise UI/UX Dark Transformation**: EcoVault-inspired dark SaaS visual theme (`#060913`, `#0d1326`, glowing violet `#8b5cf6` and cyan `#06b6d4`), interactive `EvidenceToInsightFlow.tsx` pipeline diagram, and slide-over evidence inspection drawer.
+
 

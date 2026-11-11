@@ -78,3 +78,41 @@ This guarantees that **zero unsupported AI opinions** can ever enter the alignme
 1. Updated `frontend/build.mjs` to embed `INDEX_HTML` and `BUNDLE_JS` directly into `backend/static_assets.py` as a Python module and mirror them into root `public/`.
 2. Reordered `createDomNode` in `frontend/src/lib/react-lite.ts` so child nodes are appended prior to setting `.value` and added input focus/cursor state preservation across re-renders.
 
+---
+
+## Case Study 5: Preventing Invented Quotations & Page Hallucinations via Provenance Verification Gate
+
+### The Risk
+When testing LLMs on long corporate filings, LLMs frequently paraphrase passages and attribute them with invented quotation marks or fabricate non-existent page numbers and document titles.
+
+### The Engineered Safeguard
+Authored [`backend/services/evidence_validator.py`](../backend/services/evidence_validator.py) providing deterministic two-stage verification:
+1. **`verify_quotation_in_chunk(quotation, chunk_content)`**:
+   - Performs normalized whitespace, punctuation, and case stripping.
+   - Evaluates exact substring matching and token overlap ratio (threshold $\ge 0.70$).
+   - Returns `(is_valid, match_ratio, verified_exact_substring)`.
+2. **`find_matching_chunk_for_quotation(db, period_id, quotation)`**:
+   - Scans the actual database chunks for the assessment period to find the true provenance coordinates (`document_id`, `chunk_id`, `page_number`).
+   - If an LLM attempts to claim a quote from page 99 that doesn't exist, the gate rejects the quotation and falls back to verified deterministic chunk extraction.
+3. Added automated test `test_evidence_validator_provenance_and_hallucination_rejection` in `tests/test_alignment_analyzer.py` proving that valid quotations pass ($\ge 90\%$ overlap) while hallucinated assertions are rejected with `is_valid == False`.
+
+---
+
+## Case Study 6: Catching Regression during Core AI Engine Integration via Automated Pytest
+
+### The Problem
+During Phase 2, `_extract_evidence_via_llm` was initially invoked in `analysis_engine.py` before its function body was defined in that module scope. 
+
+### Detection & Resolution
+Running `./.venv/bin/python -m pytest -v tests/test_alignment_analyzer.py` caught this immediately:
+```text
+FAILED tests/test_alignment_analyzer.py::test_scenario_3_company_claim_without_independent_verification
+E       NameError: name '_extract_evidence_via_llm' is not defined
+```
+The helper function was cleanly defined above `run_full_diagnostic_analysis` with:
+- Groq prompt payload preparation and context window economy ($\le 10$ top chunks).
+- Pydantic schema validation using `LLMEvidenceList`.
+- Automatic quotation provenance verification against database records.
+- Re-running `pytest` confirmed that all **15/15 automated tests passed**.
+
+
