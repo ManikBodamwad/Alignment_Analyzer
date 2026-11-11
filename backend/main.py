@@ -90,13 +90,28 @@ def health_check():
     }
 
 
+NO_CACHE_HEADERS = {
+    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "Expires": "0",
+}
+
+
 @app.get("/static/bundle.js")
 @app.get("/bundle.js")
 def serve_bundle_js():
     bundle_file = BASE_DIR / "frontend" / "public" / "bundle.js"
     if bundle_file.exists():
-        return FileResponse(str(bundle_file), media_type="application/javascript")
-    return Response(content=BUNDLE_JS, media_type="application/javascript")
+        return FileResponse(
+            str(bundle_file),
+            media_type="application/javascript",
+            headers=NO_CACHE_HEADERS,
+        )
+    return Response(
+        content=BUNDLE_JS,
+        media_type="application/javascript",
+        headers=NO_CACHE_HEADERS,
+    )
 
 
 FRONTEND_DIST = BASE_DIR / "frontend" / "public"
@@ -108,5 +123,5 @@ if FRONTEND_DIST.exists():
 def serve_spa_index():
     index_file = BASE_DIR / "frontend" / "public" / "index.html"
     if index_file.exists():
-        return FileResponse(str(index_file))
-    return HTMLResponse(INDEX_HTML)
+        return FileResponse(str(index_file), headers=NO_CACHE_HEADERS)
+    return HTMLResponse(INDEX_HTML, headers=NO_CACHE_HEADERS)

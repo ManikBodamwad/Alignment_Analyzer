@@ -1936,7 +1936,7 @@
     const [companies, setCompanies] = useState([]);
     const [allPeriods, setAllPeriods] = useState([]);
     const [selectedCompanyId, setSelectedCompanyId] = useState(1);
-    const [selectedPeriodId, setSelectedPeriodId] = useState(2);
+    const [selectedPeriodId, setSelectedPeriodId] = useState(15);
     const [summary, setSummary] = useState(null);
     const [documents, setDocuments] = useState([]);
     const [stakeholders, setStakeholders] = useState([]);
@@ -1966,6 +1966,15 @@
       ]);
       setCompanies(comps);
       setAllPeriods(periods);
+      const metaPeriods = periods.filter((p) => p.company_id === 1);
+      if (metaPeriods.length > 0) {
+        const comprehensive = metaPeriods.find((p) => p.title.includes("Official SEC Filings") || p.id === 15);
+        if (comprehensive) {
+          setSelectedPeriodId(comprehensive.id);
+        } else {
+          setSelectedPeriodId(metaPeriods[metaPeriods.length - 1].id);
+        }
+      }
     };
     const loadPeriodData = async (periodId) => {
       if (!periodId) return;
@@ -2050,7 +2059,7 @@
     const currentCompany = companies.find((c) => c.id === selectedCompanyId);
     const currentPeriod = allPeriods.find((p) => p.id === selectedPeriodId);
     const auth = getAuthContext();
-    return /* @__PURE__ */ h("div", { className: "min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden" }, /* @__PURE__ */ h("div", { className: "fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("div", { className: "fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("aside", { className: "w-64 bg-[#0d1322] text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-700/80 backdrop-blur-xl relative z-20 overflow-y-auto" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "p-5 border-b border-slate-800" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("div", { className: "w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30" }, "SA"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-extrabold text-white tracking-wider uppercase" }, "Alignment Analyzer"), /* @__PURE__ */ h("div", { className: "text-[10px] text-indigo-400 font-mono font-medium" }, "Enterprise AI Diagnostic")))), /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800 space-y-3 text-xs bg-slate-900/60" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "1. Target Company"), /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden" }, /* @__PURE__ */ h("div", { className: "fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("div", { className: "fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("aside", { className: "w-64 bg-[#0d1322] text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-700/80 backdrop-blur-xl relative z-20 overflow-y-auto" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "p-5 border-b border-slate-800" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("div", { className: "w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30" }, "SA"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-extrabold text-white tracking-wider uppercase" }, "Alignment Analyzer"), /* @__PURE__ */ h("div", { className: "text-[10px] text-indigo-400 font-mono font-medium flex items-center gap-1.5" }, /* @__PURE__ */ h("span", null, "Enterprise AI Diagnostic"), /* @__PURE__ */ h("span", { className: "px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40" }, "v2.2"))))), /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800 space-y-3 text-xs bg-slate-900/60" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "1. Target Company"), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => setShowNewCompanyModal(true),

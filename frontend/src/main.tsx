@@ -68,7 +68,7 @@ function App() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [allPeriods, setAllPeriods] = useState<AssessmentPeriod[]>([]);
   const [selectedCompanyId, setSelectedCompanyId] = useState<number>(1);
-  const [selectedPeriodId, setSelectedPeriodId] = useState<number>(2); // Default to Meta FY2025
+  const [selectedPeriodId, setSelectedPeriodId] = useState<number>(15); // Default to Meta FY2025 Comprehensive Assessment
 
   const [summary, setSummary] = useState<AssessmentFullSummary | null>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
@@ -102,6 +102,15 @@ function App() {
     ]);
     setCompanies(comps);
     setAllPeriods(periods);
+    const metaPeriods = periods.filter((p) => p.company_id === 1);
+    if (metaPeriods.length > 0) {
+      const comprehensive = metaPeriods.find((p) => p.title.includes("Official SEC Filings") || p.id === 15);
+      if (comprehensive) {
+        setSelectedPeriodId(comprehensive.id);
+      } else {
+        setSelectedPeriodId(metaPeriods[metaPeriods.length - 1].id);
+      }
+    }
   };
 
   const loadPeriodData = async (periodId: number) => {
@@ -216,8 +225,9 @@ function App() {
                 <div className="text-xs font-extrabold text-white tracking-wider uppercase">
                   Alignment Analyzer
                 </div>
-                <div className="text-[10px] text-indigo-400 font-mono font-medium">
-                  Enterprise AI Diagnostic
+                <div className="text-[10px] text-indigo-400 font-mono font-medium flex items-center gap-1.5">
+                  <span>Enterprise AI Diagnostic</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40">v2.2</span>
                 </div>
               </div>
             </div>
