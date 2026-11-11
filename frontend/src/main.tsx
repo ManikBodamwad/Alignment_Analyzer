@@ -9,7 +9,7 @@ import { ReportView } from "./components/ReportView";
 import { SettingsView } from "./components/SettingsView";
 import { StakeholdersView } from "./components/StakeholdersView";
 import { StructureView } from "./components/StructureView";
-import { h, mountApp, useEffect, useState } from "./lib/react-lite";
+import { Fragment, h, mountApp, useEffect, useState } from "./lib/react-lite";
 import {
   AssessmentFullSummary,
   AssessmentPeriod,

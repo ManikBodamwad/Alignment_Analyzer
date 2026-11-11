@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { h, useState } from "../lib/react-lite";
+import { Fragment, h, useState } from "../lib/react-lite";
 import { AssessmentFullSummary, StakeholderProfile } from "../types";
 import { classificationBadge, RadialScoreGauge } from "./badges";
 import { EvidenceToInsightFlow } from "./EvidenceToInsightFlow";
@@ -20,21 +20,34 @@ export function DashboardView(props: {
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
 
-  if (!summary) {
+  if (!summary || !summary.assessment) {
     return (
-      <div className="p-12 text-center text-slate-400 font-mono text-sm">
-        <span className="w-2.5 h-2.5 rounded-full bg-violet-400 animate-pulse inline-block mr-2" />
+      <div className="p-12 text-center text-slate-300 font-mono text-sm">
+        <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse inline-block mr-2" />
         Loading organizational diagnostic intelligence overview...
       </div>
     );
   }
 
-  const { assessment, metrics, dimensions_summary } = summary;
+  const { assessment } = summary;
+  const metrics = summary.metrics || {
+    overall_alignment_score: 0,
+    evidence_coverage_pct: 0,
+    strong_alignments: 0,
+    partial_alignments: 0,
+    potential_misalignments: 0,
+    insufficient_evidence_count: 0,
+    alignment_gaps_identified: 0,
+    conflicts_count: 0,
+    recommendations_count: 0,
+    total_documents: 0,
+  };
+  const dimensions_summary = summary.dimensions_summary || [];
   const totalReq =
-    metrics.strong_alignments +
-    metrics.partial_alignments +
-    metrics.potential_misalignments +
-    metrics.insufficient_evidence_count;
+    (metrics.strong_alignments || 0) +
+    (metrics.partial_alignments || 0) +
+    (metrics.potential_misalignments || 0) +
+    (metrics.insufficient_evidence_count || 0);
 
   const handleRunGroqSynthesis = async () => {
     setIsGeneratingAi(true);

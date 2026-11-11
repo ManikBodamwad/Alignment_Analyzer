@@ -14,6 +14,10 @@ export interface VNode {
 export function Fragment(props: { children?: VNodeChild[] }): any {
   return props.children || [];
 }
+if (typeof window !== "undefined") {
+  (window as any).Fragment = Fragment;
+  (window as any).h = h;
+}
 
 export function h(
   tag: any,
@@ -222,9 +226,26 @@ function performRender(): void {
   effectCursor = 0;
   pendingEffects = [];
 
-  const vnode = rootComponent();
-  rootContainer.innerHTML = "";
-  rootContainer.appendChild(createDomNode(vnode));
+  try {
+    const vnode = rootComponent();
+    rootContainer.innerHTML = "";
+    rootContainer.appendChild(createDomNode(vnode));
+  } catch (renderErr: any) {
+    console.error("UI Render Error:", renderErr);
+    rootContainer.innerHTML = `
+      <div style="min-h-screen; display:flex; align-items:center; justify-content:center; padding:40px; background:#0a0e1a; color:#f8fafc; font-family:sans-serif; text-align:center;">
+        <div style="background:#111827; border:1px solid #374151; border-radius:16px; padding:32px; max-width:540px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
+          <div style="font-size:36px; margin-bottom:12px;">⚡</div>
+          <h2 style="font-size:18px; font-weight:800; margin-bottom:8px; color:#ffffff;">Diagnostic Workspace Recovered</h2>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">${renderErr && renderErr.message ? renderErr.message : "An unexpected rendering event occurred."}</p>
+          <button onclick="window.location.reload()" style="padding:10px 20px; background:#4f46e5; color:#ffffff; font-weight:700; border-radius:8px; cursor:pointer; border:none; font-size:13px;">
+            Reload Workspace
+          </button>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   // Restore focus & cursor position if user was typing in an input/textarea
   if (focusInfo) {

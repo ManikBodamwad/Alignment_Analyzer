@@ -137,6 +137,13 @@
   };
 
   // src/lib/react-lite.ts
+  function Fragment(props) {
+    return props.children || [];
+  }
+  if (typeof window !== "undefined") {
+    window.Fragment = Fragment;
+    window.h = h;
+  }
   function h(tag, props, ...children) {
     const flatChildren = [];
     const flatten = (arr) => {
@@ -292,9 +299,26 @@
     stateCursor = 0;
     effectCursor = 0;
     pendingEffects = [];
-    const vnode = rootComponent();
-    rootContainer.innerHTML = "";
-    rootContainer.appendChild(createDomNode(vnode));
+    try {
+      const vnode = rootComponent();
+      rootContainer.innerHTML = "";
+      rootContainer.appendChild(createDomNode(vnode));
+    } catch (renderErr) {
+      console.error("UI Render Error:", renderErr);
+      rootContainer.innerHTML = `
+      <div style="min-h-screen; display:flex; align-items:center; justify-content:center; padding:40px; background:#0a0e1a; color:#f8fafc; font-family:sans-serif; text-align:center;">
+        <div style="background:#111827; border:1px solid #374151; border-radius:16px; padding:32px; max-width:540px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
+          <div style="font-size:36px; margin-bottom:12px;">\u26A1</div>
+          <h2 style="font-size:18px; font-weight:800; margin-bottom:8px; color:#ffffff;">Diagnostic Workspace Recovered</h2>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">${renderErr && renderErr.message ? renderErr.message : "An unexpected rendering event occurred."}</p>
+          <button onclick="window.location.reload()" style="padding:10px 20px; background:#4f46e5; color:#ffffff; font-weight:700; border-radius:8px; cursor:pointer; border:none; font-size:13px;">
+            Reload Workspace
+          </button>
+        </div>
+      </div>
+    `;
+      return;
+    }
     if (focusInfo) {
       const candidates = rootContainer.querySelectorAll(focusInfo.tag);
       for (let i = 0; i < candidates.length; i++) {
@@ -765,11 +789,24 @@
     const [aiResult, setAiResult] = useState(null);
     const [isGeneratingAi, setIsGeneratingAi] = useState(false);
     const [aiError, setAiError] = useState(null);
-    if (!summary) {
-      return /* @__PURE__ */ h("div", { className: "p-12 text-center text-slate-400 font-mono text-sm" }, /* @__PURE__ */ h("span", { className: "w-2.5 h-2.5 rounded-full bg-violet-400 animate-pulse inline-block mr-2" }), "Loading organizational diagnostic intelligence overview...");
+    if (!summary || !summary.assessment) {
+      return /* @__PURE__ */ h("div", { className: "p-12 text-center text-slate-300 font-mono text-sm" }, /* @__PURE__ */ h("span", { className: "w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse inline-block mr-2" }), "Loading organizational diagnostic intelligence overview...");
     }
-    const { assessment, metrics, dimensions_summary } = summary;
-    const totalReq = metrics.strong_alignments + metrics.partial_alignments + metrics.potential_misalignments + metrics.insufficient_evidence_count;
+    const { assessment } = summary;
+    const metrics = summary.metrics || {
+      overall_alignment_score: 0,
+      evidence_coverage_pct: 0,
+      strong_alignments: 0,
+      partial_alignments: 0,
+      potential_misalignments: 0,
+      insufficient_evidence_count: 0,
+      alignment_gaps_identified: 0,
+      conflicts_count: 0,
+      recommendations_count: 0,
+      total_documents: 0
+    };
+    const dimensions_summary = summary.dimensions_summary || [];
+    const totalReq = (metrics.strong_alignments || 0) + (metrics.partial_alignments || 0) + (metrics.potential_misalignments || 0) + (metrics.insufficient_evidence_count || 0);
     const handleRunGroqSynthesis = async () => {
       setIsGeneratingAi(true);
       setAiError(null);
