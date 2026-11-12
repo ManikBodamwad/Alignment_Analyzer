@@ -214,19 +214,19 @@ function App() {
       <div className="fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" />
 
       {/* Left Enterprise Sidebar */}
-      <aside className="w-64 bg-[#0d1322] text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-700/80 backdrop-blur-xl relative z-20 overflow-y-auto">
+      <aside className="w-64 bg-[#080f1e] text-slate-200 flex flex-col justify-between shrink-0 border-r border-white/10 backdrop-blur-2xl relative z-20 overflow-y-auto shadow-2xl">
         <div>
-          <div className="p-5 border-b border-slate-800">
+          <div className="p-5 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center font-black text-white text-base shadow-lg shadow-emerald-500/30">
                 SA
               </div>
               <div>
-                <div className="text-xs font-extrabold text-white tracking-wider uppercase">
+                <div className="text-xs font-black text-white tracking-wider uppercase">
                   Alignment Analyzer
                 </div>
-                <div className="text-[10px] text-indigo-400 font-mono font-medium flex items-center gap-1.5">
-                  <span>Enterprise AI Diagnostic</span>
+                <div className="text-[10px] text-emerald-400 font-mono font-medium flex items-center gap-1.5 mt-0.5">
+                  <span>Enterprise Intelligence</span>
                   <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40">v2.2</span>
                 </div>
               </div>
@@ -234,13 +234,13 @@ function App() {
           </div>
 
           {/* Company & Period Selector in Sidebar */}
-          <div className="p-4 border-b border-slate-800 space-y-3 text-xs bg-slate-900/60">
+          <div className="p-4 border-b border-white/10 space-y-3 text-xs bg-[#0b1528]/80">
             <div>
               <div className="flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 <span>1. Target Company</span>
                 <button
                   onClick={() => setShowNewCompanyModal(true)}
-                  className="text-indigo-400 hover:text-indigo-300 font-bold"
+                  className="text-emerald-400 hover:text-emerald-300 font-bold"
                 >
                   + Add
                 </button>
@@ -250,7 +250,7 @@ function App() {
                 onChange={(e: any) =>
                   handleSelectCompany(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-indigo-500"
+                className="w-full rounded-xl bg-[#060b14] border border-white/15 p-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
               >
                 {companies.map((c) => (
                   <option key={c.id} value={String(c.id)}>
@@ -275,7 +275,7 @@ function App() {
                 onChange={(e: any) =>
                   setSelectedPeriodId(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
+                className="w-full rounded-xl bg-[#060b14] border border-white/15 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
               >
                 {companyPeriods.map((p) => (
                   <option key={p.id} value={String(p.id)}>
@@ -299,10 +299,10 @@ function App() {
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${
                         active
-                          ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25"
-                          : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                          ? "bg-gradient-to-r from-emerald-600/30 via-teal-600/20 to-transparent border-l-2 border-emerald-400 text-white font-bold shadow-md shadow-emerald-500/10"
+                          : "text-slate-300 hover:bg-white/5 hover:text-white"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
@@ -310,10 +310,10 @@ function App() {
                         <span className="truncate">{item.label}</span>
                       </div>
                       <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0 ml-1.5 ${
+                        className={`text-[10px] px-2 py-0.5 rounded-full font-mono shrink-0 ml-1.5 ${
                           active
-                            ? "bg-indigo-950/80 text-indigo-200 border border-indigo-400/40"
-                            : "bg-slate-900 text-slate-400"
+                            ? "bg-emerald-950 text-emerald-300 border border-emerald-500/40"
+                            : "bg-[#060b14] text-slate-400"
                         }`}
                       >
                         {item.stepNumber}
@@ -327,14 +327,14 @@ function App() {
         </div>
 
         {/* Footer Evaluator Context */}
-        <div className="p-4 border-t border-slate-800 text-[11px] text-slate-300 space-y-1 bg-slate-950/70">
-          <div className="font-bold text-white flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+        <div className="p-4 border-t border-white/10 text-[11px] text-slate-300 space-y-1 bg-[#060b14]/70">
+          <div className="font-bold text-white flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             {auth.name}
           </div>
           <div>
             Role:{" "}
-            <span className="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-bold border border-indigo-700/50">
+            <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-bold border border-emerald-600/40">
               {auth.role}
             </span>
           </div>
@@ -343,41 +343,39 @@ function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
-        {/* Sleek Enterprise Top Application Bar */}
-        <header className="bg-slate-900/90 border-b border-slate-700/80 px-6 py-3.5 backdrop-blur-md sticky top-0 z-30">
+        {/* Sleek Enterprise Top Application Bar (EcoVault Inspired) */}
+        <header className="bg-[#080f1e]/85 border-b border-white/10 px-6 py-3.5 backdrop-blur-2xl sticky top-0 z-30 shadow-lg shadow-black/40">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* Breadcrumb Path */}
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-slate-400 font-medium">Platform</span>
+            {/* Breadcrumb Path & Live Indicator */}
+            <div className="flex items-center gap-3 text-xs">
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-950/70 border border-emerald-500/50 rounded-full text-emerald-300 font-bold shadow-sm shadow-emerald-500/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+                <span className="font-mono text-[11px]">896 Chunks Verified</span>
+              </div>
+              <span className="text-slate-600">|</span>
+              <span className="text-white font-extrabold tracking-tight">{currentCompany ? currentCompany.name : "Company"}</span>
               <span className="text-slate-600">/</span>
-              <span className="text-white font-bold">{currentCompany ? currentCompany.name : "Company"}</span>
-              <span className="text-slate-600">/</span>
-              <span className="text-indigo-400 font-mono font-semibold bg-indigo-950/70 border border-indigo-700/50 px-2 py-0.5 rounded">
+              <span className="text-cyan-300 font-mono font-semibold bg-cyan-950/60 border border-cyan-500/40 px-2.5 py-0.5 rounded-md">
                 {currentPeriod ? currentPeriod.fiscal_year : "FY2025"}
               </span>
-              {currentPeriod && currentPeriod.title.includes("Live SEC") ? (
-                <span className="px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold">
-                  19 SEC Filings
-                </span>
-              ) : null}
             </div>
 
             {/* Quick Company Switcher Tabs */}
-            <div className="flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-1.5 bg-[#060b14]/90 p-1.5 rounded-xl border border-white/10 shadow-inner">
               {companies.map((c) => {
                 const isSel = c.id === selectedCompanyId;
                 return (
                   <button
                     key={c.id}
                     onClick={() => handleSelectCompany(c.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
                       isSel
-                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                        ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     <span>{c.ticker || c.name.slice(0, 4)}</span>
-                    <span className={`text-[10px] font-normal ${isSel ? "text-indigo-200" : "text-slate-400"}`}>
+                    <span className={`text-[10px] font-normal ${isSel ? "text-emerald-100" : "text-slate-400"}`}>
                       {c.name.split(" ")[0]}
                     </span>
                   </button>
@@ -390,7 +388,7 @@ function App() {
               <button
                 onClick={handleRunAnalysis}
                 disabled={isAnalyzing}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition-all card-hover"
+                className="btn-shimmer px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-white text-xs font-black shadow-lg shadow-emerald-500/30 flex items-center gap-2 transition-all card-hover"
               >
                 {isAnalyzing ? (
                   <>
@@ -406,7 +404,7 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveTab("report")}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition card-hover"
+                className="px-4 py-2.5 rounded-xl bg-[#0b1528] hover:bg-[#101d36] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition card-hover"
               >
                 <span>📄</span>
                 <span>Export Report</span>

@@ -64,25 +64,27 @@ export function DashboardView(props: {
 
   return (
     <div className="space-y-6">
-      {/* Top Executive Header Card */}
-      <div className="glass-card rounded-2xl p-6 text-white border border-slate-700/80 bg-[#111827] shadow-2xl relative overflow-hidden card-hover">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Top Executive Header Card (EcoVault Inspired) */}
+      <div className="glass-card rounded-2xl p-6 text-white border border-white/10 bg-gradient-to-br from-[#0c162c] via-[#081120] to-[#060b14] shadow-2xl relative overflow-hidden card-hover">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
-              <span className="flex items-center gap-1.5 bg-indigo-950/80 border border-indigo-700/50 px-2.5 py-1 rounded-md">
+            <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+              <span className="flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1 rounded-full shadow-sm shadow-emerald-500/20">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 Organizational Diagnostic Intelligence
               </span>
               <span>•</span>
               <span className="text-cyan-300 font-bold">{assessment.fiscal_year}</span>
               {assessment.company_ticker ? (
-                <span className="px-2 py-0.5 bg-slate-900 border border-slate-700 rounded text-cyan-300 font-mono font-bold">
+                <span className="px-2.5 py-0.5 bg-[#060b14] border border-white/15 rounded-md text-cyan-300 font-mono font-bold">
                   {assessment.company_ticker}
                 </span>
               ) : null}
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white mt-1">
+            <h1 className="text-2xl font-black tracking-tight text-white mt-1.5">
               {assessment.company_name} — {assessment.title}
             </h1>
             <p className="text-slate-300 text-xs mt-1.5 flex items-center gap-3">
@@ -97,23 +99,23 @@ export function DashboardView(props: {
               <span>•</span>
               <span>
                 Status:{" "}
-                <span className="uppercase font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-600/40">
+                <span className="uppercase font-bold text-emerald-400 px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40">
                   {assessment.status}
                 </span>
               </span>
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigate("documents")}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-bold transition card-hover"
+              className="px-4 py-2.5 rounded-xl bg-[#0e1a32] hover:bg-[#142344] text-white border border-white/15 text-xs font-bold transition card-hover shadow-lg"
             >
               📁 Manage Filings ({metrics.documents_processed})
             </button>
             <button
               onClick={onRunAnalysis}
               disabled={isAnalyzing}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition card-hover flex items-center gap-2"
+              className="btn-shimmer px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-white text-xs font-black shadow-lg shadow-emerald-500/30 transition card-hover flex items-center gap-2"
             >
               {isAnalyzing ? (
                 <>
@@ -131,15 +133,15 @@ export function DashboardView(props: {
         </div>
       </div>
 
-      {/* 5-Step Clear Diagnostic Workflow Journey */}
-      <div className="glass-card bg-[#111827] rounded-2xl p-5 border border-slate-700/80 shadow-xl">
+      {/* 5-Step Clear Diagnostic Workflow Journey (EcoVault Inspired) */}
+      <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] rounded-2xl p-5 border border-white/10 shadow-2xl">
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
               Diagnostic Workflow (Click Any Step to Inspect)
             </span>
           </div>
-          <span className="text-[11px] text-indigo-400 font-mono font-semibold">
+          <span className="text-[11px] text-emerald-400 font-mono font-semibold">
             5-Stage Diagnostic Pipeline
           </span>
         </div>
@@ -148,13 +150,13 @@ export function DashboardView(props: {
           {/* Step 1 */}
           <div 
             onClick={() => onNavigate("documents")}
-            className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
           >
             <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
               <span>STEP 01</span>
               <span className="text-emerald-400 font-semibold">✓ Ingested</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-indigo-300 transition">
+            <div className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
               Research Library
             </div>
             <div className="text-xs text-slate-300 mt-1">
@@ -165,13 +167,13 @@ export function DashboardView(props: {
           {/* Step 2 */}
           <div 
             onClick={() => onNavigate("stakeholders")}
-            className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
           >
             <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
               <span>STEP 02</span>
               <span className="text-emerald-400 font-semibold">✓ Mapped</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-indigo-300 transition">
+            <div className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
               Stakeholders
             </div>
             <div className="text-xs text-slate-300 mt-1">
@@ -182,13 +184,13 @@ export function DashboardView(props: {
           {/* Step 3 */}
           <div 
             onClick={() => onNavigate("structure")}
-            className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
           >
             <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
               <span>STEP 03</span>
               <span className="text-emerald-400 font-semibold">✓ Extracted</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-indigo-300 transition">
+            <div className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
               Org Structure
             </div>
             <div className="text-xs text-slate-300 mt-1">
@@ -199,11 +201,11 @@ export function DashboardView(props: {
           {/* Step 4 */}
           <div 
             onClick={() => onNavigate("matrix")}
-            className="p-3.5 rounded-xl bg-gradient-to-br from-indigo-950/70 to-slate-900 border border-indigo-500/50 hover:border-indigo-400 cursor-pointer card-hover transition group"
+            className="p-4 rounded-xl bg-gradient-to-br from-emerald-950/40 via-[#0a182e] to-[#070e1c] border border-emerald-500/40 hover:border-emerald-400 cursor-pointer card-hover transition group shadow-lg shadow-emerald-950/20"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-indigo-300 mb-1">
+            <div className="flex items-center justify-between text-[11px] font-bold text-emerald-300 mb-1">
               <span>STEP 04</span>
-              <span className="text-indigo-300 font-bold">{assessment.overall_alignment_score}% Score</span>
+              <span className="text-emerald-400 font-black">{assessment.overall_alignment_score}% Score</span>
             </div>
             <div className="text-sm font-extrabold text-white group-hover:text-cyan-300 transition">
               Alignment Matrix
@@ -216,13 +218,13 @@ export function DashboardView(props: {
           {/* Step 5 */}
           <div 
             onClick={() => onNavigate("recommendations")}
-            className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-amber-500/60 cursor-pointer card-hover transition group shadow-md"
           >
             <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
               <span>STEP 05</span>
               <span className="text-amber-400 font-bold">{metrics.recommendations_count} Actions</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-indigo-300 transition">
+            <div className="text-sm font-bold text-white group-hover:text-amber-300 transition">
               Action Plan
             </div>
             <div className="text-xs text-slate-300 mt-1">
@@ -251,74 +253,76 @@ export function DashboardView(props: {
           colorHex="#06b6d4"
         />
 
-        <div className="glass-card bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl flex flex-col justify-between">
+        <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl flex flex-col justify-between card-hover">
           <div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Knowledge Base & Evidence
             </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-white">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl font-black text-white">
                 {metrics.documents_processed}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-300 font-medium">
                 documents ({metrics.evidence_records_count} citations)
               </span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-400">
+          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+            <span className="text-slate-300">
               Assessed:{" "}
-              <strong className="text-slate-200">
+              <strong className="text-white">
                 {metrics.stakeholders_assessed} / {metrics.total_stakeholders}
               </strong>
             </span>
             <button
               onClick={() => onNavigate("evidence")}
-              className="text-cyan-400 font-semibold hover:underline"
+              className="text-cyan-400 font-bold hover:text-cyan-300 flex items-center gap-1"
             >
-              Inspect Citations →
+              <span>Inspect Citations</span>
+              <span>→</span>
             </button>
           </div>
         </div>
 
-        <div className="glass-card bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl flex flex-col justify-between">
+        <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl flex flex-col justify-between card-hover">
           <div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Alignment Gaps & Diagnostics
             </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-rose-400">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl font-black text-rose-400">
                 {metrics.alignment_gaps_identified}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-300 font-medium">
                 gaps ({metrics.potential_misalignments} misaligned,{" "}
                 {metrics.partial_alignments} partial)
               </span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-400">
+          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+            <span className="text-slate-300">
               Remediations:{" "}
-              <strong className="text-slate-200">{metrics.recommendations_count}</strong>
+              <strong className="text-white">{metrics.recommendations_count}</strong>
             </span>
             <button
               onClick={() => onNavigate("recommendations")}
-              className="text-violet-400 font-semibold hover:underline"
+              className="text-emerald-400 font-bold hover:text-emerald-300 flex items-center gap-1"
             >
-              View Actions →
+              <span>View Actions</span>
+              <span>→</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Distribution Breakdown Bar */}
-      <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl text-white">
+      {/* Distribution Breakdown Bar (EcoVault Inspired) */}
+      <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-6 rounded-2xl border border-white/10 shadow-2xl text-white">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
           <div>
-            <h3 className="text-sm font-bold text-white">
+            <h3 className="text-sm font-black text-white">
               Requirement Alignment Distribution ({totalReq} Evaluated Requirements)
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-300 mt-0.5">
               Click any cell in the Alignment Matrix to inspect exact quotations, root causes, and score math
             </p>
           </div>

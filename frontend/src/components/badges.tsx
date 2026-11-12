@@ -87,14 +87,24 @@ export function RadialScoreGauge(props: {
   const dashOffset = circumference - (pct / 100) * circumference;
 
   return (
-    <div className="flex items-center gap-4 bg-[#111827] p-5 rounded-2xl border border-slate-700/80 shadow-xl relative overflow-hidden card-hover">
+    <div className="flex items-center gap-4 bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden card-hover group">
+      {/* Ambient background glow */}
+      <div 
+        className="absolute -top-10 -left-10 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-20"
+        style={{ backgroundColor: props.colorHex }}
+      />
+      
       <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
-        <svg className="w-24 h-24 -rotate-90" viewBox="0 0 120 120">
+        <svg 
+          className="w-24 h-24 -rotate-90" 
+          viewBox="0 0 120 120"
+          style={{ filter: `drop-shadow(0 0 8px ${props.colorHex}66)` }}
+        >
           <circle
             cx="60"
             cy="60"
             r={radius}
-            stroke="#1e293b"
+            stroke="#162238"
             stroke-width="10"
             fill="none"
           />
@@ -112,14 +122,21 @@ export function RadialScoreGauge(props: {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-black text-white tracking-tight">
+          <span 
+            className="text-xl font-black tracking-tight"
+            style={{ color: props.colorHex }}
+          >
             {props.value !== null && props.value !== undefined ? `${props.value}%` : "N/A"}
           </span>
         </div>
       </div>
-      <div>
-        <div className="text-sm font-extrabold text-white tracking-tight">{props.label}</div>
-        <div className="text-xs text-slate-300 mt-1 leading-relaxed font-normal">{props.sublabel}</div>
+      <div className="relative z-10">
+        <div className="text-sm font-extrabold text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+          {props.label}
+        </div>
+        <div className="text-xs text-slate-300 mt-1 leading-relaxed font-normal">
+          {props.sublabel}
+        </div>
       </div>
     </div>
   );

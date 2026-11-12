@@ -421,31 +421,53 @@
     const radius = 46;
     const circumference = 2 * Math.PI * radius;
     const dashOffset = circumference - pct / 100 * circumference;
-    return /* @__PURE__ */ h("div", { className: "flex items-center gap-4 bg-[#111827] p-5 rounded-2xl border border-slate-700/80 shadow-xl relative overflow-hidden card-hover" }, /* @__PURE__ */ h("div", { className: "relative w-24 h-24 flex items-center justify-center shrink-0" }, /* @__PURE__ */ h("svg", { className: "w-24 h-24 -rotate-90", viewBox: "0 0 120 120" }, /* @__PURE__ */ h(
-      "circle",
+    return /* @__PURE__ */ h("div", { className: "flex items-center gap-4 bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden card-hover group" }, /* @__PURE__ */ h(
+      "div",
       {
-        cx: "60",
-        cy: "60",
-        r: radius,
-        stroke: "#1e293b",
-        "stroke-width": "10",
-        fill: "none"
+        className: "absolute -top-10 -left-10 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-20",
+        style: { backgroundColor: props.colorHex }
       }
-    ), /* @__PURE__ */ h(
-      "circle",
+    ), /* @__PURE__ */ h("div", { className: "relative w-24 h-24 flex items-center justify-center shrink-0" }, /* @__PURE__ */ h(
+      "svg",
       {
-        cx: "60",
-        cy: "60",
-        r: radius,
-        stroke: props.colorHex,
-        "stroke-width": "10",
-        "stroke-dasharray": String(circumference),
-        "stroke-dashoffset": String(dashOffset),
-        "stroke-linecap": "round",
-        fill: "none",
-        className: "transition-all duration-1000 ease-out"
-      }
-    )), /* @__PURE__ */ h("div", { className: "absolute inset-0 flex flex-col items-center justify-center" }, /* @__PURE__ */ h("span", { className: "text-xl font-black text-white tracking-tight" }, props.value !== null && props.value !== void 0 ? `${props.value}%` : "N/A"))), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-sm font-extrabold text-white tracking-tight" }, props.label), /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1 leading-relaxed font-normal" }, props.sublabel)));
+        className: "w-24 h-24 -rotate-90",
+        viewBox: "0 0 120 120",
+        style: { filter: `drop-shadow(0 0 8px ${props.colorHex}66)` }
+      },
+      /* @__PURE__ */ h(
+        "circle",
+        {
+          cx: "60",
+          cy: "60",
+          r: radius,
+          stroke: "#162238",
+          "stroke-width": "10",
+          fill: "none"
+        }
+      ),
+      /* @__PURE__ */ h(
+        "circle",
+        {
+          cx: "60",
+          cy: "60",
+          r: radius,
+          stroke: props.colorHex,
+          "stroke-width": "10",
+          "stroke-dasharray": String(circumference),
+          "stroke-dashoffset": String(dashOffset),
+          "stroke-linecap": "round",
+          fill: "none",
+          className: "transition-all duration-1000 ease-out"
+        }
+      )
+    ), /* @__PURE__ */ h("div", { className: "absolute inset-0 flex flex-col items-center justify-center" }, /* @__PURE__ */ h(
+      "span",
+      {
+        className: "text-xl font-black tracking-tight",
+        style: { color: props.colorHex }
+      },
+      props.value !== null && props.value !== void 0 ? `${props.value}%` : "N/A"
+    ))), /* @__PURE__ */ h("div", { className: "relative z-10" }, /* @__PURE__ */ h("div", { className: "text-sm font-extrabold text-white tracking-tight group-hover:text-emerald-300 transition-colors" }, props.label), /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1 leading-relaxed font-normal" }, props.sublabel)));
   }
 
   // src/components/ComparisonView.tsx
@@ -819,11 +841,11 @@
         setIsGeneratingAi(false);
       }
     };
-    return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "glass-card rounded-2xl p-6 text-white border border-slate-700/80 bg-[#111827] shadow-2xl relative overflow-hidden card-hover" }, /* @__PURE__ */ h("div", { className: "absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ h("div", { className: "flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1" }, /* @__PURE__ */ h("span", { className: "flex items-center gap-1.5 bg-indigo-950/80 border border-indigo-700/50 px-2.5 py-1 rounded-md" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }), "Organizational Diagnostic Intelligence"), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", { className: "text-cyan-300 font-bold" }, assessment.fiscal_year), assessment.company_ticker ? /* @__PURE__ */ h("span", { className: "px-2 py-0.5 bg-slate-900 border border-slate-700 rounded text-cyan-300 font-mono font-bold" }, assessment.company_ticker) : null), /* @__PURE__ */ h("h1", { className: "text-2xl font-black tracking-tight text-white mt-1" }, assessment.company_name, " \u2014 ", assessment.title), /* @__PURE__ */ h("p", { className: "text-slate-300 text-xs mt-1.5 flex items-center gap-3" }, /* @__PURE__ */ h("span", null, "Last Evaluated:", " ", /* @__PURE__ */ h("strong", { className: "text-slate-100" }, assessment.last_analyzed_at ? new Date(assessment.last_analyzed_at).toLocaleString() : "Not yet analyzed")), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", null, "Status:", " ", /* @__PURE__ */ h("span", { className: "uppercase font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-600/40" }, assessment.status)))), /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center gap-2.5" }, /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "space-y-6" }, /* @__PURE__ */ h("div", { className: "glass-card rounded-2xl p-6 text-white border border-white/10 bg-gradient-to-br from-[#0c162c] via-[#081120] to-[#060b14] shadow-2xl relative overflow-hidden card-hover" }, /* @__PURE__ */ h("div", { className: "absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ h("div", { className: "absolute bottom-0 left-1/3 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ h("div", { className: "flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1" }, /* @__PURE__ */ h("span", { className: "flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1 rounded-full shadow-sm shadow-emerald-500/20" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }), "Organizational Diagnostic Intelligence"), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", { className: "text-cyan-300 font-bold" }, assessment.fiscal_year), assessment.company_ticker ? /* @__PURE__ */ h("span", { className: "px-2.5 py-0.5 bg-[#060b14] border border-white/15 rounded-md text-cyan-300 font-mono font-bold" }, assessment.company_ticker) : null), /* @__PURE__ */ h("h1", { className: "text-2xl font-black tracking-tight text-white mt-1.5" }, assessment.company_name, " \u2014 ", assessment.title), /* @__PURE__ */ h("p", { className: "text-slate-300 text-xs mt-1.5 flex items-center gap-3" }, /* @__PURE__ */ h("span", null, "Last Evaluated:", " ", /* @__PURE__ */ h("strong", { className: "text-slate-100" }, assessment.last_analyzed_at ? new Date(assessment.last_analyzed_at).toLocaleString() : "Not yet analyzed")), /* @__PURE__ */ h("span", null, "\u2022"), /* @__PURE__ */ h("span", null, "Status:", " ", /* @__PURE__ */ h("span", { className: "uppercase font-bold text-emerald-400 px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40" }, assessment.status)))), /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center gap-3" }, /* @__PURE__ */ h(
       "button",
       {
         onClick: () => onNavigate("documents"),
-        className: "px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-bold transition card-hover"
+        className: "px-4 py-2.5 rounded-xl bg-[#0e1a32] hover:bg-[#142344] text-white border border-white/15 text-xs font-bold transition card-hover shadow-lg"
       },
       "\u{1F4C1} Manage Filings (",
       metrics.documents_processed,
@@ -833,53 +855,53 @@
       {
         onClick: onRunAnalysis,
         disabled: isAnalyzing,
-        className: "px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition card-hover flex items-center gap-2"
+        className: "btn-shimmer px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-white text-xs font-black shadow-lg shadow-emerald-500/30 transition card-hover flex items-center gap-2"
       },
       isAnalyzing ? /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", { className: "w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" }), /* @__PURE__ */ h("span", null, "Running AI Engine...")) : /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", null, "\u26A1"), /* @__PURE__ */ h("span", null, "Run AI Diagnostic"))
-    )))), /* @__PURE__ */ h("div", { className: "glass-card bg-[#111827] rounded-2xl p-5 border border-slate-700/80 shadow-xl" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between mb-3.5" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "text-xs font-bold uppercase tracking-wider text-slate-300" }, "Diagnostic Workflow (Click Any Step to Inspect)")), /* @__PURE__ */ h("span", { className: "text-[11px] text-indigo-400 font-mono font-semibold" }, "5-Stage Diagnostic Pipeline")), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" }, /* @__PURE__ */ h(
+    )))), /* @__PURE__ */ h("div", { className: "glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] rounded-2xl p-5 border border-white/10 shadow-2xl" }, /* @__PURE__ */ h("div", { className: "flex items-center justify-between mb-3.5" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "text-xs font-bold uppercase tracking-wider text-slate-300" }, "Diagnostic Workflow (Click Any Step to Inspect)")), /* @__PURE__ */ h("span", { className: "text-[11px] text-emerald-400 font-mono font-semibold" }, "5-Stage Diagnostic Pipeline")), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" }, /* @__PURE__ */ h(
       "div",
       {
         onClick: () => onNavigate("documents"),
-        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+        className: "p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
       },
       /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 01"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-semibold" }, "\u2713 Ingested")),
-      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Research Library"),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-emerald-300 transition" }, "Research Library"),
       /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, metrics.documents_processed, " Filings \u2022 ", metrics.evidence_records_count, " Chunks")
     ), /* @__PURE__ */ h(
       "div",
       {
         onClick: () => onNavigate("stakeholders"),
-        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+        className: "p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
       },
       /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 02"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-semibold" }, "\u2713 Mapped")),
-      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Stakeholders"),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-emerald-300 transition" }, "Stakeholders"),
       /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, metrics.stakeholders_assessed, " Groups (4 Int / 6 Ext)")
     ), /* @__PURE__ */ h(
       "div",
       {
         onClick: () => onNavigate("structure"),
-        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+        className: "p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
       },
       /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 03"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-semibold" }, "\u2713 Extracted")),
-      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Org Structure"),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-emerald-300 transition" }, "Org Structure"),
       /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, "7 Core Dimensions & Units")
     ), /* @__PURE__ */ h(
       "div",
       {
         onClick: () => onNavigate("matrix"),
-        className: "p-3.5 rounded-xl bg-gradient-to-br from-indigo-950/70 to-slate-900 border border-indigo-500/50 hover:border-indigo-400 cursor-pointer card-hover transition group"
+        className: "p-4 rounded-xl bg-gradient-to-br from-emerald-950/40 via-[#0a182e] to-[#070e1c] border border-emerald-500/40 hover:border-emerald-400 cursor-pointer card-hover transition group shadow-lg shadow-emerald-950/20"
       },
-      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-indigo-300 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 04"), /* @__PURE__ */ h("span", { className: "text-indigo-300 font-bold" }, assessment.overall_alignment_score, "% Score")),
+      /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-emerald-300 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 04"), /* @__PURE__ */ h("span", { className: "text-emerald-400 font-black" }, assessment.overall_alignment_score, "% Score")),
       /* @__PURE__ */ h("div", { className: "text-sm font-extrabold text-white group-hover:text-cyan-300 transition" }, "Alignment Matrix"),
       /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, totalReq, " Requirements Evaluated")
     ), /* @__PURE__ */ h(
       "div",
       {
         onClick: () => onNavigate("recommendations"),
-        className: "p-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/60 cursor-pointer card-hover transition group"
+        className: "p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-amber-500/60 cursor-pointer card-hover transition group shadow-md"
       },
       /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1" }, /* @__PURE__ */ h("span", null, "STEP 05"), /* @__PURE__ */ h("span", { className: "text-amber-400 font-bold" }, metrics.recommendations_count, " Actions")),
-      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-indigo-300 transition" }, "Action Plan"),
+      /* @__PURE__ */ h("div", { className: "text-sm font-bold text-white group-hover:text-amber-300 transition" }, "Action Plan"),
       /* @__PURE__ */ h("div", { className: "text-xs text-slate-300 mt-1" }, metrics.conflicts_count, " Conflicts \u2022 Reforms")
     ))), /* @__PURE__ */ h("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" }, /* @__PURE__ */ h(
       RadialScoreGauge,
@@ -897,21 +919,23 @@
         value: assessment.evidence_coverage_pct,
         colorHex: "#06b6d4"
       }
-    ), /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl flex flex-col justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-semibold text-slate-400 uppercase tracking-wider" }, "Knowledge Base & Evidence"), /* @__PURE__ */ h("div", { className: "mt-2 flex items-baseline gap-2" }, /* @__PURE__ */ h("span", { className: "text-3xl font-extrabold text-white" }, metrics.documents_processed), /* @__PURE__ */ h("span", { className: "text-xs text-slate-400" }, "documents (", metrics.evidence_records_count, " citations)"))), /* @__PURE__ */ h("div", { className: "mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs" }, /* @__PURE__ */ h("span", { className: "text-slate-400" }, "Assessed:", " ", /* @__PURE__ */ h("strong", { className: "text-slate-200" }, metrics.stakeholders_assessed, " / ", metrics.total_stakeholders)), /* @__PURE__ */ h(
+    ), /* @__PURE__ */ h("div", { className: "glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl flex flex-col justify-between card-hover" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-bold text-slate-400 uppercase tracking-wider" }, "Knowledge Base & Evidence"), /* @__PURE__ */ h("div", { className: "mt-2.5 flex items-baseline gap-2" }, /* @__PURE__ */ h("span", { className: "text-3xl font-black text-white" }, metrics.documents_processed), /* @__PURE__ */ h("span", { className: "text-xs text-slate-300 font-medium" }, "documents (", metrics.evidence_records_count, " citations)"))), /* @__PURE__ */ h("div", { className: "mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs" }, /* @__PURE__ */ h("span", { className: "text-slate-300" }, "Assessed:", " ", /* @__PURE__ */ h("strong", { className: "text-white" }, metrics.stakeholders_assessed, " / ", metrics.total_stakeholders)), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => onNavigate("evidence"),
-        className: "text-cyan-400 font-semibold hover:underline"
+        className: "text-cyan-400 font-bold hover:text-cyan-300 flex items-center gap-1"
       },
-      "Inspect Citations \u2192"
-    ))), /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl flex flex-col justify-between" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-semibold text-slate-400 uppercase tracking-wider" }, "Alignment Gaps & Diagnostics"), /* @__PURE__ */ h("div", { className: "mt-2 flex items-baseline gap-2" }, /* @__PURE__ */ h("span", { className: "text-3xl font-extrabold text-rose-400" }, metrics.alignment_gaps_identified), /* @__PURE__ */ h("span", { className: "text-xs text-slate-400" }, "gaps (", metrics.potential_misalignments, " misaligned,", " ", metrics.partial_alignments, " partial)"))), /* @__PURE__ */ h("div", { className: "mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs" }, /* @__PURE__ */ h("span", { className: "text-slate-400" }, "Remediations:", " ", /* @__PURE__ */ h("strong", { className: "text-slate-200" }, metrics.recommendations_count)), /* @__PURE__ */ h(
+      /* @__PURE__ */ h("span", null, "Inspect Citations"),
+      /* @__PURE__ */ h("span", null, "\u2192")
+    ))), /* @__PURE__ */ h("div", { className: "glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl flex flex-col justify-between card-hover" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-bold text-slate-400 uppercase tracking-wider" }, "Alignment Gaps & Diagnostics"), /* @__PURE__ */ h("div", { className: "mt-2.5 flex items-baseline gap-2" }, /* @__PURE__ */ h("span", { className: "text-3xl font-black text-rose-400" }, metrics.alignment_gaps_identified), /* @__PURE__ */ h("span", { className: "text-xs text-slate-300 font-medium" }, "gaps (", metrics.potential_misalignments, " misaligned,", " ", metrics.partial_alignments, " partial)"))), /* @__PURE__ */ h("div", { className: "mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs" }, /* @__PURE__ */ h("span", { className: "text-slate-300" }, "Remediations:", " ", /* @__PURE__ */ h("strong", { className: "text-white" }, metrics.recommendations_count)), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => onNavigate("recommendations"),
-        className: "text-violet-400 font-semibold hover:underline"
+        className: "text-emerald-400 font-bold hover:text-emerald-300 flex items-center gap-1"
       },
-      "View Actions \u2192"
-    )))), /* @__PURE__ */ h("div", { className: "glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl text-white" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-bold text-white" }, "Requirement Alignment Distribution (", totalReq, " Evaluated Requirements)"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-400 mt-0.5" }, "Click any cell in the Alignment Matrix to inspect exact quotations, root causes, and score math")), /* @__PURE__ */ h(
+      /* @__PURE__ */ h("span", null, "View Actions"),
+      /* @__PURE__ */ h("span", null, "\u2192")
+    )))), /* @__PURE__ */ h("div", { className: "glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-6 rounded-2xl border border-white/10 shadow-2xl text-white" }, /* @__PURE__ */ h("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("h3", { className: "text-sm font-black text-white" }, "Requirement Alignment Distribution (", totalReq, " Evaluated Requirements)"), /* @__PURE__ */ h("p", { className: "text-xs text-slate-300 mt-0.5" }, "Click any cell in the Alignment Matrix to inspect exact quotations, root causes, and score math")), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => onNavigate("matrix"),
@@ -2096,11 +2120,11 @@
     const currentCompany = companies.find((c) => c.id === selectedCompanyId);
     const currentPeriod = allPeriods.find((p) => p.id === selectedPeriodId);
     const auth = getAuthContext();
-    return /* @__PURE__ */ h("div", { className: "min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden" }, /* @__PURE__ */ h("div", { className: "fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("div", { className: "fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("aside", { className: "w-64 bg-[#0d1322] text-slate-200 flex flex-col justify-between shrink-0 border-r border-slate-700/80 backdrop-blur-xl relative z-20 overflow-y-auto" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "p-5 border-b border-slate-800" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("div", { className: "w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30" }, "SA"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-extrabold text-white tracking-wider uppercase" }, "Alignment Analyzer"), /* @__PURE__ */ h("div", { className: "text-[10px] text-indigo-400 font-mono font-medium flex items-center gap-1.5" }, /* @__PURE__ */ h("span", null, "Enterprise AI Diagnostic"), /* @__PURE__ */ h("span", { className: "px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40" }, "v2.2"))))), /* @__PURE__ */ h("div", { className: "p-4 border-b border-slate-800 space-y-3 text-xs bg-slate-900/60" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "1. Target Company"), /* @__PURE__ */ h(
+    return /* @__PURE__ */ h("div", { className: "min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden" }, /* @__PURE__ */ h("div", { className: "fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("div", { className: "fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" }), /* @__PURE__ */ h("aside", { className: "w-64 bg-[#080f1e] text-slate-200 flex flex-col justify-between shrink-0 border-r border-white/10 backdrop-blur-2xl relative z-20 overflow-y-auto shadow-2xl" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "p-5 border-b border-white/10" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ h("div", { className: "w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center font-black text-white text-base shadow-lg shadow-emerald-500/30" }, "SA"), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "text-xs font-black text-white tracking-wider uppercase" }, "Alignment Analyzer"), /* @__PURE__ */ h("div", { className: "text-[10px] text-emerald-400 font-mono font-medium flex items-center gap-1.5 mt-0.5" }, /* @__PURE__ */ h("span", null, "Enterprise Intelligence"), /* @__PURE__ */ h("span", { className: "px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40" }, "v2.2"))))), /* @__PURE__ */ h("div", { className: "p-4 border-b border-white/10 space-y-3 text-xs bg-[#0b1528]/80" }, /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "1. Target Company"), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => setShowNewCompanyModal(true),
-        className: "text-indigo-400 hover:text-indigo-300 font-bold"
+        className: "text-emerald-400 hover:text-emerald-300 font-bold"
       },
       "+ Add"
     )), /* @__PURE__ */ h(
@@ -2108,7 +2132,7 @@
       {
         value: String(selectedCompanyId),
         onChange: (e) => handleSelectCompany(parseInt(e.target.value, 10)),
-        className: "w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-indigo-500"
+        className: "w-full rounded-xl bg-[#060b14] border border-white/15 p-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
       },
       companies.map((c) => /* @__PURE__ */ h("option", { key: c.id, value: String(c.id) }, c.name, " ", c.ticker ? `(${c.ticker})` : ""))
     )), /* @__PURE__ */ h("div", null, /* @__PURE__ */ h("div", { className: "flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5" }, /* @__PURE__ */ h("span", null, "2. Assessment Period"), /* @__PURE__ */ h(
@@ -2123,7 +2147,7 @@
       {
         value: String(selectedPeriodId),
         onChange: (e) => setSelectedPeriodId(parseInt(e.target.value, 10)),
-        className: "w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
+        className: "w-full rounded-xl bg-[#060b14] border border-white/15 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
       },
       companyPeriods.map((p) => /* @__PURE__ */ h("option", { key: p.id, value: String(p.id) }, p.title))
     ))), /* @__PURE__ */ h("nav", { className: "p-3 space-y-4" }, NAV_SECTIONS.map((section) => /* @__PURE__ */ h("div", { key: section.title, className: "space-y-1" }, /* @__PURE__ */ h("div", { className: "text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1" }, section.title), section.items.map((item) => {
@@ -2133,42 +2157,42 @@
         {
           key: item.id,
           onClick: () => setActiveTab(item.id),
-          className: `w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${active ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25" : "text-slate-300 hover:bg-slate-800/80 hover:text-white"}`
+          className: `w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${active ? "bg-gradient-to-r from-emerald-600/30 via-teal-600/20 to-transparent border-l-2 border-emerald-400 text-white font-bold shadow-md shadow-emerald-500/10" : "text-slate-300 hover:bg-white/5 hover:text-white"}`
         },
         /* @__PURE__ */ h("div", { className: "flex items-center gap-2.5 truncate" }, /* @__PURE__ */ h("span", { className: "text-sm shrink-0" }, item.icon), /* @__PURE__ */ h("span", { className: "truncate" }, item.label)),
         /* @__PURE__ */ h(
           "span",
           {
-            className: `text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0 ml-1.5 ${active ? "bg-indigo-950/80 text-indigo-200 border border-indigo-400/40" : "bg-slate-900 text-slate-400"}`
+            className: `text-[10px] px-2 py-0.5 rounded-full font-mono shrink-0 ml-1.5 ${active ? "bg-emerald-950 text-emerald-300 border border-emerald-500/40" : "bg-[#060b14] text-slate-400"}`
           },
           item.stepNumber
         )
       );
-    }))))), /* @__PURE__ */ h("div", { className: "p-4 border-t border-slate-800 text-[11px] text-slate-300 space-y-1 bg-slate-950/70" }, /* @__PURE__ */ h("div", { className: "font-bold text-white flex items-center gap-1.5" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400" }), auth.name), /* @__PURE__ */ h("div", null, "Role:", " ", /* @__PURE__ */ h("span", { className: "px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-bold border border-indigo-700/50" }, auth.role)))), /* @__PURE__ */ h("div", { className: "flex-1 flex flex-col min-w-0 relative z-10" }, /* @__PURE__ */ h("header", { className: "bg-slate-900/90 border-b border-slate-700/80 px-6 py-3.5 backdrop-blur-md sticky top-0 z-30" }, /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center justify-between gap-4" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-2 text-xs" }, /* @__PURE__ */ h("span", { className: "text-slate-400 font-medium" }, "Platform"), /* @__PURE__ */ h("span", { className: "text-slate-600" }, "/"), /* @__PURE__ */ h("span", { className: "text-white font-bold" }, currentCompany ? currentCompany.name : "Company"), /* @__PURE__ */ h("span", { className: "text-slate-600" }, "/"), /* @__PURE__ */ h("span", { className: "text-indigo-400 font-mono font-semibold bg-indigo-950/70 border border-indigo-700/50 px-2 py-0.5 rounded" }, currentPeriod ? currentPeriod.fiscal_year : "FY2025"), currentPeriod && currentPeriod.title.includes("Live SEC") ? /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold" }, "19 SEC Filings") : null), /* @__PURE__ */ h("div", { className: "flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800" }, companies.map((c) => {
+    }))))), /* @__PURE__ */ h("div", { className: "p-4 border-t border-white/10 text-[11px] text-slate-300 space-y-1 bg-[#060b14]/70" }, /* @__PURE__ */ h("div", { className: "font-bold text-white flex items-center gap-2" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }), auth.name), /* @__PURE__ */ h("div", null, "Role:", " ", /* @__PURE__ */ h("span", { className: "px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-bold border border-emerald-600/40" }, auth.role)))), /* @__PURE__ */ h("div", { className: "flex-1 flex flex-col min-w-0 relative z-10" }, /* @__PURE__ */ h("header", { className: "bg-[#080f1e]/85 border-b border-white/10 px-6 py-3.5 backdrop-blur-2xl sticky top-0 z-30 shadow-lg shadow-black/40" }, /* @__PURE__ */ h("div", { className: "flex flex-wrap items-center justify-between gap-4" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-3 text-xs" }, /* @__PURE__ */ h("div", { className: "flex items-center gap-1.5 px-3 py-1 bg-emerald-950/70 border border-emerald-500/50 rounded-full text-emerald-300 font-bold shadow-sm shadow-emerald-500/20" }, /* @__PURE__ */ h("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" }), /* @__PURE__ */ h("span", { className: "font-mono text-[11px]" }, "896 Chunks Verified")), /* @__PURE__ */ h("span", { className: "text-slate-600" }, "|"), /* @__PURE__ */ h("span", { className: "text-white font-extrabold tracking-tight" }, currentCompany ? currentCompany.name : "Company"), /* @__PURE__ */ h("span", { className: "text-slate-600" }, "/"), /* @__PURE__ */ h("span", { className: "text-cyan-300 font-mono font-semibold bg-cyan-950/60 border border-cyan-500/40 px-2.5 py-0.5 rounded-md" }, currentPeriod ? currentPeriod.fiscal_year : "FY2025")), /* @__PURE__ */ h("div", { className: "flex items-center gap-1.5 bg-[#060b14]/90 p-1.5 rounded-xl border border-white/10 shadow-inner" }, companies.map((c) => {
       const isSel = c.id === selectedCompanyId;
       return /* @__PURE__ */ h(
         "button",
         {
           key: c.id,
           onClick: () => handleSelectCompany(c.id),
-          className: `px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${isSel ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`
+          className: `px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${isSel ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30" : "text-slate-400 hover:text-white hover:bg-white/5"}`
         },
         /* @__PURE__ */ h("span", null, c.ticker || c.name.slice(0, 4)),
-        /* @__PURE__ */ h("span", { className: `text-[10px] font-normal ${isSel ? "text-indigo-200" : "text-slate-400"}` }, c.name.split(" ")[0])
+        /* @__PURE__ */ h("span", { className: `text-[10px] font-normal ${isSel ? "text-emerald-100" : "text-slate-400"}` }, c.name.split(" ")[0])
       );
     })), /* @__PURE__ */ h("div", { className: "flex items-center gap-2.5" }, /* @__PURE__ */ h(
       "button",
       {
         onClick: handleRunAnalysis,
         disabled: isAnalyzing,
-        className: "px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition-all card-hover"
+        className: "btn-shimmer px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-white text-xs font-black shadow-lg shadow-emerald-500/30 flex items-center gap-2 transition-all card-hover"
       },
       isAnalyzing ? /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", { className: "w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" }), /* @__PURE__ */ h("span", null, "Executing 6-Stage AI...")) : /* @__PURE__ */ h(Fragment, null, /* @__PURE__ */ h("span", null, "\u26A1"), /* @__PURE__ */ h("span", null, "Run Full AI Diagnostic"))
     ), /* @__PURE__ */ h(
       "button",
       {
         onClick: () => setActiveTab("report"),
-        className: "px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition card-hover"
+        className: "px-4 py-2.5 rounded-xl bg-[#0b1528] hover:bg-[#101d36] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition card-hover"
       },
       /* @__PURE__ */ h("span", null, "\u{1F4C4}"),
       /* @__PURE__ */ h("span", null, "Export Report")

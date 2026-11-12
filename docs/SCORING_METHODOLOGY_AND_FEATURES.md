@@ -187,3 +187,4 @@ Step 1: Ingest Filings ➔ Step 2: Stakeholders ➔ Step 3: Org Structure ➔ St
 | **Does missing data lower the score?** | **No.** Missing evidence is classified as *Insufficient Evidence* and excluded from the alignment score denominator; it reduces *Evidence Coverage %* instead. |
 | **Can a company claim get Strong Alignment?** | **No.** Under Section 8 scoring rules, unverified company claims are capped at *Partial Alignment (3.0)*. *Strong Alignment (4.0)* requires verified factual implementation. |
 | **What does 79.7% mean?** | Out of all requirements where empirical evidence was found, Meta's organizational structure achieves ~79.7% of maximum potential alignment, with the primary gap being partial oversight formalization and dual-class voting concentration. |
+
