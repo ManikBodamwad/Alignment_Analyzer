@@ -28,6 +28,33 @@ def ensure_db_initialized() -> None:
     global _DB_INITIALIZED
     if _DB_INITIALIZED:
         return
+
+    from backend.config import RUNTIME_WRITABLE_DIR, IS_VERCEL
+    from backend.models import AlignmentAssessment
+
+    db_path = RUNTIME_WRITABLE_DIR / "alignment_analyzer.db"
+    preseeded_gz = BASE_DIR / "backend" / "preseeded_database.db.gz"
+
+    should_unpack = False
+    if not db_path.exists() and preseeded_gz.exists():
+        should_unpack = True
+    elif IS_VERCEL and preseeded_gz.exists():
+        try:
+            db_check = SessionLocal()
+            if db_check.query(AlignmentAssessment).count() == 0:
+                should_unpack = True
+            db_check.close()
+        except Exception:
+            should_unpack = True
+
+    if should_unpack and preseeded_gz.exists():
+        try:
+            import gzip
+            with gzip.open(preseeded_gz, "rb") as f_in, open(db_path, "wb") as f_out:
+                f_out.write(f_in.read())
+        except Exception:
+            pass
+
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
