@@ -81,14 +81,14 @@ app.include_router(reports.router)
 
 @app.get("/api/index.py")
 @app.get("/api")
-def api_root():
+def api_root(request: Request):
     return {
         "status": "online",
         "service": settings.app_name,
         "version": settings.app_version,
-        "docs": "/docs",
-        "health": "/api/health",
-        "companies": "/api/companies",
+        "path": request.url.path,
+        "scope_path": request.scope.get("path"),
+        "headers": dict(request.headers),
     }
 
 
