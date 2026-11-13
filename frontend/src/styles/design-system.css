@@ -1,155 +1,126 @@
 /* =============================================================================
-   Stakeholder–Structure Alignment Analyzer Design Tokens & Premium Dark Theme
-   Inspired by EcoVault / Vercel Geist Developer Experience
+   Stakeholder–Structure Alignment Analyzer Design Tokens & Apple Inspired Light Theme
+   Strictly Clean Apple Design Language: Luminous Surfaces, Animated Mesh, SF Pro Typography
    ============================================================================= */
 
 :root {
-  /* Surface Palette */
-  --bg-app: #0a0e1a;
-  --bg-sidebar: #0d1322;
-  --bg-surface-1: #111827;
-  --bg-surface-2: #162033;
-  --bg-surface-3: #1e293b;
-  --bg-glass: rgba(17, 24, 39, 0.85);
-  --bg-glass-card: rgba(22, 32, 51, 0.85);
-  --bg-glass-subtle: rgba(255, 255, 255, 0.04);
+  /* Apple Surface Palette */
+  --apple-bg: #f5f5f7;
+  --apple-surface: #ffffff;
+  --apple-surface-translucent: rgba(255, 255, 255, 0.85);
+  --apple-surface-subtle: #fbfbfd;
+  --apple-sidebar: rgba(255, 255, 255, 0.82);
 
-  /* Border Tokens */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-glass: rgba(255, 255, 255, 0.12);
-  --border-hover: rgba(99, 102, 241, 0.45);
-  --border-active: #6366f1;
+  /* Apple Typography */
+  --apple-text: #1d1d1f;
+  --apple-text-secondary: #515154;
+  --apple-text-muted: #86868b;
+  --apple-text-subtle: #a1a1a6;
 
-  /* Accent & Brand Colors */
-  --accent-indigo: #6366f1;
-  --accent-violet: #8b5cf6;
-  --accent-violet-glow: rgba(139, 92, 246, 0.35);
-  --accent-cyan: #06b6d4;
-  --accent-cyan-glow: rgba(6, 182, 212, 0.3);
-  --accent-blue: #3b82f6;
+  /* Apple Accent Colors */
+  --apple-accent: #0071e3;
+  --apple-accent-hover: #0077ed;
+  --apple-accent-light: rgba(0, 113, 227, 0.08);
+  --apple-accent-glow: rgba(0, 113, 227, 0.25);
 
-  /* Semantic Alignment Colors */
-  --status-strong: #10b981;
-  --status-strong-bg: rgba(16, 185, 129, 0.15);
-  --status-strong-border: rgba(16, 185, 129, 0.4);
+  /* Semantic Health Colors */
+  --apple-strong: #34c759;
+  --apple-strong-bg: rgba(52, 199, 89, 0.12);
+  --apple-strong-text: #248a3d;
 
-  --status-partial: #f59e0b;
-  --status-partial-bg: rgba(245, 158, 11, 0.15);
-  --status-partial-border: rgba(245, 158, 11, 0.4);
+  --apple-partial: #ff9500;
+  --apple-partial-bg: rgba(255, 149, 0, 0.12);
+  --apple-partial-text: #c96500;
 
-  --status-misaligned: #f43f5e;
-  --status-misaligned-bg: rgba(244, 63, 94, 0.15);
-  --status-misaligned-border: rgba(244, 63, 94, 0.45);
+  --apple-misaligned: #ff3b30;
+  --apple-misaligned-bg: rgba(255, 59, 48, 0.12);
+  --apple-misaligned-text: #d70015;
 
-  --status-insufficient: #64748b;
-  --status-insufficient-bg: rgba(100, 116, 139, 0.15);
-  --status-insufficient-border: rgba(100, 116, 139, 0.35);
+  --apple-insufficient: #8e8e93;
+  --apple-insufficient-bg: rgba(142, 142, 147, 0.12);
+  --apple-insufficient-text: #636366;
 
-  /* Typography Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #94a3b8;
-  --text-highlight: #c4b5fd;
+  /* Borders & Dividers */
+  --apple-border: rgba(0, 0, 0, 0.08);
+  --apple-border-subtle: rgba(0, 0, 0, 0.04);
+  --apple-border-focus: rgba(0, 113, 227, 0.4);
 
-  /* Elevation Shadows */
-  --shadow-ambient: 0 0 50px -10px rgba(99, 102, 241, 0.1);
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  /* Apple Shadows */
+  --apple-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --apple-shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --apple-shadow-hover: 0 16px 36px -4px rgba(0, 113, 227, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Global Reset & Ambient Glows */
-body {
-  background-color: var(--bg-app);
-  color: var(--text-primary);
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow-x: hidden;
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: -150px;
-  right: -100px;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.04) 50%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  bottom: -200px;
-  left: 10%;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
+  --apple-transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Glassmorphism Containers */
 .glass-panel {
-  background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--shadow-glass);
+  background: var(--apple-sidebar);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-right: 1px solid var(--apple-border);
 }
 
 .glass-card {
-  background: var(--bg-glass-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--shadow-card);
-  transition: all var(--transition-normal);
+  background: var(--apple-surface-translucent);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--apple-border);
+  border-radius: 20px;
+  box-shadow: var(--apple-shadow-card);
+  transition: var(--apple-transition);
 }
 
 .glass-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: 0 8px 30px -4px rgba(139, 92, 246, 0.2);
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  box-shadow: var(--apple-shadow-hover);
+  border-color: rgba(0, 113, 227, 0.3);
 }
 
-/* Animations */
-@keyframes fadeInSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Apple Pill Buttons */
+.apple-pill-btn {
+  border-radius: 980px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--apple-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(139, 92, 246, 0.45);
-  }
+.apple-pill-primary {
+  background-color: var(--apple-accent);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.25);
+  border: 1px solid transparent;
 }
 
-.animate-entrance {
-  animation: fadeInSlideUp 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.apple-pill-primary:hover {
+  background-color: var(--apple-accent-hover);
+  box-shadow: 0 4px 14px rgba(0, 113, 227, 0.35);
+  transform: scale(1.02);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+.apple-pill-primary:active {
+  transform: scale(0.98);
 }
 
+.apple-pill-secondary {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--apple-text);
+  border: 1px solid #d2d2d7;
+}
+
+.apple-pill-secondary:hover {
+  background-color: #ffffff;
+  border-color: var(--apple-accent);
+  color: var(--apple-accent);
+  transform: scale(1.02);
+}
+
+.apple-pill-secondary:active {
+  transform: scale(0.98);
+}

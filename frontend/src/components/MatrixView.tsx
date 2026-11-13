@@ -208,7 +208,7 @@ export function MatrixView(props: {
                                   </div>
                                   {cell.is_overridden ? (
                                     <div className="text-[9px] font-extrabold uppercase text-cyan-300 mt-0.5">
-                                      ★ Overridden
+                                      [Overridden]
                                     </div>
                                   ) : null}
                                 </button>
@@ -347,8 +347,9 @@ export function MatrixView(props: {
                           "{ev.exact_quotation}"
                         </div>
                         {ev.is_contradictory ? (
-                          <div className="text-[10px] text-amber-400 font-semibold">
-                            ⚠️ Marked as Contradictory: Clashes with countervailing external or operational findings.
+                          <div className="text-[10px] text-amber-400 font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                            <span>Marked as Contradictory: Clashes with countervailing external or operational findings.</span>
                           </div>
                         ) : null}
                       </div>

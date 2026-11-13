@@ -171,7 +171,7 @@ export function ConflictsView(props: {
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-xs font-extrabold text-slate-100">
-                    {c.stakeholder_a_name} <span className="text-rose-400">⚡ vs.</span>{" "}
+                    {c.stakeholder_a_name} <span className="text-rose-500 font-bold">vs.</span>{" "}
                     {c.stakeholder_b_name}
                   </div>
                   {priorityBadge(c.severity)}

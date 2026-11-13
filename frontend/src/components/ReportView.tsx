@@ -114,8 +114,8 @@ export function ReportView(props: {
                     Dimension: {ev.organizational_dimension}
                   </span>
                   {ev.is_contradictory ? (
-                    <span className="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-600 font-bold text-[10px]">
-                      ⚠ Contradictory
+                    <span className="px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-600 font-bold text-[10px]">
+                      Contradictory
                     </span>
                   ) : null}
                 </div>

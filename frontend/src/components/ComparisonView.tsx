@@ -267,7 +267,7 @@ export function ComparisonView(props: {
                   comparison.alignment_improvements.map(
                     (imp: string, i: number) => (
                       <div key={i} className="text-emerald-200">
-                        ✓ {imp}
+                        + {imp}
                       </div>
                     )
                   )

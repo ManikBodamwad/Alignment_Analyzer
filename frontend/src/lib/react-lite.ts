@@ -235,7 +235,9 @@ function performRender(): void {
     rootContainer.innerHTML = `
       <div style="min-h-screen; display:flex; align-items:center; justify-content:center; padding:40px; background:#0a0e1a; color:#f8fafc; font-family:sans-serif; text-align:center;">
         <div style="background:#111827; border:1px solid #374151; border-radius:16px; padding:32px; max-width:540px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
-          <div style="font-size:36px; margin-bottom:12px;">⚡</div>
+          <div style="width:40px; height:40px; margin:0 auto 12px; border-radius:50%; background:#eaf2fe; display:flex; align-items:center; justify-content:center; color:#0071e3;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
           <h2 style="font-size:18px; font-weight:800; margin-bottom:8px; color:#ffffff;">Diagnostic Workspace Recovered</h2>
           <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">${renderErr && renderErr.message ? renderErr.message : "An unexpected rendering event occurred."}</p>
           <button onclick="window.location.reload()" style="padding:10px 20px; background:#4f46e5; color:#ffffff; font-weight:700; border-radius:8px; cursor:pointer; border:none; font-size:13px;">

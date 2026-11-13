@@ -3,6 +3,20 @@ import { ComparisonView } from "./components/ComparisonView";
 import { ConflictsView } from "./components/ConflictsView";
 import { DashboardView } from "./components/DashboardView";
 import { DocumentsView } from "./components/DocumentsView";
+import {
+  BoltIcon,
+  CockpitIcon,
+  DocumentIcon,
+  LightbulbIcon,
+  MatrixIcon,
+  ReportIcon,
+  SearchIcon,
+  SettingsIcon,
+  SparklesIcon,
+  StructureIcon,
+  TrendIcon,
+  UsersIcon,
+} from "./components/icons";
 import { MatrixView } from "./components/MatrixView";
 import { RecommendationsView } from "./components/RecommendationsView";
 import { ReportView } from "./components/ReportView";
@@ -26,7 +40,7 @@ interface NavItem {
   stepNumber: string;
   label: string;
   shortLabel: string;
-  icon: string;
+  icon: (props: any) => any;
 }
 
 interface NavSection {
@@ -38,27 +52,27 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: "DIAGNOSTIC WORKFLOW",
     items: [
-      { id: "dashboard", stepNumber: "01", label: "Executive Dashboard", shortLabel: "Cockpit", icon: "📊" },
-      { id: "documents", stepNumber: "02", label: "Research Library", shortLabel: "Filings", icon: "📁" },
-      { id: "stakeholders", stepNumber: "03", label: "Stakeholder Profiles", shortLabel: "Profiles", icon: "👥" },
-      { id: "structure", stepNumber: "04", label: "Org Structure (7 Dims)", shortLabel: "Structure", icon: "🏛️" },
-      { id: "matrix", stepNumber: "05", label: "Alignment Matrix", shortLabel: "Matrix", icon: "🎯" },
+      { id: "dashboard", stepNumber: "01", label: "Executive Dashboard", shortLabel: "Cockpit", icon: CockpitIcon },
+      { id: "documents", stepNumber: "02", label: "Research Library", shortLabel: "Filings", icon: DocumentIcon },
+      { id: "stakeholders", stepNumber: "03", label: "Stakeholder Profiles", shortLabel: "Profiles", icon: UsersIcon },
+      { id: "structure", stepNumber: "04", label: "Org Structure (7 Dims)", shortLabel: "Structure", icon: StructureIcon },
+      { id: "matrix", stepNumber: "05", label: "Alignment Matrix", shortLabel: "Matrix", icon: MatrixIcon },
     ],
   },
   {
     title: "DEEP ANALYSIS",
     items: [
-      { id: "conflicts", stepNumber: "06", label: "Conflict Matrix", shortLabel: "Conflicts", icon: "⚡" },
-      { id: "recommendations", stepNumber: "07", label: "Recommendations", shortLabel: "Actions", icon: "💡" },
-      { id: "evidence", stepNumber: "08", label: "Evidence Repository", shortLabel: "Citations", icon: "🔍" },
+      { id: "conflicts", stepNumber: "06", label: "Conflict Matrix", shortLabel: "Conflicts", icon: BoltIcon },
+      { id: "recommendations", stepNumber: "07", label: "Recommendations", shortLabel: "Actions", icon: LightbulbIcon },
+      { id: "evidence", stepNumber: "08", label: "Evidence Repository", shortLabel: "Citations", icon: SearchIcon },
     ],
   },
   {
     title: "GOVERNANCE & REPORTS",
     items: [
-      { id: "comparison", stepNumber: "09", label: "Historical Trends", shortLabel: "Trends", icon: "📈" },
-      { id: "report", stepNumber: "10", label: "Diagnostic Report", shortLabel: "Report", icon: "📄" },
-      { id: "settings", stepNumber: "11", label: "Audit & Settings", shortLabel: "Audit", icon: "⚙️" },
+      { id: "comparison", stepNumber: "09", label: "Historical Trends", shortLabel: "Trends", icon: TrendIcon },
+      { id: "report", stepNumber: "10", label: "Diagnostic Report", shortLabel: "Report", icon: ReportIcon },
+      { id: "settings", stepNumber: "11", label: "Audit & Settings", shortLabel: "Audit", icon: SettingsIcon },
     ],
   },
 ];
@@ -172,30 +186,32 @@ function App() {
     }
   };
 
-  const handleCreatePeriod = async (ev: Event) => {
-    ev.preventDefault();
-    if (!newPeriodTitle.trim()) return;
-    const created = await api.createAssessment({
+  const handleCreatePeriod = async (e: any) => {
+    e.preventDefault();
+    if (!newPeriodTitle || !newPeriodFy) return;
+    const period = await api.createAssessment({
       company_id: selectedCompanyId,
-      title: newPeriodTitle.trim(),
-      fiscal_year: newPeriodFy.trim() || "FY2026",
+      title: newPeriodTitle,
+      fiscal_year: newPeriodFy,
     });
     setShowNewPeriodModal(false);
+    setNewPeriodTitle("FY2026 Assessment");
     await loadInitialLists();
-    setSelectedPeriodId(created.id);
+    setSelectedPeriodId(period.id);
   };
 
-  const handleCreateCompany = async (ev: Event) => {
-    ev.preventDefault();
-    if (!newCompName.trim()) return;
+  const handleCreateCompany = async (e: any) => {
+    e.preventDefault();
+    if (!newCompName) return;
+    const prios = newCompPriorities
+      .split(",")
+      .map((s) => s.strip ? s.strip() : s.trim())
+      .filter((s) => s.length > 0);
     const comp = await api.createCompany({
-      name: newCompName.trim(),
-      ticker: newCompTicker.trim() || null,
-      industry: newCompIndustry.trim(),
-      analysis_priorities: newCompPriorities
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      name: newCompName,
+      ticker: newCompTicker || undefined,
+      industry: newCompIndustry,
+      analysis_priorities: prios,
     });
     const period = await api.createAssessment({
       company_id: comp.id,
@@ -218,39 +234,38 @@ function App() {
   const auth = getAuthContext();
 
   return (
-    <div className="min-h-screen flex bg-[#0a0e1a] text-slate-100 relative overflow-x-hidden">
-      {/* Background ambient accents */}
-      <div className="fixed top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" />
-      <div className="fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0" />
-
-      {/* Left Enterprise Sidebar */}
-      <aside className="w-64 bg-[#080f1e] text-slate-200 flex flex-col justify-between shrink-0 border-r border-white/10 backdrop-blur-2xl relative z-20 overflow-y-auto shadow-2xl">
+    <div className="min-h-screen flex text-[#1d1d1f] relative overflow-x-hidden">
+      {/* Left Apple Glass Sidebar */}
+      <aside className="w-64 bg-white/75 backdrop-blur-2xl text-[#1d1d1f] flex flex-col justify-between shrink-0 border-r border-black/8 relative z-20 overflow-y-auto shadow-sm">
         <div>
-          <div className="p-5 border-b border-white/10">
+          {/* Brand Header */}
+          <div className="p-5 border-b border-black/8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center font-black text-white text-base shadow-lg shadow-emerald-500/30">
+              <div className="w-10 h-10 rounded-2xl bg-[#0071e3] flex items-center justify-center font-bold text-white text-base shadow-md shadow-[#0071e3]/30">
                 SA
               </div>
               <div>
-                <div className="text-xs font-black text-white tracking-wider uppercase">
+                <div className="text-sm font-bold text-[#1d1d1f] tracking-tight">
                   Alignment Analyzer
                 </div>
-                <div className="text-[10px] text-emerald-400 font-mono font-medium flex items-center gap-1.5 mt-0.5">
+                <div className="text-[11px] text-[#0071e3] font-medium flex items-center gap-1.5 mt-0.5">
                   <span>Enterprise Intelligence</span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40">v2.2</span>
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#0071e3]/10 text-[#0071e3] text-[9px] font-bold">
+                    v2.2
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Company & Period Selector in Sidebar */}
-          <div className="p-4 border-b border-white/10 space-y-3 text-xs bg-[#0b1528]/80">
+          <div className="p-4 border-b border-black/8 space-y-3 text-xs bg-black/[0.02]">
             <div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <span>1. Target Company</span>
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[#86868b] uppercase tracking-wider mb-1.5">
+                <span>Target Company</span>
                 <button
                   onClick={() => setShowNewCompanyModal(true)}
-                  className="text-emerald-400 hover:text-emerald-300 font-bold"
+                  className="text-[#0071e3] hover:text-[#0077ed] font-semibold"
                 >
                   + Add
                 </button>
@@ -260,7 +275,7 @@ function App() {
                 onChange={(e: any) =>
                   handleSelectCompany(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-xl bg-[#060b14] border border-white/15 p-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full rounded-xl bg-white border border-black/10 p-2 text-[#1d1d1f] font-medium shadow-sm focus:outline-none focus:border-[#0071e3]"
               >
                 {companies.map((c) => (
                   <option key={c.id} value={String(c.id)}>
@@ -271,11 +286,11 @@ function App() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <span>2. Assessment Period</span>
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[#86868b] uppercase tracking-wider mb-1.5">
+                <span>Assessment Period</span>
                 <button
                   onClick={() => setShowNewPeriodModal(true)}
-                  className="text-cyan-400 hover:text-cyan-300 font-bold"
+                  className="text-[#0071e3] hover:text-[#0077ed] font-semibold"
                 >
                   + New
                 </button>
@@ -285,7 +300,7 @@ function App() {
                 onChange={(e: any) =>
                   setSelectedPeriodId(parseInt(e.target.value, 10))
                 }
-                className="w-full rounded-xl bg-[#060b14] border border-white/15 p-2 text-white font-semibold focus:outline-none focus:border-cyan-500"
+                className="w-full rounded-xl bg-white border border-black/10 p-2 text-[#1d1d1f] font-medium shadow-sm focus:outline-none focus:border-[#0071e3]"
               >
                 {companyPeriods.map((p) => (
                   <option key={p.id} value={String(p.id)}>
@@ -300,30 +315,31 @@ function App() {
           <nav className="p-3 space-y-4">
             {NAV_SECTIONS.map((section) => (
               <div key={section.title} className="space-y-1">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
+                <div className="text-[10px] font-bold text-[#86868b] uppercase tracking-wider px-2 py-1">
                   {section.title}
                 </div>
                 {section.items.map((item) => {
                   const active = activeTab === item.id;
+                  const IconComp = item.icon;
                   return (
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all duration-200 card-hover ${
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between transition-all duration-200 card-hover ${
                         active
-                          ? "bg-gradient-to-r from-emerald-600/30 via-teal-600/20 to-transparent border-l-2 border-emerald-400 text-white font-bold shadow-md shadow-emerald-500/10"
-                          : "text-slate-300 hover:bg-white/5 hover:text-white"
+                          ? "bg-[#0071e3] text-white font-semibold shadow-sm shadow-[#0071e3]/30"
+                          : "text-[#515154] hover:bg-black/5 hover:text-[#1d1d1f]"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
-                        <span className="text-sm shrink-0">{item.icon}</span>
+                        <IconComp className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-[#86868b]"}`} />
                         <span className="truncate">{item.label}</span>
                       </div>
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-full font-mono shrink-0 ml-1.5 ${
                           active
-                            ? "bg-emerald-950 text-emerald-300 border border-emerald-500/40"
-                            : "bg-[#060b14] text-slate-400"
+                            ? "bg-white/20 text-white font-bold"
+                            : "bg-black/5 text-[#86868b]"
                         }`}
                       >
                         {item.stepNumber}
@@ -337,14 +353,14 @@ function App() {
         </div>
 
         {/* Footer Evaluator Context */}
-        <div className="p-4 border-t border-white/10 text-[11px] text-slate-300 space-y-1 bg-[#060b14]/70">
-          <div className="font-bold text-white flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="p-4 border-t border-black/8 text-[11px] text-[#86868b] space-y-1 bg-black/[0.02]">
+          <div className="font-semibold text-[#1d1d1f] flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#34c759] shadow-sm shadow-[#34c759]/60" />
             {auth.name}
           </div>
           <div>
             Role:{" "}
-            <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-bold border border-emerald-600/40">
+            <span className="px-2 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold border border-[#0071e3]/20">
               {auth.role}
             </span>
           </div>
@@ -353,39 +369,39 @@ function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
-        {/* Sleek Enterprise Top Application Bar (EcoVault Inspired) */}
-        <header className="bg-[#080f1e]/85 border-b border-white/10 px-6 py-3.5 backdrop-blur-2xl sticky top-0 z-30 shadow-lg shadow-black/40">
+        {/* Apple Frosted Top Application Bar */}
+        <header className="bg-white/80 border-b border-black/8 px-6 py-3.5 backdrop-blur-2xl sticky top-0 z-30 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* Breadcrumb Path & Live Indicator */}
+            {/* Breadcrumb Path & Status */}
             <div className="flex items-center gap-3 text-xs">
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-950/70 border border-emerald-500/50 rounded-full text-emerald-300 font-bold shadow-sm shadow-emerald-500/20">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-[#34c759]/10 border border-[#34c759]/25 rounded-full text-[#248a3d] font-semibold shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-[#34c759] shrink-0" />
                 <span className="font-mono text-[11px]">896 Chunks Verified</span>
               </div>
-              <span className="text-slate-600">|</span>
-              <span className="text-white font-extrabold tracking-tight">{currentCompany ? currentCompany.name : "Company"}</span>
-              <span className="text-slate-600">/</span>
-              <span className="text-cyan-300 font-mono font-semibold bg-cyan-950/60 border border-cyan-500/40 px-2.5 py-0.5 rounded-md">
+              <span className="text-[#d2d2d7]">/</span>
+              <span className="text-[#1d1d1f] font-bold tracking-tight">{currentCompany ? currentCompany.name : "Company"}</span>
+              <span className="text-[#d2d2d7]">/</span>
+              <span className="text-[#0071e3] font-mono font-semibold bg-[#0071e3]/10 border border-[#0071e3]/20 px-2.5 py-0.5 rounded-full">
                 {currentPeriod ? currentPeriod.fiscal_year : "FY2025"}
               </span>
             </div>
 
-            {/* Quick Company Switcher Tabs */}
-            <div className="flex items-center gap-1.5 bg-[#060b14]/90 p-1.5 rounded-xl border border-white/10 shadow-inner">
+            {/* Segmented Company Switcher Tabs */}
+            <div className="flex items-center gap-1 bg-black/5 p-1 rounded-full border border-black/5">
               {companies.map((c) => {
                 const isSel = c.id === selectedCompanyId;
                 return (
                   <button
                     key={c.id}
                     onClick={() => handleSelectCompany(c.id)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
                       isSel
-                        ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30"
-                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                        ? "bg-white text-[#1d1d1f] shadow-sm font-bold"
+                        : "text-[#86868b] hover:text-[#1d1d1f]"
                     }`}
                   >
                     <span>{c.ticker || c.name.slice(0, 4)}</span>
-                    <span className={`text-[10px] font-normal ${isSel ? "text-emerald-100" : "text-slate-400"}`}>
+                    <span className={`text-[10px] ${isSel ? "text-[#0071e3]" : "text-[#a1a1a6]"}`}>
                       {c.name.split(" ")[0]}
                     </span>
                   </button>
@@ -393,30 +409,30 @@ function App() {
               })}
             </div>
 
-            {/* Actions: Run Analysis + Export Report */}
+            {/* Apple Pill Action Buttons */}
             <div className="flex items-center gap-2.5">
               <button
                 onClick={handleRunAnalysis}
                 disabled={isAnalyzing}
-                className="btn-shimmer px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-white text-xs font-black shadow-lg shadow-emerald-500/30 flex items-center gap-2 transition-all card-hover"
+                className="apple-btn-primary"
               >
                 {isAnalyzing ? (
                   <>
                     <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Executing 6-Stage AI...</span>
+                    <span>Executing AI Engine...</span>
                   </>
                 ) : (
                   <>
-                    <span>⚡</span>
+                    <SparklesIcon className="w-4 h-4" />
                     <span>Run Full AI Diagnostic</span>
                   </>
                 )}
               </button>
               <button
                 onClick={() => setActiveTab("report")}
-                className="px-4 py-2.5 rounded-xl bg-[#0b1528] hover:bg-[#101d36] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition card-hover"
+                className="apple-btn-secondary"
               >
-                <span>📄</span>
+                <ReportIcon className="w-4 h-4 text-[#0071e3]" />
                 <span>Export Report</span>
               </button>
             </div>
@@ -518,131 +534,134 @@ function App() {
         </main>
       </div>
 
-      {/* Modal: Create New Assessment Period */}
+      {/* Apple Styled Modal: Create New Assessment Period */}
       {showNewPeriodModal ? (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
           <form
             onSubmit={handleCreatePeriod}
-            className="glass-card bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs text-white border border-slate-700"
+            className="apple-card bg-white p-6 max-w-md w-full shadow-2xl space-y-4 text-xs text-[#1d1d1f] border border-black/10"
           >
-            <h3 className="text-base font-extrabold text-white">
+            <h3 className="text-lg font-bold text-[#1d1d1f] tracking-tight">
               Create New Periodic Assessment
             </h3>
-            <p className="text-slate-400">
+            <p className="text-[#86868b] leading-relaxed">
               Initializes an isolated document collection, 10 stakeholder groups, and 7 organizational structure dimensions.
             </p>
             <div>
-              <label className="block font-bold text-slate-300 mb-1">
+              <label className="block font-semibold text-[#1d1d1f] mb-1">
                 Assessment Title
               </label>
               <input
                 type="text"
                 value={newPeriodTitle}
                 onInput={(e: any) => setNewPeriodTitle(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
+                className="w-full bg-[#f5f5f7] border border-black/10 rounded-xl p-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
               />
             </div>
             <div>
-              <label className="block font-bold text-slate-300 mb-1">
+              <label className="block font-semibold text-[#1d1d1f] mb-1">
                 Financial Year
               </label>
               <input
                 type="text"
                 value={newPeriodFy}
                 onInput={(e: any) => setNewPeriodFy(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
+                className="w-full bg-[#f5f5f7] border border-black/10 rounded-xl p-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowNewPeriodModal(false)}
-                className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold"
+                className="apple-btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold shadow-md shadow-violet-600/30"
+                className="apple-btn-primary"
               >
-                Create Assessment Period
+                Create Assessment
               </button>
             </div>
           </form>
         </div>
       ) : null}
 
-      {/* Modal: Create New Company */}
+      {/* Apple Styled Modal: Create New Target Company */}
       {showNewCompanyModal ? (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
           <form
             onSubmit={handleCreateCompany}
-            className="glass-card bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs text-white border border-slate-700"
+            className="apple-card bg-white p-6 max-w-md w-full shadow-2xl space-y-4 text-xs text-[#1d1d1f] border border-black/10"
           >
-            <h3 className="text-base font-extrabold text-white">
-              Add New Company to Diagnostic Platform
+            <h3 className="text-lg font-bold text-[#1d1d1f] tracking-tight">
+              Register New Organization
             </h3>
+            <p className="text-[#86868b] leading-relaxed">
+              Sets up organizational entity profile with customized diagnostic priorities and baseline stakeholder framework.
+            </p>
             <div>
-              <label className="block font-bold text-slate-300 mb-1">
-                Company Name
+              <label className="block font-semibold text-[#1d1d1f] mb-1">
+                Company Legal Name
               </label>
               <input
                 type="text"
+                placeholder="e.g., Apple Inc."
                 value={newCompName}
                 onInput={(e: any) => setNewCompName(e.target.value)}
-                placeholder="e.g., Alphabet Inc."
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
+                className="w-full bg-[#f5f5f7] border border-black/10 rounded-xl p-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-bold text-slate-300 mb-1">
+                <label className="block font-semibold text-[#1d1d1f] mb-1">
                   Ticker Symbol
                 </label>
                 <input
                   type="text"
+                  placeholder="AAPL"
                   value={newCompTicker}
                   onInput={(e: any) => setNewCompTicker(e.target.value)}
-                  placeholder="GOOGL"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
+                  className="w-full bg-[#f5f5f7] border border-black/10 rounded-xl p-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
                 />
               </div>
               <div>
-                <label className="block font-bold text-slate-300 mb-1">
-                  Industry
+                <label className="block font-semibold text-[#1d1d1f] mb-1">
+                  Industry Classification
                 </label>
                 <input
                   type="text"
                   value={newCompIndustry}
                   onInput={(e: any) => setNewCompIndustry(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
+                  className="w-full bg-[#f5f5f7] border border-black/10 rounded-xl p-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
                 />
               </div>
             </div>
             <div>
-              <label className="block font-bold text-slate-300 mb-1">
-                Company-Specific Analysis Priorities (Comma-separated)
+              <label className="block font-semibold text-[#1d1d1f] mb-1">
+                Analysis Priorities (comma-separated)
               </label>
               <textarea
                 rows={2}
                 value={newCompPriorities}
                 onInput={(e: any) => setNewCompPriorities(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-violet-500"
-              ></textarea>
+                className="w-full bg-[#f5f5f7] border border-black/10 rounded-xl p-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
+              />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowNewCompanyModal(false)}
-                className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold"
+                className="apple-btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold shadow-md shadow-violet-600/30"
+                className="apple-btn-primary"
               >
-                Create Company
+                Register & Initialize
               </button>
             </div>
           </form>
@@ -652,7 +671,4 @@ function App() {
   );
 }
 
-const rootEl = document.getElementById("app");
-if (rootEl) {
-  mountApp(App, rootEl);
-}
+mountApp(App, document.getElementById("root")!);

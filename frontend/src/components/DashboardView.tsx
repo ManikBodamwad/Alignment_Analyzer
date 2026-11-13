@@ -3,6 +3,18 @@ import { Fragment, h, useState } from "../lib/react-lite";
 import { AssessmentFullSummary, StakeholderProfile } from "../types";
 import { classificationBadge, RadialScoreGauge } from "./badges";
 import { EvidenceToInsightFlow } from "./EvidenceToInsightFlow";
+import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+  DocumentIcon,
+  MatrixIcon,
+  ReportIcon,
+  SearchIcon,
+  SettingsIcon,
+  SparklesIcon,
+  StructureIcon,
+  UsersIcon,
+} from "./icons";
 
 export function DashboardView(props: {
   summary: AssessmentFullSummary | null;
@@ -22,8 +34,8 @@ export function DashboardView(props: {
 
   if (!summary || !summary.assessment) {
     return (
-      <div className="p-12 text-center text-slate-300 font-mono text-sm">
-        <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse inline-block mr-2" />
+      <div className="p-12 text-center text-[#86868b] font-medium text-sm">
+        <span className="w-2.5 h-2.5 rounded-full bg-[#0071e3] animate-pulse inline-block mr-2" />
         Loading organizational diagnostic intelligence overview...
       </div>
     );
@@ -41,6 +53,10 @@ export function DashboardView(props: {
     conflicts_count: 0,
     recommendations_count: 0,
     total_documents: 0,
+    documents_processed: 0,
+    evidence_records_count: 0,
+    stakeholders_assessed: 0,
+    total_stakeholders: 10,
   };
   const dimensions_summary = summary.dimensions_summary || [];
   const totalReq =
@@ -56,7 +72,7 @@ export function DashboardView(props: {
       const res = await api.runAiSynthesis(assessment.id, aiQuestion);
       setAiResult(res);
     } catch (err: any) {
-      setAiError(err.message || "Failed to generate Groq AI synthesis");
+      setAiError(err.message || "Failed to generate AI executive synthesis");
     } finally {
       setIsGeneratingAi(false);
     }
@@ -64,33 +80,33 @@ export function DashboardView(props: {
 
   return (
     <div className="space-y-6">
-      {/* Top Executive Header Card (EcoVault Inspired) */}
-      <div className="glass-card rounded-2xl p-6 text-white border border-white/10 bg-gradient-to-br from-[#0c162c] via-[#081120] to-[#060b14] shadow-2xl relative overflow-hidden card-hover">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10">
+      {/* Top Executive Header Card (Apple Style Showcase) */}
+      <div className="apple-card p-7 text-[#1d1d1f] relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
-              <span className="flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1 rounded-full shadow-sm shadow-emerald-500/20">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold mb-2">
+              <span className="flex items-center gap-1.5 bg-[#0071e3]/10 border border-[#0071e3]/20 px-3 py-1 rounded-full text-[#0071e3]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0071e3] shadow-sm shadow-[#0071e3]/60" />
                 Organizational Diagnostic Intelligence
               </span>
-              <span>•</span>
-              <span className="text-cyan-300 font-bold">{assessment.fiscal_year}</span>
+              <span className="text-[#d2d2d7]">•</span>
+              <span className="text-[#1d1d1f] font-bold">{assessment.fiscal_year}</span>
               {assessment.company_ticker ? (
-                <span className="px-2.5 py-0.5 bg-[#060b14] border border-white/15 rounded-md text-cyan-300 font-mono font-bold">
+                <span className="px-2.5 py-0.5 bg-[#f5f5f7] border border-black/10 rounded-md text-[#0071e3] font-mono font-bold">
                   {assessment.company_ticker}
                 </span>
               ) : null}
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white mt-1.5">
-              {assessment.company_name} — {assessment.title}
+            <h1 className="text-3xl font-bold tracking-tight text-[#1d1d1f]">
+              {assessment.company_name}
             </h1>
-            <p className="text-slate-300 text-xs mt-1.5 flex items-center gap-3">
+            <p className="text-sm text-[#86868b] mt-1">
+              {assessment.title}
+            </p>
+            <div className="text-xs text-[#86868b] mt-3 flex flex-wrap items-center gap-3">
               <span>
                 Last Evaluated:{" "}
-                <strong className="text-slate-100">
+                <strong className="text-[#1d1d1f]">
                   {assessment.last_analyzed_at
                     ? new Date(assessment.last_analyzed_at).toLocaleString()
                     : "Not yet analyzed"}
@@ -99,23 +115,25 @@ export function DashboardView(props: {
               <span>•</span>
               <span>
                 Status:{" "}
-                <span className="uppercase font-bold text-emerald-400 px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40">
+                <span className="font-semibold text-[#248a3d] px-2.5 py-0.5 rounded-full bg-[#34c759]/10 border border-[#34c759]/30">
                   {assessment.status}
                 </span>
               </span>
-            </p>
+            </div>
           </div>
+
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigate("documents")}
-              className="px-4 py-2.5 rounded-xl bg-[#0e1a32] hover:bg-[#142344] text-white border border-white/15 text-xs font-bold transition card-hover shadow-lg"
+              className="apple-btn-secondary"
             >
-              📁 Manage Filings ({metrics.documents_processed})
+              <DocumentIcon className="w-4 h-4 text-[#0071e3]" />
+              <span>Manage Filings ({metrics.documents_processed})</span>
             </button>
             <button
               onClick={onRunAnalysis}
               disabled={isAnalyzing}
-              className="btn-shimmer px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-white text-xs font-black shadow-lg shadow-emerald-500/30 transition card-hover flex items-center gap-2"
+              className="apple-btn-primary"
             >
               {isAnalyzing ? (
                 <>
@@ -124,7 +142,7 @@ export function DashboardView(props: {
                 </>
               ) : (
                 <>
-                  <span>⚡</span>
+                  <SparklesIcon className="w-4 h-4" />
                   <span>Run AI Diagnostic</span>
                 </>
               )}
@@ -133,16 +151,14 @@ export function DashboardView(props: {
         </div>
       </div>
 
-      {/* 5-Step Clear Diagnostic Workflow Journey (EcoVault Inspired) */}
-      <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] rounded-2xl p-5 border border-white/10 shadow-2xl">
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-              Diagnostic Workflow (Click Any Step to Inspect)
-            </span>
+      {/* 5-Step Diagnostic Workflow Journey (Apple Clean Cards) */}
+      <div className="apple-card p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#86868b]">
+            Diagnostic Workflow
           </div>
-          <span className="text-[11px] text-emerald-400 font-mono font-semibold">
-            5-Stage Diagnostic Pipeline
+          <span className="text-xs text-[#0071e3] font-mono font-semibold">
+            5-Stage Pipeline
           </span>
         </div>
 
@@ -150,16 +166,16 @@ export function DashboardView(props: {
           {/* Step 1 */}
           <div 
             onClick={() => onNavigate("documents")}
-            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
+            className="p-4 rounded-2xl bg-[#f5f5f7]/80 hover:bg-white border border-black/5 hover:border-[#0071e3]/30 cursor-pointer card-hover transition group shadow-sm"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[#86868b] mb-1">
               <span>STEP 01</span>
-              <span className="text-emerald-400 font-semibold">✓ Ingested</span>
+              <span className="text-[#248a3d] font-semibold">Ingested</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+            <div className="text-sm font-bold text-[#1d1d1f] group-hover:text-[#0071e3] transition">
               Research Library
             </div>
-            <div className="text-xs text-slate-300 mt-1">
+            <div className="text-xs text-[#86868b] mt-1">
               {metrics.documents_processed} Filings • {metrics.evidence_records_count} Chunks
             </div>
           </div>
@@ -167,16 +183,16 @@ export function DashboardView(props: {
           {/* Step 2 */}
           <div 
             onClick={() => onNavigate("stakeholders")}
-            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
+            className="p-4 rounded-2xl bg-[#f5f5f7]/80 hover:bg-white border border-black/5 hover:border-[#0071e3]/30 cursor-pointer card-hover transition group shadow-sm"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[#86868b] mb-1">
               <span>STEP 02</span>
-              <span className="text-emerald-400 font-semibold">✓ Mapped</span>
+              <span className="text-[#248a3d] font-semibold">Mapped</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+            <div className="text-sm font-bold text-[#1d1d1f] group-hover:text-[#0071e3] transition">
               Stakeholders
             </div>
-            <div className="text-xs text-slate-300 mt-1">
+            <div className="text-xs text-[#86868b] mt-1">
               {metrics.stakeholders_assessed} Groups (4 Int / 6 Ext)
             </div>
           </div>
@@ -184,16 +200,16 @@ export function DashboardView(props: {
           {/* Step 3 */}
           <div 
             onClick={() => onNavigate("structure")}
-            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-emerald-500/60 cursor-pointer card-hover transition group shadow-md"
+            className="p-4 rounded-2xl bg-[#f5f5f7]/80 hover:bg-white border border-black/5 hover:border-[#0071e3]/30 cursor-pointer card-hover transition group shadow-sm"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[#86868b] mb-1">
               <span>STEP 03</span>
-              <span className="text-emerald-400 font-semibold">✓ Extracted</span>
+              <span className="text-[#248a3d] font-semibold">Extracted</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+            <div className="text-sm font-bold text-[#1d1d1f] group-hover:text-[#0071e3] transition">
               Org Structure
             </div>
-            <div className="text-xs text-slate-300 mt-1">
+            <div className="text-xs text-[#86868b] mt-1">
               7 Core Dimensions & Units
             </div>
           </div>
@@ -201,16 +217,16 @@ export function DashboardView(props: {
           {/* Step 4 */}
           <div 
             onClick={() => onNavigate("matrix")}
-            className="p-4 rounded-xl bg-gradient-to-br from-emerald-950/40 via-[#0a182e] to-[#070e1c] border border-emerald-500/40 hover:border-emerald-400 cursor-pointer card-hover transition group shadow-lg shadow-emerald-950/20"
+            className="p-4 rounded-2xl bg-[#0071e3]/5 hover:bg-white border border-[#0071e3]/20 hover:border-[#0071e3] cursor-pointer card-hover transition group shadow-sm"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-emerald-300 mb-1">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[#0071e3] mb-1">
               <span>STEP 04</span>
-              <span className="text-emerald-400 font-black">{assessment.overall_alignment_score}% Score</span>
+              <span className="font-bold">{assessment.overall_alignment_score}% Score</span>
             </div>
-            <div className="text-sm font-extrabold text-white group-hover:text-cyan-300 transition">
+            <div className="text-sm font-bold text-[#1d1d1f] group-hover:text-[#0071e3] transition">
               Alignment Matrix
             </div>
-            <div className="text-xs text-slate-300 mt-1">
+            <div className="text-xs text-[#86868b] mt-1">
               {totalReq} Requirements Evaluated
             </div>
           </div>
@@ -218,129 +234,132 @@ export function DashboardView(props: {
           {/* Step 5 */}
           <div 
             onClick={() => onNavigate("recommendations")}
-            className="p-4 rounded-xl bg-[#091224]/90 border border-white/10 hover:border-amber-500/60 cursor-pointer card-hover transition group shadow-md"
+            className="p-4 rounded-2xl bg-[#f5f5f7]/80 hover:bg-white border border-black/5 hover:border-[#ff9500]/40 cursor-pointer card-hover transition group shadow-sm"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[#86868b] mb-1">
               <span>STEP 05</span>
-              <span className="text-amber-400 font-bold">{metrics.recommendations_count} Actions</span>
+              <span className="text-[#c96500] font-bold">{metrics.recommendations_count} Actions</span>
             </div>
-            <div className="text-sm font-bold text-white group-hover:text-amber-300 transition">
+            <div className="text-sm font-bold text-[#1d1d1f] group-hover:text-[#c96500] transition">
               Action Plan
             </div>
-            <div className="text-xs text-slate-300 mt-1">
+            <div className="text-xs text-[#86868b] mt-1">
               {metrics.conflicts_count} Conflicts • Reforms
             </div>
           </div>
         </div>
       </div>
+
+      {/* Dual Radial Gauges & Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <RadialScoreGauge
           label="Overall Alignment Score"
-          sublabel="Weighted average across assessed stakeholder expectations (Scale: Strong=4, Partial=3, Misaligned=1)"
+          sublabel="Weighted average across stakeholder expectations (Strong=4, Partial=3, Misaligned=1)"
           value={assessment.overall_alignment_score}
           colorHex={
             (assessment.overall_alignment_score || 0) >= 75
-              ? "#10b981"
+              ? "#34c759"
               : (assessment.overall_alignment_score || 0) >= 55
-              ? "#f59e0b"
-              : "#f43f5e"
+              ? "#ff9500"
+              : "#ff3b30"
           }
         />
         <RadialScoreGauge
           label="Evidence Coverage"
-          sublabel="Percentage of applicable stakeholder requirements backed by extracted documentary evidence"
+          sublabel="Percentage of applicable requirements backed by extracted documentary evidence"
           value={assessment.evidence_coverage_pct}
-          colorHex="#06b6d4"
+          colorHex="#0071e3"
         />
 
-        <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl flex flex-col justify-between card-hover">
+        <div className="apple-card p-5 flex flex-col justify-between">
           <div>
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="text-xs font-semibold text-[#86868b] uppercase tracking-wider">
               Knowledge Base & Evidence
             </div>
             <div className="mt-2.5 flex items-baseline gap-2">
-              <span className="text-3xl font-black text-white">
+              <span className="text-3xl font-bold text-[#1d1d1f]">
                 {metrics.documents_processed}
               </span>
-              <span className="text-xs text-slate-300 font-medium">
+              <span className="text-xs text-[#86868b] font-medium">
                 documents ({metrics.evidence_records_count} citations)
               </span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-            <span className="text-slate-300">
+          <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs">
+            <span className="text-[#515154]">
               Assessed:{" "}
-              <strong className="text-white">
+              <strong className="text-[#1d1d1f]">
                 {metrics.stakeholders_assessed} / {metrics.total_stakeholders}
               </strong>
             </span>
             <button
               onClick={() => onNavigate("evidence")}
-              className="text-cyan-400 font-bold hover:text-cyan-300 flex items-center gap-1"
+              className="text-[#0071e3] font-semibold hover:underline flex items-center gap-1"
             >
               <span>Inspect Citations</span>
-              <span>→</span>
+              <ArrowRightIcon className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-5 rounded-2xl border border-white/10 shadow-2xl flex flex-col justify-between card-hover">
+        <div className="apple-card p-5 flex flex-col justify-between">
           <div>
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="text-xs font-semibold text-[#86868b] uppercase tracking-wider">
               Alignment Gaps & Diagnostics
             </div>
             <div className="mt-2.5 flex items-baseline gap-2">
-              <span className="text-3xl font-black text-rose-400">
+              <span className="text-3xl font-bold text-[#d70015]">
                 {metrics.alignment_gaps_identified}
               </span>
-              <span className="text-xs text-slate-300 font-medium">
+              <span className="text-xs text-[#86868b] font-medium">
                 gaps ({metrics.potential_misalignments} misaligned,{" "}
                 {metrics.partial_alignments} partial)
               </span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-            <span className="text-slate-300">
+          <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs">
+            <span className="text-[#515154]">
               Remediations:{" "}
-              <strong className="text-white">{metrics.recommendations_count}</strong>
+              <strong className="text-[#1d1d1f]">{metrics.recommendations_count}</strong>
             </span>
             <button
               onClick={() => onNavigate("recommendations")}
-              className="text-emerald-400 font-bold hover:text-emerald-300 flex items-center gap-1"
+              className="text-[#0071e3] font-semibold hover:underline flex items-center gap-1"
             >
               <span>View Actions</span>
-              <span>→</span>
+              <ArrowRightIcon className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Distribution Breakdown Bar (EcoVault Inspired) */}
-      <div className="glass-card bg-gradient-to-br from-[#0c162c] to-[#070e1c] p-6 rounded-2xl border border-white/10 shadow-2xl text-white">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+      {/* Distribution Breakdown Bar (Apple Clean Segment) */}
+      <div className="apple-card p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
-            <h3 className="text-sm font-black text-white">
+            <h3 className="text-base font-bold text-[#1d1d1f]">
               Requirement Alignment Distribution ({totalReq} Evaluated Requirements)
             </h3>
-            <p className="text-xs text-slate-300 mt-0.5">
+            <p className="text-xs text-[#86868b] mt-0.5">
               Click any cell in the Alignment Matrix to inspect exact quotations, root causes, and score math
             </p>
           </div>
           <button
             onClick={() => onNavigate("matrix")}
-            className="px-3.5 py-1.5 rounded-lg bg-violet-600/30 text-violet-300 border border-violet-500/30 text-xs font-bold hover:bg-violet-600/50 transition self-start sm:self-auto"
+            className="apple-btn-secondary"
           >
-            Open Interactive Alignment Matrix →
+            <span>Open Interactive Alignment Matrix</span>
+            <ArrowRightIcon className="w-4 h-4 text-[#0071e3]" />
           </button>
         </div>
 
-        <div className="w-full h-5 rounded-full overflow-hidden flex bg-slate-800/80 border border-slate-700/50">
+        <div className="w-full h-4 rounded-full overflow-hidden flex bg-[#e5e5ea]">
           {totalReq > 0 ? (
             <div
               style={{
                 width: `${(metrics.strong_alignments / totalReq) * 100}%`,
               }}
-              className="bg-emerald-500 h-full shadow-sm shadow-emerald-400/50"
+              className="bg-[#34c759] h-full"
               title={`Strong Alignment: ${metrics.strong_alignments}`}
             ></div>
           ) : null}
@@ -349,7 +368,7 @@ export function DashboardView(props: {
               style={{
                 width: `${(metrics.partial_alignments / totalReq) * 100}%`,
               }}
-              className="bg-amber-500 h-full shadow-sm shadow-amber-400/50"
+              className="bg-[#ff9500] h-full"
               title={`Partial Alignment: ${metrics.partial_alignments}`}
             ></div>
           ) : null}
@@ -358,7 +377,7 @@ export function DashboardView(props: {
               style={{
                 width: `${(metrics.potential_misalignments / totalReq) * 100}%`,
               }}
-              className="bg-rose-500 h-full shadow-sm shadow-rose-400/50"
+              className="bg-[#ff3b30] h-full"
               title={`Potential Misalignment: ${metrics.potential_misalignments}`}
             ></div>
           ) : null}
@@ -367,34 +386,34 @@ export function DashboardView(props: {
               style={{
                 width: `${(metrics.insufficient_evidence_count / totalReq) * 100}%`,
               }}
-              className="bg-slate-600 h-full"
+              className="bg-[#8e8e93] h-full"
               title={`Insufficient Evidence: ${metrics.insufficient_evidence_count}`}
             ></div>
           ) : null}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-xs">
-          <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-between card-hover">
-            <span className="font-bold text-emerald-200">Strong Alignment (4)</span>
-            <span className="font-black text-emerald-300 text-base">
+          <div className="p-3 rounded-xl bg-[#eaf8ee] border border-[#a3e4b7] flex items-center justify-between">
+            <span className="font-semibold text-[#1d7334]">Strong Alignment (4)</span>
+            <span className="font-bold text-[#1d7334] text-base">
               {metrics.strong_alignments}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 flex items-center justify-between card-hover">
-            <span className="font-bold text-amber-200">Partial Alignment (3)</span>
-            <span className="font-black text-amber-300 text-base">
+          <div className="p-3 rounded-xl bg-[#fff7e6] border border-[#ffd580] flex items-center justify-between">
+            <span className="font-semibold text-[#b25e00]">Partial Alignment (3)</span>
+            <span className="font-bold text-[#b25e00] text-base">
               {metrics.partial_alignments}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 flex items-center justify-between card-hover">
-            <span className="font-bold text-rose-200">Potential Misaligned (1)</span>
-            <span className="font-black text-rose-300 text-base">
+          <div className="p-3 rounded-xl bg-[#fdeef0] border border-[#f9abb4] flex items-center justify-between">
+            <span className="font-semibold text-[#c9182b]">Potential Misaligned (1)</span>
+            <span className="font-bold text-[#c9182b] text-base">
               {metrics.potential_misalignments}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-between card-hover">
-            <span className="font-bold text-slate-300">Insufficient Evidence</span>
-            <span className="font-black text-slate-300 text-base">
+          <div className="p-3 rounded-xl bg-[#f2f2f7] border border-[#d1d1d6] flex items-center justify-between">
+            <span className="font-semibold text-[#636366]">Insufficient Evidence</span>
+            <span className="font-bold text-[#636366] text-base">
               {metrics.insufficient_evidence_count}
             </span>
           </div>
@@ -402,117 +421,119 @@ export function DashboardView(props: {
       </div>
 
       {/* Top Priority Structural Findings & Key Insights */}
-      <div className="glass-card bg-[#111827] p-5 rounded-2xl border border-slate-700/80 shadow-xl space-y-3">
+      <div className="apple-card p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-black text-white tracking-tight flex items-center gap-2">
-              <span>🎯</span>
+            <h3 className="text-base font-bold text-[#1d1d1f] tracking-tight flex items-center gap-2">
+              <MatrixIcon className="w-5 h-5 text-[#0071e3]" />
               <span>Key Diagnostic Findings & Priority Governance Gaps</span>
             </h3>
-            <p className="text-xs text-slate-300 mt-0.5">
-              Identified through automated 6-stage cross-examination of corporate charters and 10-K disclosures
+            <p className="text-xs text-[#86868b] mt-0.5">
+              Identified through automated 6-stage cross-examination of corporate charters and disclosures
             </p>
           </div>
           <button
             onClick={() => onNavigate("recommendations")}
-            className="text-xs text-indigo-400 font-bold hover:underline"
+            className="text-xs text-[#0071e3] font-semibold hover:underline"
           >
-            View All {metrics.recommendations_count} Recommended Reforms →
+            View All {metrics.recommendations_count} Recommended Actions →
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
           {/* Finding 1 */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-rose-500/30 card-hover flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-[#fdeef0]/60 border border-[#f9abb4] card-hover flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-xs mb-2">
-                <span className="px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-bold text-[10px] border border-rose-800/60">
-                  CRITICAL MISALIGNMENT
+                <span className="px-2 py-0.5 rounded-full bg-[#ff3b30] text-white font-bold text-[10px]">
+                  CRITICAL GAP
                 </span>
-                <span className="text-slate-400 font-mono text-[11px]">Centralization</span>
+                <span className="text-[#86868b] font-mono text-[11px]">Centralization</span>
               </div>
-              <div className="text-xs font-bold text-white leading-snug">
+              <div className="text-sm font-bold text-[#1d1d1f] leading-snug">
                 Dual-Class Founder Voting Power Concentration
               </div>
-              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
-                Class B shares hold &gt;60% voting power, creating a severe governance imbalance between executive authority and independent minority shareholder accountability.
+              <p className="text-xs text-[#515154] mt-2 leading-relaxed">
+                Class B shares hold concentrated voting power, creating a governance imbalance between executive authority and independent minority shareholder accountability.
               </p>
             </div>
-            <div className="mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300 flex items-center justify-between">
-              <span>Reform: Independent lead director vote</span>
-              <span className="text-slate-500">Score 1.0</span>
+            <div className="mt-3 pt-2.5 border-t border-black/5 text-xs text-[#0071e3] flex items-center justify-between font-medium">
+              <span>Reform: Independent lead director</span>
+              <span className="font-bold text-[#d70015]">Score 1.0</span>
             </div>
           </div>
 
           {/* Finding 2 */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 card-hover flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-[#fff7e6]/60 border border-[#ffd580] card-hover flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-xs mb-2">
-                <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-bold text-[10px] border border-amber-800/60">
-                  PARTIAL ALIGNMENT (CLAIM CAPPED)
+                <span className="px-2 py-0.5 rounded-full bg-[#ff9500] text-white font-bold text-[10px]">
+                  PARTIAL ALIGNMENT
                 </span>
-                <span className="text-slate-400 font-mono text-[11px]">Formalization</span>
+                <span className="text-[#86868b] font-mono text-[11px]">Formalization</span>
               </div>
-              <div className="text-xs font-bold text-white leading-snug">
-                Teen Safety Controls &amp; Pre-Launch Privacy Review
+              <div className="text-sm font-bold text-[#1d1d1f] leading-snug">
+                Youth Safety Controls &amp; Pre-Launch Review
               </div>
-              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
-                Default Instagram Teen Accounts deployed; self-reported safety disclosures capped at Partial Alignment by the epistemic validator pending independent audit.
+              <p className="text-xs text-[#515154] mt-2 leading-relaxed">
+                Default teen accounts deployed; self-reported safety disclosures capped at Partial Alignment pending third-party operational audit.
               </p>
             </div>
-            <div className="mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300 flex items-center justify-between">
-              <span>Action: Publish 3P safety verification</span>
-              <span className="text-slate-500">Score 3.0</span>
+            <div className="mt-3 pt-2.5 border-t border-black/5 text-xs text-[#0071e3] flex items-center justify-between font-medium">
+              <span>Action: Publish 3P audit report</span>
+              <span className="font-bold text-[#b25e00]">Score 3.0</span>
             </div>
           </div>
 
           {/* Finding 3 */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30 card-hover flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-[#eaf8ee]/60 border border-[#a3e4b7] card-hover flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-xs mb-2">
-                <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-bold text-[10px] border border-emerald-800/60">
+                <span className="px-2 py-0.5 rounded-full bg-[#34c759] text-white font-bold text-[10px]">
                   STRONG ALIGNMENT
                 </span>
-                <span className="text-slate-400 font-mono text-[11px]">Governance</span>
+                <span className="text-[#86868b] font-mono text-[11px]">Governance</span>
               </div>
-              <div className="text-xs font-bold text-white leading-snug">
-                Audit &amp; Privacy Committee Board Charter
+              <div className="text-sm font-bold text-[#1d1d1f] leading-snug">
+                Audit &amp; Risk Committee Board Charter
               </div>
-              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
-                Direct board charter mandates quarterly reporting from Chief Privacy Officer, backed by AI Governance &amp; Responsible Innovation Council.
+              <p className="text-xs text-[#515154] mt-2 leading-relaxed">
+                Direct board charter mandates quarterly reporting from Chief Privacy Officer, backed by executive Responsible Innovation Council.
               </p>
             </div>
-            <div className="mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300 flex items-center justify-between">
-              <span>Verified: Formal Board Charter (2025)</span>
-              <span className="text-emerald-400 font-bold">Score 4.0</span>
+            <div className="mt-3 pt-2.5 border-t border-black/5 text-xs text-[#0071e3] flex items-center justify-between font-medium">
+              <span>Verified: Formal Board Charter</span>
+              <span className="font-bold text-[#1d7334]">Score 4.0</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Collapsible Architecture Engine */}
-      <div className="glass-card bg-[#111827] rounded-2xl border border-slate-700/80 overflow-hidden shadow-xl">
+      <div className="apple-card overflow-hidden">
         <button
           onClick={() => setShowArchitecture(!showArchitecture)}
-          className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition cursor-pointer"
+          className="w-full p-5 flex items-center justify-between text-left hover:bg-black/[0.02] transition cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <span className="text-xl">⚙️</span>
+            <div className="w-9 h-9 rounded-xl bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3]">
+              <SettingsIcon className="w-5 h-5" />
+            </div>
             <div>
-              <div className="text-sm font-bold text-white">
+              <div className="text-sm font-bold text-[#1d1d1f]">
                 Technical Multi-Agent Architecture (6-Stage Pipeline)
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-[#86868b]">
                 End-to-end evidence verification combining local RAG, Groq LLM inference, and deterministic scoring.
               </div>
             </div>
           </div>
-          <span className="text-xs text-indigo-300 font-bold px-3 py-1.5 rounded-lg bg-indigo-950 border border-indigo-700/60">
+          <span className="text-xs text-[#0071e3] font-semibold px-3 py-1.5 rounded-full bg-[#0071e3]/10 border border-[#0071e3]/20">
             {showArchitecture ? "Hide Diagram ▲" : "Inspect Diagram ▼"}
           </span>
         </button>
         {showArchitecture ? (
-          <div className="p-5 border-t border-slate-800 animate-fade-in bg-slate-950/40">
+          <div className="p-6 border-t border-black/5 animate-fade-in bg-white/50">
             <EvidenceToInsightFlow
               evidenceCount={metrics.evidence_records_count}
               coveragePct={assessment.evidence_coverage_pct}
@@ -524,30 +545,29 @@ export function DashboardView(props: {
         ) : null}
       </div>
 
-      {/* Live Groq AI Executive Diagnostic & Evidence Q&A Synthesis */}
-      <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-violet-900/60 shadow-xl space-y-4 text-white">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      {/* Live AI Executive Diagnostic & Evidence Q&A Synthesis */}
+      <div className="apple-card p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-violet-600 text-white text-[10px] font-bold uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#5856d6] text-white text-[10px] font-bold uppercase tracking-wider">
                 Groq AI Live Synthesis
               </span>
-              <h3 className="text-sm font-bold text-white">
-                AI Executive Board Briefing & Evidence-Grounded Diagnostic Q&A
+              <h3 className="text-base font-bold text-[#1d1d1f]">
+                AI Executive Briefing & Diagnostic Synthesis
               </h3>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Powered by Groq (llama-3.3-70b-versatile) with strict quotation guardrails. Synthesizes extracted citations and structural alignment gaps.
+            <p className="text-xs text-[#86868b] mt-0.5">
+              Powered by Groq with strict citation verification. Synthesizes extracted evidence and structural gaps.
             </p>
           </div>
           <button
             onClick={handleRunGroqSynthesis}
             disabled={isGeneratingAi}
-            className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-violet-600/30 transition shrink-0"
+            className="apple-btn-primary self-start sm:self-auto"
           >
-            {isGeneratingAi
-              ? "Querying Groq AI (llama-3.3-70b)..."
-              : "Generate Groq AI Executive Synthesis"}
+            <SparklesIcon className="w-4 h-4" />
+            <span>{isGeneratingAi ? "Synthesizing AI Briefing..." : "Generate AI Briefing"}</span>
           </button>
         </div>
 
@@ -557,63 +577,63 @@ export function DashboardView(props: {
             value={aiQuestion}
             onInput={(e: any) => setAiQuestion(e.target.value)}
             placeholder="Ask an organizational alignment question grounded in this period's evidence..."
-            className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-violet-500"
+            className="flex-1 bg-[#f5f5f7] border border-black/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1d1d1f] placeholder-[#86868b] focus:outline-none focus:border-[#0071e3] focus:bg-white transition"
           />
         </div>
 
         {aiError ? (
-          <div className="p-3 rounded-lg bg-rose-950/60 border border-rose-500/40 text-xs text-rose-300">
+          <div className="p-3 rounded-xl bg-[#fdeef0] border border-[#f9abb4] text-xs text-[#c9182b]">
             {aiError}
           </div>
         ) : null}
 
         {aiResult ? (
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="font-bold text-violet-300">
+          <div className="p-5 rounded-2xl bg-[#fbfbfd] border border-black/8 space-y-3 text-xs">
+            <div className="flex items-center justify-between border-b border-black/5 pb-2.5">
+              <span className="font-bold text-[#1d1d1f] text-sm">
                 Executive Diagnostic Briefing ({assessment.company_name})
               </span>
-              <span className="px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800/50 font-mono text-[11px]">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] border border-[#0071e3]/20 font-mono text-[11px] font-semibold">
                 Engine: {aiResult.provider_used}
               </span>
             </div>
-            <p className="text-slate-300 leading-relaxed">
+            <p className="text-[#515154] leading-relaxed text-sm">
               {aiResult.executive_summary}
             </p>
             {aiResult.targeted_question_response &&
             aiResult.targeted_question_response !== aiResult.executive_summary ? (
-              <div className="p-3 rounded-lg bg-violet-950/40 border border-violet-800/40">
-                <div className="font-bold text-violet-300 mb-1">
+              <div className="p-3.5 rounded-xl bg-[#f5f5f7] border border-black/8">
+                <div className="font-bold text-[#1d1d1f] mb-1">
                   Targeted Diagnostic Response:
                 </div>
-                <p className="text-slate-200 leading-relaxed">
+                <p className="text-[#515154] leading-relaxed">
                   {aiResult.targeted_question_response}
                 </p>
               </div>
             ) : null}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-              <div className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-500/30">
-                <div className="font-bold text-emerald-300 mb-1">
+              <div className="p-3.5 rounded-xl bg-[#eaf8ee] border border-[#a3e4b7]">
+                <div className="font-bold text-[#1d7334] mb-1">
                   Key Structural Strengths
                 </div>
-                <ul className="list-disc pl-4 space-y-1 text-emerald-200">
+                <ul className="list-disc pl-4 space-y-1 text-[#1d7334]">
                   {(aiResult.key_strengths || []).map((s: string, i: number) => (
                     <li key={i}>{s}</li>
                   ))}
                 </ul>
               </div>
-              <div className="p-3 rounded-lg bg-amber-950/40 border border-amber-500/30">
-                <div className="font-bold text-amber-300 mb-1">
+              <div className="p-3.5 rounded-xl bg-[#fff7e6] border border-[#ffd580]">
+                <div className="font-bold text-[#b25e00] mb-1">
                   Key Structural Alignment Gaps
                 </div>
-                <ul className="list-disc pl-4 space-y-1 text-amber-200">
+                <ul className="list-disc pl-4 space-y-1 text-[#b25e00]">
                   {(aiResult.key_structural_gaps || []).map((g: string, i: number) => (
                     <li key={i}>{g}</li>
                   ))}
                 </ul>
               </div>
             </div>
-            <div className="text-[11px] text-slate-400 italic">
+            <div className="text-[11px] text-[#86868b] italic">
               <strong>Evidence Limitation Disclosure:</strong>{" "}
               {aiResult.evidence_limitations_summary}
             </div>
@@ -621,56 +641,56 @@ export function DashboardView(props: {
         ) : null}
       </div>
 
-      {/* Two-Column Chart Grid: Stakeholder Alignment vs Coverage & 7 Organizational Dimensions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-white">
+      {/* Two-Column Grid: Stakeholder Alignment vs Coverage & 7 Organizational Dimensions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Stakeholder Alignment & Coverage Chart */}
-        <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl">
+        <div className="apple-card p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white">
+              <h3 className="text-base font-bold text-[#1d1d1f]">
                 Stakeholder Alignment Score vs. Evidence Coverage
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#86868b]">
                 Weighted by evaluator importance weights
               </p>
             </div>
             <button
               onClick={() => onNavigate("stakeholders")}
-              className="text-xs text-cyan-400 font-semibold hover:underline"
+              className="text-xs text-[#0071e3] font-semibold hover:underline"
             >
               Adjust Weights →
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3.5">
             {stakeholders.map((sh) => {
               const score = sh.alignment_score;
               const barColor =
                 score === null
-                  ? "bg-slate-700"
+                  ? "bg-[#8e8e93]"
                   : score >= 75
-                  ? "bg-emerald-500 shadow-sm shadow-emerald-400/50"
+                  ? "bg-[#34c759]"
                   : score >= 55
-                  ? "bg-amber-500 shadow-sm shadow-amber-400/50"
-                  : "bg-rose-500 shadow-sm shadow-rose-400/50";
+                  ? "bg-[#ff9500]"
+                  : "bg-[#ff3b30]";
               return (
-                <div key={sh.id} className="space-y-1">
+                <div key={sh.id} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-200">{sh.name}</span>
-                      <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 text-[10px] font-mono">
+                      <span className="font-semibold text-[#1d1d1f]">{sh.name}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-black/5 text-[#86868b] text-[10px] font-mono">
                         {sh.category} • W:{sh.importance_weight}x
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-slate-400">
-                        Cov: <strong className="text-slate-200">{sh.evidence_coverage_pct}%</strong>
+                      <span className="text-[#86868b]">
+                        Cov: <strong className="text-[#1d1d1f]">{sh.evidence_coverage_pct}%</strong>
                       </span>
-                      <span className="font-bold text-white w-14 text-right">
+                      <span className="font-bold text-[#1d1d1f] w-14 text-right">
                         {score !== null ? `${score}%` : "Insuff."}
                       </span>
                     </div>
                   </div>
-                  <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden flex">
+                  <div className="w-full h-2 bg-[#e5e5ea] rounded-full overflow-hidden flex">
                     <div
                       className={`${barColor} h-full transition-all`}
                       style={{ width: `${score !== null ? score : 0}%` }}
@@ -684,34 +704,34 @@ export function DashboardView(props: {
 
         {/* 7 Organizational Dimensions Suitability & Company Priorities */}
         <div className="space-y-6">
-          <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl">
+          <div className="apple-card p-6">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className="text-sm font-bold text-white">
+                <h3 className="text-base font-bold text-[#1d1d1f]">
                   7 Organizational Structure Dimensions
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#86868b]">
                   Structural suitability based on extracted evidence
                 </p>
               </div>
               <button
                 onClick={() => onNavigate("structure")}
-                className="text-xs text-cyan-400 font-semibold hover:underline"
+                className="text-xs text-[#0071e3] font-semibold hover:underline"
               >
                 Inspect Structure →
               </button>
             </div>
-            <div className="divide-y divide-slate-800">
+            <div className="divide-y divide-black/5">
               {dimensions_summary.map((d) => (
                 <div
                   key={d.id}
                   className="py-2.5 flex items-center justify-between text-xs"
                 >
                   <div>
-                    <span className="font-semibold text-slate-200">
+                    <span className="font-semibold text-[#1d1d1f]">
                       {d.dimension_name}
                     </span>
-                    <span className="text-slate-500 ml-2">
+                    <span className="text-[#86868b] ml-2">
                       ({d.evidence_count} citations)
                     </span>
                   </div>
@@ -722,18 +742,18 @@ export function DashboardView(props: {
           </div>
 
           {/* Company-Specific Analysis Priorities */}
-          <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl">
-            <h3 className="text-sm font-bold text-white">
+          <div className="apple-card p-6">
+            <h3 className="text-base font-bold text-[#1d1d1f]">
               Configured Diagnostic Priorities ({assessment.company_name})
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5 mb-3">
-              Priority focus areas guiding RAG retrieval and expectation discovery without predetermining conclusions
+            <p className="text-xs text-[#86868b] mt-0.5 mb-3">
+              Priority focus areas guiding retrieval and expectation discovery without predetermining conclusions
             </p>
             <div className="flex flex-wrap gap-2">
               {(assessment.company_priorities || []).map((prio, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-full bg-violet-950/60 border border-violet-700/50 text-violet-300 text-xs font-semibold"
+                  className="px-3 py-1 rounded-full bg-[#0071e3]/10 border border-[#0071e3]/20 text-[#0071e3] text-xs font-semibold"
                 >
                   {prio}
                 </span>

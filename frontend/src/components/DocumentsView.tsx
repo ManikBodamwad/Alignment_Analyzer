@@ -311,7 +311,7 @@ export function DocumentsView(props: {
                         </span>
                       ) : (
                         <span className="text-[10px] text-emerald-400">
-                          ✓ Clean Source
+                          Clean Source
                         </span>
                       )}
                     </div>
@@ -354,7 +354,7 @@ export function DocumentsView(props: {
               onClick={() => setSelectedDocDetails(null)}
               className="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 border border-slate-700"
             >
-              Close Inspector ✕
+              Close Inspector
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-1">
