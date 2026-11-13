@@ -1,6 +1,7 @@
 """Vercel Serverless Function Entrypoint for Stakeholder–Structure Alignment Analyzer."""
 
 import sys
+import urllib.parse
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -12,9 +13,9 @@ from backend.main import app as _fastapi_app  # noqa: E402
 
 class VercelPathFixMiddleware:
     """
-    On Vercel, rewrites like `/api/(.*) -> /api/index.py` cause Vercel's Python ASGI runner
-    to set scope['path'] to '/api/index.py'. This middleware recovers the original path from
-    the `x-matched-path` header (or other proxy headers) so FastAPI can match routes properly.
+    On Vercel, rewrites route incoming API requests to `/api/index.py?__path=<original_path>`.
+    This ASGI middleware extracts `__path`, cleans the query string, and restores the true
+    request path and query parameters in the ASGI scope so FastAPI matches routes properly.
     """
 
     def __init__(self, asgi_app):
@@ -22,25 +23,20 @@ class VercelPathFixMiddleware:
 
     async def __call__(self, scope, receive, send):
         if scope["type"] in ("http", "websocket"):
-            headers = dict(scope.get("headers", []))
-            matched_header = (
-                headers.get(b"x-matched-path")
-                or headers.get(b"x-vercel-matched-path")
-                or headers.get(b"x-forwarded-uri")
-                or headers.get(b"x-original-url")
-                or headers.get(b"x-rewrite-url")
-            )
-            if matched_header:
-                decoded = matched_header.decode("latin1", errors="ignore")
-                if "?" in decoded:
-                    clean_path, qs = decoded.split("?", 1)
-                    scope["query_string"] = qs.encode("latin1")
-                else:
-                    clean_path = decoded
-
-                if clean_path and clean_path not in ("/api/index.py", "/api/index"):
-                    scope["path"] = clean_path
-                    scope["raw_path"] = clean_path.encode("latin1")
+            qs = scope.get("query_string", b"").decode("latin1", errors="ignore")
+            if "__path=" in qs:
+                parts = qs.split("&")
+                target_path = None
+                remaining = []
+                for p in parts:
+                    if p.startswith("__path="):
+                        target_path = urllib.parse.unquote(p.split("=", 1)[1])
+                    else:
+                        remaining.append(p)
+                if target_path:
+                    scope["path"] = target_path
+                    scope["raw_path"] = target_path.encode("latin1")
+                    scope["query_string"] = "&".join(remaining).encode("latin1")
 
         await self.asgi_app(scope, receive, send)
 
