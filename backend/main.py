@@ -79,6 +79,19 @@ app.include_router(analysis.router)
 app.include_router(reports.router)
 
 
+@app.get("/api/index.py")
+@app.get("/api")
+def api_root():
+    return {
+        "status": "online",
+        "service": settings.app_name,
+        "version": settings.app_version,
+        "docs": "/docs",
+        "health": "/api/health",
+        "companies": "/api/companies",
+    }
+
+
 @app.get("/api/health")
 def health_check():
     return {
