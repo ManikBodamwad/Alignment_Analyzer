@@ -38,6 +38,7 @@ const rootPublicDir = path.join(rootDir, "public");
 const rootPublicStaticDir = path.join(rootPublicDir, "static");
 mkdirSync(rootPublicStaticDir, { recursive: true });
 writeFileSync(path.join(rootPublicDir, "index.html"), indexHtml, "utf-8");
+writeFileSync(path.join(rootPublicDir, "bundle.js"), bundleJs, "utf-8");
 writeFileSync(path.join(rootPublicStaticDir, "bundle.js"), bundleJs, "utf-8");
 
 const staticAssetsPyPath = path.join(rootDir, "backend", "static_assets.py");

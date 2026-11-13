@@ -1997,7 +1997,7 @@
     const [companies, setCompanies] = useState([]);
     const [allPeriods, setAllPeriods] = useState([]);
     const [selectedCompanyId, setSelectedCompanyId] = useState(1);
-    const [selectedPeriodId, setSelectedPeriodId] = useState(15);
+    const [selectedPeriodId, setSelectedPeriodId] = useState(0);
     const [summary, setSummary] = useState(null);
     const [documents, setDocuments] = useState([]);
     const [stakeholders, setStakeholders] = useState([]);
@@ -2021,42 +2021,52 @@
     );
     const [, setAuthTick] = useState(0);
     const loadInitialLists = async () => {
-      const [comps, periods] = await Promise.all([
-        api.getCompanies(),
-        api.getAssessments()
-      ]);
-      setCompanies(comps);
-      setAllPeriods(periods);
-      const metaPeriods = periods.filter((p) => p.company_id === 1);
-      if (metaPeriods.length > 0) {
-        const comprehensive = metaPeriods.find((p) => p.title.includes("Official SEC Filings") || p.id === 15);
-        if (comprehensive) {
-          setSelectedPeriodId(comprehensive.id);
-        } else {
-          setSelectedPeriodId(metaPeriods[metaPeriods.length - 1].id);
+      try {
+        const [comps, periods] = await Promise.all([
+          api.getCompanies(),
+          api.getAssessments()
+        ]);
+        setCompanies(comps);
+        setAllPeriods(periods);
+        const metaPeriods = periods.filter((p) => p.company_id === 1);
+        if (metaPeriods.length > 0) {
+          const comprehensive = metaPeriods.find((p) => p.title.includes("Official SEC Filings") || p.id === 15);
+          if (comprehensive) {
+            setSelectedPeriodId(comprehensive.id);
+          } else {
+            setSelectedPeriodId(metaPeriods[metaPeriods.length - 1].id);
+          }
+        } else if (periods.length > 0) {
+          setSelectedPeriodId(periods[0].id);
         }
+      } catch (err) {
+        console.error("Failed to load initial lists:", err);
       }
     };
     const loadPeriodData = async (periodId) => {
       if (!periodId) return;
-      const [sum, docs, shs, struct, mat, confs, recs, evs] = await Promise.all([
-        api.getAssessmentSummary(periodId),
-        api.getDocuments(periodId),
-        api.getStakeholders(periodId),
-        api.getStructureAnalysis(periodId),
-        api.getAlignmentMatrix(periodId),
-        api.getConflicts(periodId),
-        api.getRecommendations(periodId),
-        api.getEvidence(periodId)
-      ]);
-      setSummary(sum);
-      setDocuments(docs);
-      setStakeholders(shs);
-      setStructureData(struct);
-      setMatrixData(mat);
-      setConflicts(confs);
-      setRecommendations(recs);
-      setEvidenceList(evs);
+      try {
+        const [sum, docs, shs, struct, mat, confs, recs, evs] = await Promise.all([
+          api.getAssessmentSummary(periodId),
+          api.getDocuments(periodId),
+          api.getStakeholders(periodId),
+          api.getStructureAnalysis(periodId),
+          api.getAlignmentMatrix(periodId),
+          api.getConflicts(periodId),
+          api.getRecommendations(periodId),
+          api.getEvidence(periodId)
+        ]);
+        setSummary(sum);
+        setDocuments(docs);
+        setStakeholders(shs);
+        setStructureData(struct);
+        setMatrixData(mat);
+        setConflicts(confs);
+        setRecommendations(recs);
+        setEvidenceList(evs);
+      } catch (err) {
+        console.error("Failed to load period data:", err);
+      }
     };
     useEffect(() => {
       loadInitialLists();

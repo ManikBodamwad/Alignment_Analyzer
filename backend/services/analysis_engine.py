@@ -838,11 +838,14 @@ def run_full_diagnostic_analysis(
             }
         ]
 
+        used_doc_ids_for_exp = set()
         for chunk, sim_score in retrieved:
+            if chunk.document_id in used_doc_ids_for_exp:
+                continue
             c_lower = (chunk.section_heading + " " + chunk.content).lower()
             kw_hits = sum(1 for kw in sh_keywords if kw in c_lower)
             exp_hits = sum(1 for w in exp_words if w in c_lower)
-            if sim_score < 0.20 or kw_hits == 0 or exp_hits < 2:
+            if (sim_score < 0.10 and exp_hits < 2) or kw_hits == 0 or exp_hits < 1:
                 continue
 
             doc = doc_map.get(chunk.document_id)
@@ -900,7 +903,9 @@ def run_full_diagnostic_analysis(
             db.add(ev)
             created_evidence.append(ev)
             covered_exp_ids.add(exp.id)
-            break
+            used_doc_ids_for_exp.add(chunk.document_id)
+            if len(used_doc_ids_for_exp) >= 2:
+                break
 
     db.flush()
 
