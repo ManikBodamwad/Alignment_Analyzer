@@ -5,7 +5,10 @@ import { classificationBadge, RadialScoreGauge } from "./badges";
 import { EvidenceToInsightFlow } from "./EvidenceToInsightFlow";
 import {
   ArrowRightIcon,
+  BrandLogo,
   CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   DocumentIcon,
   MatrixIcon,
   ReportIcon,
@@ -81,7 +84,10 @@ export function DashboardView(props: {
   return (
     <div className="space-y-6">
       {/* Top Executive Header Card (Apple Style Showcase) */}
-      <div className="apple-card p-7 text-[#1d1d1f] relative overflow-hidden">
+      <div className="apple-card p-7 text-[#1d1d1f] relative overflow-hidden stagger-1">
+        <div className="absolute -right-8 -top-8 opacity-[0.06] pointer-events-none">
+          <BrandLogo size={180} />
+        </div>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
           <div>
             <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold mb-2">
@@ -133,7 +139,7 @@ export function DashboardView(props: {
             <button
               onClick={onRunAnalysis}
               disabled={isAnalyzing}
-              className="apple-btn-primary"
+              className="apple-btn-primary btn-shimmer"
             >
               {isAnalyzing ? (
                 <>
@@ -152,7 +158,7 @@ export function DashboardView(props: {
       </div>
 
       {/* 5-Step Diagnostic Workflow Journey (Apple Clean Cards) */}
-      <div className="apple-card p-6">
+      <div className="apple-card p-6 stagger-2">
         <div className="flex items-center justify-between mb-4">
           <div className="text-xs font-bold uppercase tracking-wider text-[#86868b]">
             Diagnostic Workflow
@@ -251,7 +257,7 @@ export function DashboardView(props: {
       </div>
 
       {/* Dual Radial Gauges & Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 stagger-3">
         <RadialScoreGauge
           label="Overall Alignment Score"
           sublabel="Weighted average across stakeholder expectations (Strong=4, Partial=3, Misaligned=1)"
@@ -334,7 +340,7 @@ export function DashboardView(props: {
       </div>
 
       {/* Distribution Breakdown Bar (Apple Clean Segment) */}
-      <div className="apple-card p-6">
+      <div className="apple-card p-6 stagger-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
             <h3 className="text-base font-bold text-[#1d1d1f]">
@@ -353,7 +359,7 @@ export function DashboardView(props: {
           </button>
         </div>
 
-        <div className="w-full h-4 rounded-full overflow-hidden flex bg-[#e5e5ea]">
+        <div className="w-full h-4 rounded-full overflow-hidden flex bg-[#e5e5ea] bar-grow">
           {totalReq > 0 ? (
             <div
               style={{
@@ -421,8 +427,8 @@ export function DashboardView(props: {
       </div>
 
       {/* Top Priority Structural Findings & Key Insights */}
-      <div className="apple-card p-6 space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="apple-card p-6 space-y-4 stagger-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
             <h3 className="text-base font-bold text-[#1d1d1f] tracking-tight flex items-center gap-2">
               <MatrixIcon className="w-5 h-5 text-[#0071e3]" />
@@ -434,9 +440,10 @@ export function DashboardView(props: {
           </div>
           <button
             onClick={() => onNavigate("recommendations")}
-            className="text-xs text-[#0071e3] font-semibold hover:underline"
+            className="text-xs text-[#0071e3] font-semibold hover:underline inline-flex items-center gap-1 shrink-0"
           >
-            View All {metrics.recommendations_count} Recommended Actions →
+            <span>View All {metrics.recommendations_count} Recommended Actions</span>
+            <ArrowRightIcon className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -528,8 +535,13 @@ export function DashboardView(props: {
               </div>
             </div>
           </div>
-          <span className="text-xs text-[#0071e3] font-semibold px-3 py-1.5 rounded-full bg-[#0071e3]/10 border border-[#0071e3]/20">
-            {showArchitecture ? "Hide Diagram ▲" : "Inspect Diagram ▼"}
+          <span className="text-xs text-[#0071e3] font-semibold px-3 py-1.5 rounded-full bg-[#0071e3]/10 border border-[#0071e3]/20 inline-flex items-center gap-1.5 shrink-0">
+            <span>{showArchitecture ? "Hide Diagram" : "Inspect Diagram"}</span>
+            {showArchitecture ? (
+              <ChevronUpIcon className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronDownIcon className="w-3.5 h-3.5" />
+            )}
           </span>
         </button>
         {showArchitecture ? (
@@ -656,9 +668,10 @@ export function DashboardView(props: {
             </div>
             <button
               onClick={() => onNavigate("stakeholders")}
-              className="text-xs text-[#0071e3] font-semibold hover:underline"
+              className="text-xs text-[#0071e3] font-semibold hover:underline inline-flex items-center gap-1 shrink-0"
             >
-              Adjust Weights →
+              <span>Adjust Weights</span>
+              <ArrowRightIcon className="w-3.5 h-3.5" />
             </button>
           </div>
           <div className="space-y-3.5">
@@ -674,25 +687,25 @@ export function DashboardView(props: {
                   : "bg-[#ff3b30]";
               return (
                 <div key={sh.id} className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex flex-wrap items-center gap-2 min-w-0">
                       <span className="font-semibold text-[#1d1d1f]">{sh.name}</span>
                       <span className="px-2 py-0.5 rounded-full bg-black/5 text-[#86868b] text-[10px] font-mono">
                         {sh.category} • W:{sh.importance_weight}x
                       </span>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 shrink-0">
                       <span className="text-[#86868b]">
-                        Cov: <strong className="text-[#1d1d1f]">{sh.evidence_coverage_pct}%</strong>
+                        Cov: <strong className="text-[#1d1d1f] tabular-nums">{sh.evidence_coverage_pct}%</strong>
                       </span>
-                      <span className="font-bold text-[#1d1d1f] w-14 text-right">
+                      <span className="font-bold text-[#1d1d1f] w-14 text-right tabular-nums">
                         {score !== null ? `${score}%` : "Insuff."}
                       </span>
                     </div>
                   </div>
                   <div className="w-full h-2 bg-[#e5e5ea] rounded-full overflow-hidden flex">
                     <div
-                      className={`${barColor} h-full transition-all`}
+                      className={`${barColor} h-full rounded-full bar-grow`}
                       style={{ width: `${score !== null ? score : 0}%` }}
                     ></div>
                   </div>
@@ -716,9 +729,10 @@ export function DashboardView(props: {
               </div>
               <button
                 onClick={() => onNavigate("structure")}
-                className="text-xs text-[#0071e3] font-semibold hover:underline"
+                className="text-xs text-[#0071e3] font-semibold hover:underline inline-flex items-center gap-1 shrink-0"
               >
-                Inspect Structure →
+                <span>Inspect Structure</span>
+                <ArrowRightIcon className="w-3.5 h-3.5" />
               </button>
             </div>
             <div className="divide-y divide-black/5">

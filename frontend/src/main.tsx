@@ -5,6 +5,7 @@ import { DashboardView } from "./components/DashboardView";
 import { DocumentsView } from "./components/DocumentsView";
 import {
   BoltIcon,
+  BrandLogo,
   CockpitIcon,
   DocumentIcon,
   LightbulbIcon,
@@ -238,20 +239,18 @@ function App() {
       {/* Left Apple Glass Sidebar */}
       <aside className="w-64 bg-white/75 backdrop-blur-2xl text-[#1d1d1f] flex flex-col justify-between shrink-0 border-r border-black/8 relative z-20 overflow-y-auto shadow-sm">
         <div>
-          {/* Brand Header */}
+          {/* Brand Header with Custom Animated Vector Logo */}
           <div className="p-5 border-b border-black/8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#0071e3] flex items-center justify-center font-bold text-white text-base shadow-md shadow-[#0071e3]/30">
-                SA
-              </div>
-              <div>
-                <div className="text-sm font-bold text-[#1d1d1f] tracking-tight">
+              <BrandLogo size={42} className="shrink-0 shadow-md shadow-[#0071e3]/25 rounded-2xl" />
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-[#1d1d1f] tracking-tight truncate">
                   Alignment Analyzer
                 </div>
                 <div className="text-[11px] text-[#0071e3] font-medium flex items-center gap-1.5 mt-0.5">
-                  <span>Enterprise Intelligence</span>
-                  <span className="px-1.5 py-0.2 rounded-full bg-[#0071e3]/10 text-[#0071e3] text-[9px] font-bold">
-                    v2.2
+                  <span className="truncate">Diagnostic Engine</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] text-[9px] font-bold shrink-0">
+                    v2.3
                   </span>
                 </div>
               </div>
@@ -414,7 +413,7 @@ function App() {
               <button
                 onClick={handleRunAnalysis}
                 disabled={isAnalyzing}
-                className="apple-btn-primary"
+                className="apple-btn-primary btn-shimmer"
               >
                 {isAnalyzing ? (
                   <>

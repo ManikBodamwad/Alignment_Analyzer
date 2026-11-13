@@ -2,6 +2,7 @@ import { api } from "../api";
 import { h, useEffect, useState } from "../lib/react-lite";
 import { AssessmentPeriod, Company } from "../types";
 import { classificationBadge } from "./badges";
+import { ArrowDownIcon, ArrowRightIcon, TrendIcon } from "./icons";
 
 export function ComparisonView(props: {
   companies: Company[];
@@ -36,30 +37,32 @@ export function ComparisonView(props: {
   }, [baseId, targetId]);
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-[#1d1d1f]">
       {/* Selector Bar */}
-      <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl space-y-4">
+      <div className="apple-card p-6 space-y-4 stagger-1">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-            <h2 className="text-base font-bold text-white">
-              Periodic Historical & Cross-Company Alignment Comparison Engine
+          <div className="flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-xl bg-[#e8f2fe] border border-[#b3d7ff] text-[#0071e3] flex items-center justify-center shrink-0">
+              <TrendIcon className="w-4 h-4" />
+            </span>
+            <h2 className="text-lg font-bold text-[#1d1d1f] tracking-tight">
+              Periodic Historical &amp; Cross-Company Alignment Comparison Engine
             </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#86868b] mt-1">
             Compare historical periods for the same company (e.g., Meta FY2024 vs. FY2025) or benchmark across companies (Meta vs. Snap vs. Pinterest).
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5">
               Baseline Assessment Period (A)
             </label>
             <select
               value={String(baseId)}
               onChange={(e: any) => setBaseId(parseInt(e.target.value, 10))}
-              className="w-full text-xs border border-slate-700 rounded-lg p-2.5 bg-slate-950 text-white font-semibold focus:outline-none"
+              className="w-full text-xs border border-black/10 rounded-xl p-2.5 bg-[#f5f5f7] text-[#1d1d1f] font-semibold focus:outline-none focus:border-[#0071e3] focus:bg-white"
             >
               {allPeriods.map((p) => (
                 <option key={p.id} value={String(p.id)}>
@@ -71,13 +74,13 @@ export function ComparisonView(props: {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5">
               Target Assessment Period (B)
             </label>
             <select
               value={String(targetId)}
               onChange={(e: any) => setTargetId(parseInt(e.target.value, 10))}
-              className="w-full text-xs border border-slate-700 rounded-lg p-2.5 bg-slate-950 text-white font-semibold focus:outline-none"
+              className="w-full text-xs border border-black/10 rounded-xl p-2.5 bg-[#f5f5f7] text-[#1d1d1f] font-semibold focus:outline-none focus:border-[#0071e3] focus:bg-white"
             >
               {allPeriods.map((p) => (
                 <option key={p.id} value={String(p.id)}>
@@ -92,7 +95,7 @@ export function ComparisonView(props: {
             <button
               onClick={() => runComparison(baseId, targetId)}
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold shadow-md shadow-violet-600/30 transition"
+              className="apple-btn-primary w-full"
             >
               {loading ? "Comparing Assessments..." : "Compare Assessments"}
             </button>
@@ -104,75 +107,77 @@ export function ComparisonView(props: {
         <div className="space-y-6">
           {/* Date Difference & Period Advisories */}
           {(comparison.date_difference_warnings || []).length > 0 ? (
-            <div className="glass-card bg-amber-950/40 border border-amber-500/40 rounded-xl p-4 space-y-1 text-xs text-amber-200">
-              <div className="font-bold uppercase tracking-wider text-amber-300">
-                Assessment Period & Document Date Advisories
+            <div className="apple-card bg-[#fff7e6] border border-[#ffd580] p-4 space-y-1.5 text-xs text-[#1d1d1f] stagger-2">
+              <div className="font-bold uppercase tracking-wider text-[#b25e00]">
+                Assessment Period &amp; Document Date Advisories
               </div>
               {comparison.date_difference_warnings.map((w: string, i: number) => (
-                <div key={i}>• {w}</div>
+                <div key={i} className="text-[#515154]">
+                  • {w}
+                </div>
               ))}
             </div>
           ) : null}
 
           {/* Summary Delta Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl">
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 stagger-2">
+            <div className="apple-card p-5">
+              <div className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">
                 Baseline (Period A)
               </div>
-              <div className="text-sm font-extrabold text-white mt-1">
+              <div className="text-sm font-bold text-[#1d1d1f] mt-1">
                 {comparison.baseline.company_name} — {comparison.baseline.title}
               </div>
               <div className="mt-3 flex items-baseline gap-4">
                 <div>
-                  <span className="text-2xl font-extrabold text-cyan-300 font-mono">
+                  <span className="text-2xl font-bold text-[#515154] font-mono tabular-nums">
                     {comparison.baseline.overall_alignment_score ?? "N/A"}%
                   </span>
-                  <span className="text-xs text-slate-400 ml-1">Alignment</span>
+                  <span className="text-xs text-[#86868b] ml-1">Alignment</span>
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-violet-400 font-mono">
+                  <span className="text-lg font-bold text-[#0071e3] font-mono tabular-nums">
                     {comparison.baseline.evidence_coverage_pct}%
                   </span>
-                  <span className="text-xs text-slate-400 ml-1">Coverage</span>
+                  <span className="text-xs text-[#86868b] ml-1">Coverage</span>
                 </div>
               </div>
             </div>
 
-            <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl">
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="apple-card p-5">
+              <div className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">
                 Target (Period B)
               </div>
-              <div className="text-sm font-extrabold text-white mt-1">
+              <div className="text-sm font-bold text-[#1d1d1f] mt-1">
                 {comparison.target.company_name} — {comparison.target.title}
               </div>
               <div className="mt-3 flex items-baseline gap-4">
                 <div>
-                  <span className="text-2xl font-extrabold text-cyan-300 font-mono">
+                  <span className="text-2xl font-bold text-[#0071e3] font-mono tabular-nums">
                     {comparison.target.overall_alignment_score ?? "N/A"}%
                   </span>
-                  <span className="text-xs text-slate-400 ml-1">Alignment</span>
+                  <span className="text-xs text-[#86868b] ml-1">Alignment</span>
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-violet-400 font-mono">
+                  <span className="text-lg font-bold text-[#5856d6] font-mono tabular-nums">
                     {comparison.target.evidence_coverage_pct}%
                   </span>
-                  <span className="text-xs text-slate-400 ml-1">Coverage</span>
+                  <span className="text-xs text-[#86868b] ml-1">Coverage</span>
                 </div>
               </div>
             </div>
 
-            <div className="glass-card bg-slate-950 p-5 rounded-xl border border-violet-800/80 shadow-2xl">
-              <div className="text-xs font-bold text-violet-300 uppercase tracking-wider">
-                Net Alignment & Coverage Shift
+            <div className="apple-card p-5 border-[#0071e3]/30">
+              <div className="text-[11px] font-bold text-[#0071e3] uppercase tracking-wider">
+                Net Alignment &amp; Coverage Shift
               </div>
               <div className="mt-3 flex items-baseline gap-6">
                 <div>
                   <div
-                    className={`text-2xl font-extrabold font-mono ${
+                    className={`text-2xl font-bold font-mono tabular-nums ${
                       (comparison.overall_alignment_delta || 0) >= 0
-                        ? "text-emerald-400"
-                        : "text-rose-400"
+                        ? "text-[#1d7334]"
+                        : "text-[#d70015]"
                     }`}
                   >
                     {comparison.overall_alignment_delta !== null
@@ -181,47 +186,59 @@ export function ComparisonView(props: {
                         }${comparison.overall_alignment_delta}%`
                       : "N/A"}
                   </div>
-                  <div className="text-xs text-slate-400">Alignment Delta</div>
+                  <div className="text-xs text-[#86868b]">Alignment Delta</div>
                 </div>
                 <div>
-                  <div className="text-xl font-bold text-cyan-300 font-mono">
+                  <div className="text-xl font-bold text-[#0071e3] font-mono tabular-nums">
                     {comparison.overall_coverage_delta >= 0 ? "+" : ""}
                     {comparison.overall_coverage_delta}%
                   </div>
-                  <div className="text-xs text-slate-400">Coverage Delta</div>
+                  <div className="text-xs text-[#86868b]">Coverage Delta</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Stakeholder Alignment Comparison Visual Chart */}
-          <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-white">
-              Stakeholder Alignment Score Comparison (Baseline vs. Target)
-            </h3>
-            <div className="space-y-3">
+          <div className="apple-card p-6 space-y-4 stagger-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-[#1d1d1f]">
+                Stakeholder Alignment Score Comparison (Baseline vs. Target)
+              </h3>
+              <div className="flex items-center gap-4 text-[11px] font-semibold">
+                <span className="inline-flex items-center gap-1.5 text-[#515154]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#aeaeb2]" />
+                  Baseline
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-[#0071e3]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0071e3]" />
+                  Target
+                </span>
+              </div>
+            </div>
+            <div className="space-y-3.5">
               {(comparison.stakeholder_comparisons || []).map((sc: any) => (
-                <div key={sc.slug} className="space-y-1 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">
+                <div key={sc.slug} className="space-y-1.5 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-bold text-[#1d1d1f]">
                       {sc.stakeholder_name} ({sc.category})
                     </span>
                     <div className="flex items-center gap-3">
-                      <span className="text-slate-400 font-mono">
-                        Base: <strong className="text-slate-200">{sc.base_alignment_score ?? "N/A"}%</strong>
+                      <span className="text-[#86868b] font-mono tabular-nums">
+                        Base: <strong className="text-[#1d1d1f]">{sc.base_alignment_score ?? "N/A"}%</strong>
                       </span>
-                      <span className="text-slate-400 font-mono">
+                      <span className="text-[#86868b] font-mono tabular-nums">
                         Target:{" "}
-                        <strong className="text-slate-200">{sc.target_alignment_score ?? "N/A"}%</strong>
+                        <strong className="text-[#0071e3]">{sc.target_alignment_score ?? "N/A"}%</strong>
                       </span>
                       {sc.alignment_delta !== null ? (
                         <span
-                          className={`px-2 py-0.5 rounded font-mono font-bold ${
+                          className={`px-2.5 py-0.5 rounded-full font-mono font-bold border tabular-nums ${
                             sc.alignment_delta > 0
-                              ? "bg-emerald-950/70 text-emerald-300 border border-emerald-600/50"
+                              ? "bg-[#eaf8ee] text-[#1d7334] border-[#a3e4b7]"
                               : sc.alignment_delta < 0
-                              ? "bg-rose-950/70 text-rose-300 border border-rose-600/50"
-                              : "bg-slate-800 text-slate-400 border border-slate-700"
+                              ? "bg-[#fdeef0] text-[#c9182b] border-[#f9abb4]"
+                              : "bg-[#f2f2f7] text-[#636366] border-[#d1d1d6]"
                           }`}
                         >
                           {sc.alignment_delta > 0 ? "+" : ""}
@@ -230,16 +247,16 @@ export function ComparisonView(props: {
                       ) : null}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="w-full h-2.5 bg-[#e5e5ea] rounded-full overflow-hidden">
                       <div
-                        className="bg-slate-500 h-full"
+                        className="bg-[#aeaeb2] h-full rounded-full bar-grow"
                         style={{ width: `${sc.base_alignment_score || 0}%` }}
                       ></div>
                     </div>
-                    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-2.5 bg-[#e5e5ea] rounded-full overflow-hidden">
                       <div
-                        className="bg-cyan-500 h-full"
+                        className="bg-[#0071e3] h-full rounded-full bar-grow"
                         style={{ width: `${sc.target_alignment_score || 0}%` }}
                       ></div>
                     </div>
@@ -250,23 +267,23 @@ export function ComparisonView(props: {
           </div>
 
           {/* Improvements & Deteriorations Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl space-y-3 text-xs">
-              <h4 className="text-sm font-bold text-white">
-                Alignment Improvements & New Capabilities
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-4">
+            <div className="apple-card p-6 space-y-3 text-xs">
+              <h4 className="text-sm font-bold text-[#1d1d1f]">
+                Alignment Improvements &amp; New Capabilities
               </h4>
-              <div className="p-3.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30 space-y-1">
-                <div className="font-bold text-emerald-300">
+              <div className="p-4 rounded-2xl bg-[#eaf8ee] border border-[#a3e4b7] space-y-1.5">
+                <div className="font-bold text-[#1d7334]">
                   Improvements in Alignment:
                 </div>
                 {(comparison.alignment_improvements || []).length === 0 ? (
-                  <div className="text-emerald-400 italic">
+                  <div className="text-[#248a3d] italic">
                     No positive score shifts recorded.
                   </div>
                 ) : (
                   comparison.alignment_improvements.map(
                     (imp: string, i: number) => (
-                      <div key={i} className="text-emerald-200">
+                      <div key={i} className="text-[#1d1d1f]">
                         + {imp}
                       </div>
                     )
@@ -274,18 +291,18 @@ export function ComparisonView(props: {
                 )}
               </div>
 
-              <div className="p-3.5 rounded-lg bg-violet-950/30 border border-violet-500/30 space-y-1">
-                <div className="font-bold text-violet-300">
-                  Newly Disclosed Capabilities & Units:
+              <div className="p-4 rounded-2xl bg-[#e8f2fe] border border-[#b3d7ff] space-y-1.5">
+                <div className="font-bold text-[#0066cc]">
+                  Newly Disclosed Capabilities &amp; Units:
                 </div>
                 {(comparison.new_capabilities_and_units || []).length === 0 ? (
-                  <div className="text-violet-400 italic">
+                  <div className="text-[#0066cc] italic">
                     No new organizational units added between periods.
                   </div>
                 ) : (
                   comparison.new_capabilities_and_units.map(
                     (u: string, i: number) => (
-                      <div key={i} className="text-violet-200">
+                      <div key={i} className="text-[#1d1d1f]">
                         + {u}
                       </div>
                     )
@@ -294,41 +311,42 @@ export function ComparisonView(props: {
               </div>
             </div>
 
-            <div className="glass-card bg-slate-900/90 p-5 rounded-xl border border-slate-800 shadow-xl space-y-3 text-xs">
-              <h4 className="text-sm font-bold text-white">
-                Deteriorations & Structural Dimension Changes
+            <div className="apple-card p-6 space-y-3 text-xs">
+              <h4 className="text-sm font-bold text-[#1d1d1f]">
+                Deteriorations &amp; Structural Dimension Changes
               </h4>
-              <div className="p-3.5 rounded-lg bg-rose-950/30 border border-rose-500/30 space-y-1">
-                <div className="font-bold text-rose-300">
+              <div className="p-4 rounded-2xl bg-[#fdeef0] border border-[#f9abb4] space-y-1.5">
+                <div className="font-bold text-[#c9182b]">
                   Deteriorations in Alignment:
                 </div>
                 {(comparison.alignment_deteriorations || []).length === 0 ? (
-                  <div className="text-rose-400 italic">
+                  <div className="text-[#c9182b] italic">
                     No alignment score declines recorded.
                   </div>
                 ) : (
                   comparison.alignment_deteriorations.map(
                     (det: string, i: number) => (
-                      <div key={i} className="text-rose-200">
-                        ↓ {det}
+                      <div key={i} className="text-[#1d1d1f] flex items-center gap-1.5">
+                        <ArrowDownIcon className="w-3.5 h-3.5 text-[#c9182b] shrink-0" />
+                        <span>{det}</span>
                       </div>
                     )
                   )
                 )}
               </div>
 
-              <div className="divide-y divide-slate-800/80">
+              <div className="divide-y divide-black/8">
                 {(comparison.dimension_comparisons || []).map((dc: any) => (
                   <div
                     key={dc.dimension_code}
-                    className="py-2.5 flex items-center justify-between"
+                    className="py-3 flex flex-wrap items-center justify-between gap-2"
                   >
-                    <span className="font-semibold text-slate-200">
+                    <span className="font-semibold text-[#1d1d1f]">
                       {dc.dimension_name}
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {classificationBadge(dc.base_classification)}
-                      <span className="text-slate-500">→</span>
+                      <ArrowRightIcon className="w-3.5 h-3.5 text-[#86868b]" />
                       {classificationBadge(dc.target_classification)}
                     </div>
                   </div>
